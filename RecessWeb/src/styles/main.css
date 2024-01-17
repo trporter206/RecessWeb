@@ -21,3 +21,17 @@ body {
 .list-container {
     width: 100%; /* Adjust as needed */
 }
+
+.nav-style {
+    background: lightblue; /* Changed to light blue */
+    padding: 10px;        /* Removed quotes for numeric value */
+    position: fixed;
+    top: 0;
+    width: 100%;          /* Removed quotes for percentage value */
+}
+
+.nav-buttons {
+    display: flex;        /* Flexbox for horizontal alignment */
+    flex-direction: row;  /* Row direction for horizontal alignment */
+    justify-content: space-around;
+}

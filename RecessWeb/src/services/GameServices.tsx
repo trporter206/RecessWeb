@@ -11,25 +11,27 @@ const db = getFirestore(app);
 
 async function fetchGames(): Promise<Game[]> {
     try {
-        const snapshot = await getDocs(collection(db, 'Locations'));
+        console.log('Fetching games');
+        const snapshot = await getDocs(collection(db, 'Games')); // Changed to 'Games'
         const games = snapshot.docs.map((doc) => {
             const data = doc.data();
             const game: Game = {
                 id: doc.id,
                 locationId: data.locationId,
-                players: [],
-                time: data.time.toDate()
+                players: data.players || [], // Assuming 'players' field exists
+                time: data.time.toDate() // Make sure 'time' field exists and is a Timestamp
             };
             return game;
         });
         return games;
     } catch (error) {
-        console.error('Error fetching locations:', error);
+        console.error('Error fetching games:', error);
         throw error;
     }
 }
 
-async function createGame(gameData: Game): Promise<void> {
+
+export async function createGame(gameData: Game): Promise<void> {
     try {
         await addDoc(collection(db, 'Games'), gameData);
     } catch (error) {
@@ -39,3 +41,17 @@ async function createGame(gameData: Game): Promise<void> {
 }
 
 export default fetchGames;
+
+export const generateRandomGame = () => {
+    console.log('Generating random game');
+    const randomId = Math.random().toString(36).substring(2, 9); // Generate a random string
+    const randomLocationId = `Location ${randomId.toUpperCase()}`;
+  
+    return {
+      id: randomId,
+      randomLocationId: randomLocationId,
+      players: [],
+      time: new Date(),
+    };
+  };
+

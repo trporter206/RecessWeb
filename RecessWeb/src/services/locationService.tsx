@@ -53,3 +53,17 @@ async function fetchGames(locationId: string): Promise<Game[]> {
 }
 
 export default fetchLocations;
+
+export const generateRandomLocation = () => {
+    console.log('Generating random location');
+    const randomId = Math.random().toString(36).substring(2, 9); // Generate a random string
+    const randomName = `Location ${randomId.toUpperCase()}`;
+    const randomDescription = `Description for ${randomName}`;
+  
+    return {
+      id: randomId,
+      name: randomName,
+      description: randomDescription,
+      games: [] // Keeping games empty
+    };
+  };
