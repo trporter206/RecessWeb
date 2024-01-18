@@ -1,8 +1,6 @@
 import { useEffect, useState } from 'react';
-import { createGame } from '../services/GameServices';
 import { Game } from '../models/Game';
 import fetchGames from '../services/GameServices';
-import { generateRandomGame } from '../services/GameServices';
 import { GamesList } from '../components/GamesList';
 import { GameCreationModal } from '../components/GameCreationModal';
 

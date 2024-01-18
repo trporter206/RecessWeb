@@ -1,23 +1,13 @@
-// src/components/LandingPage.tsx
-import { useEffect, useState } from 'react';
-import fetchLocations from '../services/locationService';
-import { Location } from '../models/Location';
-import '../styles/main.css'
+import { useContext } from 'react';
+import { LocationsContext } from '../services/LocationsProvider'; // Import the context
+import '../styles/main.css';
 import { LocationsList } from '../components/LocationsList';
 
 export const LocationsPage = () => {
-  const [locations, setLocations] = useState<Location[]>([]);
+  // Use LocationsContext to access locations
+  const { locations } = useContext(LocationsContext);
 
-  useEffect(() => {
-    const loadLocations = async () => {
-      const locationsData = await fetchLocations();
-      setLocations(locationsData);
-    };
-
-    loadLocations();
-  }, []);
-
-return (
+  return (
     <div className="main-container">
       <div className='title-container'>
         <h1>Discover Locations</h1>
@@ -26,5 +16,5 @@ return (
         <LocationsList locations={locations} />
       </div>
     </div>
-    );
+  );
 };

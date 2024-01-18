@@ -1,8 +1,7 @@
-// src/components/GameCreationModal.tsx
-import { useState, useEffect } from 'react';
+import React, { useState, useContext } from 'react';
 import { createGame } from '../services/GameServices';
+import { LocationsContext } from '../services/LocationsProvider'; // Correctly import the context
 import { Location } from '../models/Location';
-import fetchLocations from '../services/locationService'; // Import your fetchLocations service
 
 interface GameCreationModalProps {
   show: boolean;
@@ -11,18 +10,10 @@ interface GameCreationModalProps {
 }
 
 export const GameCreationModal: React.FC<GameCreationModalProps> = ({ show, onClose, onGameCreated }) => {
-    const [locations, setLocations] = useState<Location[]>([]);
+  const { locations } = useContext(LocationsContext); // Use the existing LocationsContext
+
   const [selectedLocation, setSelectedLocation] = useState('');
   const [date, setDate] = useState('');
-
-  useEffect(() => {
-    const fetchAndSetLocations = async () => {
-      const fetchedLocations = await fetchLocations();
-      setLocations(fetchedLocations);
-    };
-
-    fetchAndSetLocations();
-  }, []);
 
   const handleSave = async () => {
     if (!selectedLocation || !date) {
@@ -32,7 +23,7 @@ export const GameCreationModal: React.FC<GameCreationModalProps> = ({ show, onCl
 
     const newGame = {
       locationId: selectedLocation,
-      players: [], // Assuming empty players list
+      players: [],
       time: new Date(date),
     };
 
@@ -51,10 +42,10 @@ export const GameCreationModal: React.FC<GameCreationModalProps> = ({ show, onCl
   }
 
   return (
-    <div style={{ /* Styles for your modal */ }}>
+    <div>
       <h2>Create Game</h2>
       <select value={selectedLocation} onChange={e => setSelectedLocation(e.target.value)}>
-        {locations.map(location => (
+        {locations.map((location: Location) => (
           <option key={location.id} value={location.id}>{location.name}</option>
         ))}
       </select>
