@@ -3,7 +3,7 @@ import { Login } from './components/Login';
 import { Register } from './components/Register';
 import { LandingPage } from './pages/LandingPage';
 import { NavigationBar } from './components/NavigationBar';
-import { GamesPage } from './pages/Games'; // Import the Games component
+import { GamesPage } from './pages/GamesPage'; // Import the Games component
 import { LocationsPage } from './pages/LocationsPage'; // Import the LocationsPage component
 
 export const App = () => {
