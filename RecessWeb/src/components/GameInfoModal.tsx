@@ -14,11 +14,6 @@ export const GameInfoModal: React.FC<GameInfoModalProps> = ({ game, onClose }) =
       <div className="gameInfoModal-content">
         <h3>{game.locationId}</h3>
         <p>Players: {game.players.length}</p>
-        {/* <ul>
-          {games.map(game => (
-            <li key={game.toString()}>{game}</li>
-          ))}
-        </ul> */}
         <button onClick={onClose}>Close</button>
       </div>
     </div>

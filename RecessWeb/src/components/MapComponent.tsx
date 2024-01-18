@@ -3,9 +3,10 @@ import { Location } from '../models/Location';
 
 interface MapComponentProps {
   locations: Location[];
+  onMarkerClick: (location: Location) => void;
 }
 
-export const MapComponent: React.FC<MapComponentProps> = ({ locations }) => {
+export const MapComponent: React.FC<MapComponentProps> = ({ locations, onMarkerClick }) => {
   const mapRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -17,13 +18,18 @@ export const MapComponent: React.FC<MapComponentProps> = ({ locations }) => {
 
       locations.forEach(location => {
         if (location.coordinates && !isNaN(location.coordinates.latitude) && !isNaN(location.coordinates.longitude)) {
-          new window.google.maps.Marker({
+          
+          const marker = new window.google.maps.Marker({
             position: {
               lat: Number(location.coordinates.latitude),
               lng: Number(location.coordinates.longitude)
             },
             map: map,
             title: location.name,
+          });
+
+          marker.addListener('click', () => {
+            onMarkerClick(location);
           });
         } else {
           console.error('Invalid location coordinates:', location);
