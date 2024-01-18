@@ -11,7 +11,7 @@ export const LocationInfoModal: React.FC<LocationInfoModalProps> = ({ location, 
   const { name, description, games } = location;
 
   return (
-    <div className="locationInfoModal-backdrop">
+    <div className="InfoModal-backdrop">
       <div className="locationInfoModal-content">
         <h3>{name}</h3>
         <p>{description}</p>

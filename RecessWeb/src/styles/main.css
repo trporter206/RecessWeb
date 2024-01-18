@@ -44,7 +44,21 @@ body {
     color: white;
 }
 
-.locationInfoModal-backdrop {
+.game-item {
+    background-color: red;
+    border-radius: 10px;
+    padding: 5px;
+    margin: 10px 0;
+    color: white;
+}
+
+.game-info {
+    display: flex;
+    align-items: center;
+    gap: 10px; /* Adjust the gap as needed */
+}
+
+.InfoModal-backdrop {
     position: fixed;
     top: 0;
     left: 0;
@@ -65,3 +79,13 @@ body {
     border-radius: 5px;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
   }
+
+  .gameInfoModal-content {
+    background: white;
+    color: black;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  }
+
+  

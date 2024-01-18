@@ -37,7 +37,7 @@ export const GamesPage = () => {
     return (
         <div>
             <h1>Find Games</h1>
-            {!showModal && <button onClick={handleOpenModal}>Add Game</button>}
+            {!showModal && <button onClick={handleOpenModal}>Host Pickleball Game</button>}
             <GameCreationModal 
                 show={showModal} 
                 onClose={handleCloseModal} 

@@ -14,7 +14,10 @@ export const LocationItem: React.FC<{ location: Location }> = ({ location }) => 
     <div className='location-item' onClick={handleToggleInfo}>
       <h3>{location.name}</h3>
       {showInfo && (
-        <LocationInfoModal location={location} onClose={() => setShowInfo(false)} />
+        <LocationInfoModal 
+          location={location} 
+          onClose={() => setShowInfo(false)} 
+        />
       )}
     </div>
   );
