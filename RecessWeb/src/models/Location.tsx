@@ -4,7 +4,7 @@ export interface Location {
   id: string;
   name: string;
   description: string;
-  games: Game[];
+  games: String[];
   coordinates: {
     latitude: number;
     longitude: number;

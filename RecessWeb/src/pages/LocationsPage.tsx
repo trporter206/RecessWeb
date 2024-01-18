@@ -1,7 +1,6 @@
 // src/components/LandingPage.tsx
 import { useEffect, useState } from 'react';
 import fetchLocations from '../services/locationService';
-import { generateRandomLocation } from '../services/locationService';
 import { Location } from '../models/Location';
 import '../styles/main.css'
 import { LocationsList } from '../components/LocationsList';
@@ -17,11 +16,6 @@ export const LocationsPage = () => {
 
     loadLocations();
   }, []);
-
-  const addRandomLocation = () => {
-    const newLocation = generateRandomLocation();
-    setLocations([...locations, newLocation]);
-  };
 
 return (
     <div className="main-container">

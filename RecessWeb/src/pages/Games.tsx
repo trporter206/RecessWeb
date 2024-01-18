@@ -23,23 +23,22 @@ export const GamesPage = () => {
 
     const handleAddGame = async () => {
         console.log("creating game");
-        const fakeGame = generateRandomGame(); // Ensure this function exists and returns the correct structure
-    
+        const fakeGame = generateRandomGame();
+      
         const game = {
-            id: fakeGame.id,
-            locationId: fakeGame.randomLocationId, // Assuming the property is 'randomLocationId'
+            locationId: 'N9pbOzXeYTCxXu86nYAY', // use a real location ID
             players: fakeGame.players,
             time: fakeGame.time,
         };
-    
+      
         try {
-            await createGame(game); // Pass the game object to createGame
+            await createGame(game);
             await fetchAndSetGames();
-            setGames([...games, game]);
         } catch (error) {
             console.error('Error in handleAddGame:', error);
         }
     };
+    
 
     return (
         <div>

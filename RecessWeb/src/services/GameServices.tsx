@@ -1,5 +1,5 @@
 import { initializeApp } from 'firebase/app';
-import { getFirestore, collection, getDocs, addDoc, doc, deleteDoc } from 'firebase/firestore';
+import { getFirestore, collection, getDocs, addDoc, doc, deleteDoc, updateDoc, arrayUnion, arrayRemove, getDoc } from 'firebase/firestore';
 import { Game } from '../models/Game';
 import { firebaseConfig } from '../firebaseConfig';
 
@@ -33,21 +33,51 @@ async function fetchGames(): Promise<Game[]> {
 export async function deleteGame(gameId: string): Promise<void> {
     try {
         const gameRef = doc(db, 'Games', gameId);
-        await deleteDoc(gameRef);
+        const gameSnapshot = await getDoc(gameRef);
+
+        if (!gameSnapshot.exists()) {
+            console.error('Game does not exist');
+            throw new Error('Game not found');
+        }
+
+        const gameData = gameSnapshot.data();
+        if (gameData === undefined) {
+            console.error('Game data is undefined');
+            throw new Error('Game data is undefined');
+        }
+
+        const locationRef = doc(db, 'Locations', gameData.locationId);
+        
+        await Promise.all([
+            deleteDoc(gameRef),
+            updateDoc(locationRef, {
+                games: arrayRemove(gameId)
+            })
+        ]);
     } catch (error) {
         console.error('Error deleting game:', error);
         throw error;
     }
 }
 
-export async function createGame(gameData: Game): Promise<void> {
+
+export async function createGame(gameData: Omit<Game, 'id'>): Promise<void> {
     try {
-        await addDoc(collection(db, 'Games'), gameData);
+        const gameRef = await addDoc(collection(db, 'Games'), gameData);
+        const firestoreId = gameRef.id;
+
+        await updateDoc(gameRef, { id: firestoreId });
+
+        const locationRef = doc(db, 'Locations', gameData.locationId);
+        await updateDoc(locationRef, {
+            games: arrayUnion(firestoreId)
+        });
     } catch (error) {
         console.error('Error creating game:', error);
         throw error;
     }
 }
+
 
 export default fetchGames;
 
@@ -58,9 +88,9 @@ export const generateRandomGame = () => {
   
     return {
       id: randomId,
-      randomLocationId: randomLocationId,
+      locationId: randomLocationId,
       players: [],
       time: new Date(),
     };
-  };
+};
 
