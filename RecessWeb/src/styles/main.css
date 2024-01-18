@@ -117,4 +117,12 @@ body {
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
   }
 
+  .profileCreationModal-content {
+    background: white;
+    color: black;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  }
+
   
