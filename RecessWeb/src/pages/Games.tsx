@@ -3,6 +3,7 @@ import { createGame } from '../services/GameServices';
 import { Game } from '../models/Game';
 import fetchGames from '../services/GameServices';
 import { generateRandomGame } from '../services/GameServices';
+import { GamesList } from '../components/GamesList';
 
 export const GamesPage = () => {
     const [games, setGames] = useState<Game[]>([]);
@@ -15,6 +16,10 @@ export const GamesPage = () => {
     useEffect(() => {
         fetchAndSetGames();
     }, []);
+
+    const handleDeleteGame = (gameId: String) => {
+        setGames(games.filter(game => game.id !== gameId));
+    };
 
     const handleAddGame = async () => {
         console.log("creating game");
@@ -41,12 +46,7 @@ export const GamesPage = () => {
             <h1>Games</h1>
             <button onClick={handleAddGame}>Add Fake Game</button>
             <div>
-                {games.map(game => (
-                    <div key={game.id}>
-                        <h3>{game.locationId}</h3>
-                        <p>Players: {game.players.length}</p>
-                    </div>
-                ))}
+                <GamesList games={games} onDeleteGame={handleDeleteGame}/>
             </div>
         </div>
     );

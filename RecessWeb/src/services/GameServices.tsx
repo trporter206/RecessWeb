@@ -1,5 +1,5 @@
 import { initializeApp } from 'firebase/app';
-import { getFirestore, collection, getDocs, addDoc } from 'firebase/firestore';
+import { getFirestore, collection, getDocs, addDoc, doc, deleteDoc } from 'firebase/firestore';
 import { Game } from '../models/Game';
 import { firebaseConfig } from '../firebaseConfig';
 
@@ -30,6 +30,15 @@ async function fetchGames(): Promise<Game[]> {
     }
 }
 
+export async function deleteGame(gameId: string): Promise<void> {
+    try {
+        const gameRef = doc(db, 'Games', gameId);
+        await deleteDoc(gameRef);
+    } catch (error) {
+        console.error('Error deleting game:', error);
+        throw error;
+    }
+}
 
 export async function createGame(gameData: Game): Promise<void> {
     try {

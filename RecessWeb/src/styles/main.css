@@ -35,3 +35,11 @@ body {
     flex-direction: row;  /* Row direction for horizontal alignment */
     justify-content: space-around;
 }
+
+.location-item {
+    background-color: green;
+    border-radius: 10px;
+    padding: 5px;
+    margin: 10px 0;
+    color: white;
+}

@@ -4,10 +4,7 @@ import { Location } from '../models/Location';
 import { Game } from '../models/Game';
 import { firebaseConfig } from '../firebaseConfig';
 
-// Initialize Firebase
 const app = initializeApp(firebaseConfig);
-
-// Initialize Firestore
 const db = getFirestore(app);
 
 async function fetchLocations(): Promise<Location[]> {
@@ -41,7 +38,6 @@ async function fetchGames(locationId: string): Promise<Game[]> {
                 locationId: data.locationId,
                 players: data.players,
                 time: data.time.toDate(),
-                // Add other properties as needed
             };
             return game;
         });
@@ -56,7 +52,7 @@ export default fetchLocations;
 
 export const generateRandomLocation = () => {
     console.log('Generating random location');
-    const randomId = Math.random().toString(36).substring(2, 9); // Generate a random string
+    const randomId = Math.random().toString(36).substring(2, 9);
     const randomName = `Location ${randomId.toUpperCase()}`;
     const randomDescription = `Description for ${randomName}`;
   
@@ -64,6 +60,6 @@ export const generateRandomLocation = () => {
       id: randomId,
       name: randomName,
       description: randomDescription,
-      games: [] // Keeping games empty
+      games: []
     };
   };

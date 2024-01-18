@@ -4,6 +4,7 @@ import fetchLocations from '../services/locationService';
 import { generateRandomLocation } from '../services/locationService';
 import { Location } from '../models/Location';
 import '../styles/main.css'
+import { LocationsList } from '../components/LocationsList';
 
 export const LocationsPage = () => {
   const [locations, setLocations] = useState<Location[]>([]);
@@ -29,12 +30,7 @@ return (
       </div>
       <button onClick={addRandomLocation}>Add Random Location</button>
       <div className='list-container'>
-        {locations.map(location => (
-          <div key={location.id}>
-            <h2>{location.name}</h2>
-            <p>{location.description}</p>
-          </div>
-        ))}
+        <LocationsList locations={locations} />
       </div>
     </div>
     );
