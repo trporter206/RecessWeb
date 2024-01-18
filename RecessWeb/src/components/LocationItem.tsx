@@ -1,19 +1,21 @@
 // LocationItem component
-import React from 'react';
-import { Location } from '../models/Location'; // Import the Location type
+import React, { useState } from 'react';
+import { Location } from '../models/Location';
+import { LocationInfoModal } from './LocationInfoModal';
 
-interface LocationItemProps {
-  location: Location;
-}
+export const LocationItem: React.FC<{ location: Location }> = ({ location }) => {
+  const [showInfo, setShowInfo] = useState(false);
 
-export const LocationItem: React.FC<LocationItemProps> = ({ location }) => {
-  const { name, description, games } = location; // Destructure the properties from location object
+  const handleToggleInfo = () => {
+    setShowInfo(!showInfo);
+  };
 
   return (
-    <div className='location-item'>
-      <h3>{name}</h3>
-      <p>{description}</p>
-      <p>Number of Games: {games.length}</p>
+    <div className='location-item' onClick={handleToggleInfo}>
+      <h3>{location.name}</h3>
+      {showInfo && (
+        <LocationInfoModal location={location} onClose={() => setShowInfo(false)} />
+      )}
     </div>
   );
 };
