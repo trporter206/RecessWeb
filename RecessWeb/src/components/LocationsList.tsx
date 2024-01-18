@@ -1,3 +1,4 @@
+// LocationsList component
 import React from 'react';
 import { Location } from '../models/Location';
 import { LocationItem } from './LocationItem';
@@ -12,8 +13,7 @@ export const LocationsList: React.FC<LocationsListProps> = ({ locations }) => {
             {locations.map(location => (
                 <LocationItem 
                     key={location.id} 
-                    name={location.name} 
-                    description={location.description} 
+                    location={location} // Pass the entire location object
                 />
             ))}
         </div>

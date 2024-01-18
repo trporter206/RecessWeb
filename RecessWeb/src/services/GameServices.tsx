@@ -61,7 +61,7 @@ export async function deleteGame(gameId: string): Promise<void> {
 }
 
 
-export async function createGame(gameData: Omit<Game, 'id'>): Promise<void> {
+export async function createGame(gameData: Omit<Game, 'id'>): Promise<string> {
     try {
         const gameRef = await addDoc(collection(db, 'Games'), gameData);
         const firestoreId = gameRef.id;
@@ -72,11 +72,14 @@ export async function createGame(gameData: Omit<Game, 'id'>): Promise<void> {
         await updateDoc(locationRef, {
             games: arrayUnion(firestoreId)
         });
+
+        return firestoreId; // Return the new game ID
     } catch (error) {
         console.error('Error creating game:', error);
         throw error;
     }
 }
+
 
 
 export default fetchGames;

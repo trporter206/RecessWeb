@@ -1,6 +1,6 @@
 import React, { useState, useContext } from 'react';
 import { createGame } from '../services/GameServices';
-import { LocationsContext } from '../services/LocationsProvider'; // Correctly import the context
+import { LocationsContext } from '../services/LocationsProvider';
 import { Location } from '../models/Location';
 
 interface GameCreationModalProps {
@@ -10,8 +10,7 @@ interface GameCreationModalProps {
 }
 
 export const GameCreationModal: React.FC<GameCreationModalProps> = ({ show, onClose, onGameCreated }) => {
-  const { locations } = useContext(LocationsContext); // Use the existing LocationsContext
-
+  const { locations, addGameToLocation } = useContext(LocationsContext);
   const [selectedLocation, setSelectedLocation] = useState('');
   const [date, setDate] = useState('');
 
@@ -28,8 +27,10 @@ export const GameCreationModal: React.FC<GameCreationModalProps> = ({ show, onCl
     };
 
     try {
-      await createGame(newGame);
+      const newGameId = await createGame(newGame); // Ensure createGame returns the new game ID
+      addGameToLocation(newGameId, selectedLocation);
       onGameCreated();
+      console.log('Game created successfully');
     } catch (error) {
       console.error('Error creating game:', error);
     }

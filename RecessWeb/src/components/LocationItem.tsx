@@ -1,17 +1,19 @@
+// LocationItem component
 import React from 'react';
-import '../styles/main.css';
+import { Location } from '../models/Location'; // Import the Location type
 
 interface LocationItemProps {
-  name: string;
-  description: string;
-  // Add other properties of the location if needed
+  location: Location;
 }
 
-export const LocationItem: React.FC<LocationItemProps> = ({ name, description }) => {
+export const LocationItem: React.FC<LocationItemProps> = ({ location }) => {
+  const { name, description, games } = location; // Destructure the properties from location object
+
   return (
     <div className='location-item'>
       <h3>{name}</h3>
       <p>{description}</p>
+      <p>Number of Games: {games.length}</p>
     </div>
   );
 };
