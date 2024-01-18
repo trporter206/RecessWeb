@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { createGame } from '../services/GameServices';
 import { LocationsContext } from '../services/LocationsProvider';
 import { Location } from '../models/Location';
@@ -11,8 +11,14 @@ interface GameCreationModalProps {
 
 export const GameCreationModal: React.FC<GameCreationModalProps> = ({ show, onClose, onGameCreated }) => {
   const { locations, addGameToLocation } = useContext(LocationsContext);
-  const [selectedLocation, setSelectedLocation] = useState('');
+  const [selectedLocation, setSelectedLocation] = useState(locations.length > 0 ? locations[0].id : '');
   const [date, setDate] = useState('');
+
+  useEffect(() => {
+    if (locations.length > 0 && selectedLocation === '') {
+      setSelectedLocation(locations[0].id);
+    }
+  }, [locations]);
 
   const handleSave = async () => {
     if (!selectedLocation || !date) {
