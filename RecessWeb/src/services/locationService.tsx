@@ -16,7 +16,8 @@ async function fetchLocations(): Promise<Location[]> {
                 id: doc.id,
                 name: data.name,
                 description: data.description,
-                games: await fetchGames(doc.id)
+                games: await fetchGames(doc.id),
+                coordinates: {latitude: data.coordinates.latitude, longitude: data.coordinates.longitude}
             };
             console.log(location.id);
             return location;
@@ -55,11 +56,14 @@ export const generateRandomLocation = () => {
     const randomId = Math.random().toString(36).substring(2, 9);
     const randomName = `Location ${randomId.toUpperCase()}`;
     const randomDescription = `Description for ${randomName}`;
+    const randomLatitude = Math.random() * 180 - 90;
+    const randomLongitude = Math.random() * 360 - 180;
   
     return {
       id: randomId,
       name: randomName,
       description: randomDescription,
-      games: []
+      games: [],
+      coordinates: { latitude: randomLatitude, longitude: randomLongitude },
     };
   };

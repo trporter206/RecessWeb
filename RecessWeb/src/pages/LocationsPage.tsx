@@ -28,7 +28,6 @@ return (
       <div className='title-container'>
         <h1>Discover Locations</h1>
       </div>
-      <button onClick={addRandomLocation}>Add Random Location</button>
       <div className='list-container'>
         <LocationsList locations={locations} />
       </div>
