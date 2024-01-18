@@ -44,6 +44,13 @@ body {
     color: white;
 }
 
+.location-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
 .game-item {
     background-color: red;
     border-radius: 10px;
@@ -70,6 +77,28 @@ body {
     justify-content: center;
     align-items: center;
     z-index: 1000; /* Ensure it's above other elements */
+  }
+
+  .gameCreationModal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5); /* semi-transparent background */
+    backdrop-filter: blur(5px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000; /* Ensure it's above other elements */
+  }
+
+  .gameCreationModal-content {
+    background: white;
+    color: black;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
   }
   
   .locationInfoModal-content {

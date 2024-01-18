@@ -12,7 +12,10 @@ export const LocationItem: React.FC<{ location: Location }> = ({ location }) => 
 
   return (
     <div className='location-item' onClick={handleToggleInfo}>
-      <h3>{location.name}</h3>
+      <div className='location-content'>
+        <h3>{location.name}</h3>
+        <span className="game-count">{location.games.length} {location.games.length === 1 ? 'game' : 'games'}</span>
+      </div>
       {showInfo && (
         <LocationInfoModal 
           location={location} 
