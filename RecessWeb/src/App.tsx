@@ -7,6 +7,7 @@ import { LocationsProvider } from './services/LocationsProvider';
 import { ProfilePage } from './pages/ProfilePage';
 import { UserProvider } from './services/UserContext';
 
+
 export const App = () => {
 
   return (

@@ -2,6 +2,7 @@ import React, { useState, useContext, useEffect } from 'react';
 import { createGame } from '../../services/GameServices';
 import { LocationsContext } from '../../services/LocationsProvider';
 import { Location } from '../../models/Location';
+import { UserContext } from '../../services/UserContext';
 
 interface GameCreationModalProps {
     show: boolean;
@@ -15,6 +16,8 @@ export const GameCreationModal: React.FC<GameCreationModalProps> = ({ show, onCl
   const [selectedLocation, setSelectedLocation] = useState('');
   const [date, setDate] = useState('');
   const [minimumSkill, setMinimumSkill] = useState(0);
+  const userContext = useContext(UserContext); // Get the entire user context
+  const user = userContext ? userContext.user : null;
 
   useEffect(() => {
     // Set the default selected location to the provided locationId or the first location in the list
@@ -32,7 +35,7 @@ export const GameCreationModal: React.FC<GameCreationModalProps> = ({ show, onCl
   };
 
   const handleSave = async () => {
-    if (!selectedLocation || !date) {
+    if (!selectedLocation || !date || !minimumSkill || !user) {
       // Handle validation error
       return;
     }
@@ -42,6 +45,7 @@ export const GameCreationModal: React.FC<GameCreationModalProps> = ({ show, onCl
       players: [],
       time: new Date(date),
       minimumSkill: minimumSkill,
+      hostId: user.uid,
     };
 
     try {
