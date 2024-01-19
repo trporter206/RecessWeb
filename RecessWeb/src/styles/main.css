@@ -1,25 +1,34 @@
-body {
-    font-family: Arial, sans-serif;
-    margin: 0; /* Remove default margin */
-    height: 100vh; /* Full viewport height */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
+
 
 .main-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Aligns children (items) horizontally in the center */
+  justify-content: center; /* Aligns children (items) vertically in the center */
+  width: 100%; /* Full width of the viewport */
+  height: 100%; /* Full height of the viewport */
 }
 
-.title-container {
-    margin-bottom: 20px; /* Add some space between title and button */
+
+.map-and-list-container {
+  display: flex;
+  flex-direction: row; /* Horizontal layout */
+  height: 100%; /* Take up all available vertical space */
+  width: 100%; /* Full width */
 }
 
+/* Style the map and list containers as needed */
+.map-container {
+  flex-grow: 1; /* Grow to fill available space */
+  height: 80vh; /* Adjusted height, previously set inline */
+  width: 80vw; /* Adjusted width, previously set inline */
+}
+
+/* Style the list container to take up 20% of the width */
 .list-container {
-    width: 100%; /* Adjust as needed */
+  width: 300px; /* Or use percentage like 20% */
+  height: 100%; /* Full height */
+  overflow-y: auto; /* Scroll if content overflows */
 }
 
 .nav-style {

@@ -3,6 +3,7 @@ import { LocationsContext } from '../services/LocationsProvider';
 import { MapComponent } from '../components/MapComponent';
 import { LocationInfoModal } from '../components/Location Components/LocationInfoModal';
 import { Location } from '../models/Location';
+import { LocationsList } from '../components/Location Components/LocationsList';
 import '../styles/main.css';
 
 export const LandingPage = () => {
@@ -19,16 +20,17 @@ export const LandingPage = () => {
 
   return (
     <div className="main-container">
-      <div className='title-container'>
-        <h1>Welcome to Recess</h1>
-        <MapComponent locations={locations} onMarkerClick={handleMarkerClick} />
-        {selectedLocation && (
-          <LocationInfoModal
-            location={selectedLocation}
-            onClose={handleCloseModal}
-          />
-        )}
+      <div className="map-and-list-container">
+        <div className="map-container">
+          <MapComponent locations={locations} onMarkerClick={handleMarkerClick} />
+        </div>
+        <div className="list-container">
+          <LocationsList locations={locations} />
+        </div>
       </div>
+      {selectedLocation && (
+        <LocationInfoModal location={selectedLocation} onClose={handleCloseModal} />
+      )}
     </div>
   );
 };

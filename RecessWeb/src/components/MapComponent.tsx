@@ -38,5 +38,5 @@ export const MapComponent: React.FC<MapComponentProps> = ({ locations, onMarkerC
     }
   }, [locations]);
 
-  return <div ref={mapRef} style={{ height: '400px', width: '100%' }} />;
+  return <div ref={mapRef} className="map-container" />;
 };

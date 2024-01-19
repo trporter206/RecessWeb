@@ -19,7 +19,7 @@ export const ProfilePage = () => {
   };
 
   return (
-    <div>
+    <div className='main-container'>
       {user ? (
         <div>
           <p>Welcome, {profile?.username}</p>

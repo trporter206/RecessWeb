@@ -9,9 +9,7 @@ export const LocationsPage = () => {
 
   return (
     <div className="main-container">
-      <div className='title-container'>
-        <h1>Discover Locations</h1>
-      </div>
+      <h1>Discover Locations</h1>
       <div className='list-container'>
         <LocationsList locations={locations} />
       </div>

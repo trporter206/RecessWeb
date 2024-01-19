@@ -13,9 +13,7 @@ export const App = () => {
     <UserProvider>
       <LocationsProvider>
         <Router>
-          <div style={{ display: 'flex', justifyContent: 'center' }}>
-            <NavigationBar />
-          </div>
+          <NavigationBar />
           <Routes>
             <Route path="/games" Component={GamesPage} /> // Use the imported Games component
             <Route path="/locations" Component={LocationsPage} /> // Use the imported LocationsPage component
