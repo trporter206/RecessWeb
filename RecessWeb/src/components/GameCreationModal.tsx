@@ -14,6 +14,7 @@ export const GameCreationModal: React.FC<GameCreationModalProps> = ({ show, onCl
   const { locations, addGameToLocation } = useContext(LocationsContext);
   const [selectedLocation, setSelectedLocation] = useState('');
   const [date, setDate] = useState('');
+  const [minimumSkill, setMinimumSkill] = useState(0);
 
   useEffect(() => {
     // Set the default selected location to the provided locationId or the first location in the list
@@ -40,6 +41,7 @@ export const GameCreationModal: React.FC<GameCreationModalProps> = ({ show, onCl
       locationId: selectedLocation,
       players: [],
       time: new Date(date),
+      minimumSkill: minimumSkill,
     };
 
     try {
@@ -66,6 +68,9 @@ export const GameCreationModal: React.FC<GameCreationModalProps> = ({ show, onCl
             {locations.map((location: Location) => (
             <option key={location.id} value={location.id}>{location.name}</option>
             ))}
+            </select>
+            <select value={minimumSkill} onChange={e => setMinimumSkill(parseInt(e.target.value))}>
+            {[1, 2, 3, 4, 5].map(s => <option key={s} value={s}>{s}</option>)}
             </select>
             <input type="date" value={date} onChange={e => setDate(e.target.value)} />
             <button onClick={handleSave}>Save</button>

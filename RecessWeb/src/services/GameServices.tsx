@@ -9,7 +9,7 @@ const app = initializeApp(firebaseConfig);
 // Initialize Firestore
 const db = getFirestore(app);
 
-async function fetchGames(): Promise<Game[]> {
+export async function fetchGames(): Promise<Game[]> {
     try {
         console.log('Fetching games');
         const snapshot = await getDocs(collection(db, 'Games')); // Changed to 'Games'
@@ -19,7 +19,8 @@ async function fetchGames(): Promise<Game[]> {
                 id: doc.id,
                 locationId: data.locationId,
                 players: data.players || [], // Assuming 'players' field exists
-                time: data.time.toDate() // Make sure 'time' field exists and is a Timestamp
+                time: data.time.toDate(),
+                minimumSkill: data.minimumSkill, // Make sure 'time' field exists and is a Timestamp
             };
             return game;
         });
@@ -80,20 +81,4 @@ export async function createGame(gameData: Omit<Game, 'id'>): Promise<string> {
     }
 }
 
-
-
-export default fetchGames;
-
-export const generateRandomGame = () => {
-    console.log('Generating random game');
-    const randomId = Math.random().toString(36).substring(2, 9); // Generate a random string
-    const randomLocationId = `Location ${randomId.toUpperCase()}`;
-  
-    return {
-      id: randomId,
-      locationId: randomLocationId,
-      players: [],
-      time: new Date(),
-    };
-};
 
