@@ -1,6 +1,6 @@
 // LocationItem component
 import React, { useState } from 'react';
-import { Location } from '../models/Location';
+import { Location } from '../../models/Location';
 import { LocationInfoModal } from './LocationInfoModal';
 
 export const LocationItem: React.FC<{ location: Location }> = ({ location }) => {

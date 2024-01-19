@@ -1,6 +1,6 @@
 // LocationsList component
 import React from 'react';
-import { Location } from '../models/Location';
+import { Location } from '../../models/Location';
 import { LocationItem } from './LocationItem';
 
 type LocationsListProps = {

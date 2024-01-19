@@ -1,7 +1,7 @@
 import React, { useState, useContext, useEffect } from 'react';
-import { createGame } from '../services/GameServices';
-import { LocationsContext } from '../services/LocationsProvider';
-import { Location } from '../models/Location';
+import { createGame } from '../../services/GameServices';
+import { LocationsContext } from '../../services/LocationsProvider';
+import { Location } from '../../models/Location';
 
 interface GameCreationModalProps {
     show: boolean;

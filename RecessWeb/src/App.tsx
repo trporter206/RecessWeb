@@ -1,5 +1,4 @@
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import { Register } from './components/Register';
 import { LandingPage } from './pages/LandingPage';
 import { NavigationBar } from './components/NavigationBar';
 import { GamesPage } from './pages/GamesPage'; // Import the Games component
@@ -18,7 +17,6 @@ export const App = () => {
             <NavigationBar />
           </div>
           <Routes>
-            <Route path="/register" Component={Register} />
             <Route path="/games" Component={GamesPage} /> // Use the imported Games component
             <Route path="/locations" Component={LocationsPage} /> // Use the imported LocationsPage component
             <Route path="/profile" Component={ProfilePage} /> // Use the imported ProfilePage component

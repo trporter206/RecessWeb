@@ -1,7 +1,8 @@
-// LocationInfoModal component
-import React, { useState } from 'react';
-import { Location } from '../models/Location';
-import { GameCreationModal } from './GameCreationModal'; // Import the GameCreationModal
+import React, { useState, useContext } from 'react';
+import { Location } from '../../models/Location';
+import { GameCreationModal } from '../Game Components/GameCreationModal';
+import { UserContext } from '../../services/UserContext';
+import { useNavigate } from 'react-router-dom';
 
 interface LocationInfoModalProps {
   location: Location;
@@ -10,11 +11,18 @@ interface LocationInfoModalProps {
 
 export const LocationInfoModal: React.FC<LocationInfoModalProps> = ({ location, onClose }) => {
   const { name, description, games } = location;
+  const context = useContext(UserContext);
+  const user = context?.user;
+  const navigate = useNavigate();
   const [showGameCreation, setShowGameCreation] = useState(false);
 
   const handleOpenGameCreation = (event: React.MouseEvent) => {
     event.stopPropagation();
-    setShowGameCreation(true);
+    if (user) {
+      setShowGameCreation(true);
+    } else {
+      navigate('/profile')
+    }
   };
 
   const handleCloseGameCreation = () => {
@@ -35,7 +43,7 @@ export const LocationInfoModal: React.FC<LocationInfoModalProps> = ({ location, 
             <li key={game.toString()}>{game}</li>
           ))}
         </ul>
-        <button onClick={(event) => handleOpenGameCreation(event)}>Create Game at this Location</button>
+        <button onClick={handleOpenGameCreation}>Create Game at this Location</button>
         <button onClick={onClose}>Close</button>
 
         {showGameCreation && (

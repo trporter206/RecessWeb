@@ -1,8 +1,8 @@
 import React, { useState, useContext } from 'react';
-import { deleteGame } from '../services/GameServices';
-import { LocationsContext } from '../services/LocationsProvider';
+import { deleteGame } from '../../services/GameServices';
+import { LocationsContext } from '../../services/LocationsProvider';
 import { GameInfoModal } from './GameInfoModal';
-import { Game } from '../models/Game';
+import { Game } from '../../models/Game';
 
 interface GameItemProps {
   game: Game;

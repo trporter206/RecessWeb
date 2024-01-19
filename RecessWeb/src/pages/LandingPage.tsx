@@ -1,7 +1,7 @@
 import { useState, useContext } from 'react';
 import { LocationsContext } from '../services/LocationsProvider';
 import { MapComponent } from '../components/MapComponent';
-import { LocationInfoModal } from '../components/LocationInfoModal';
+import { LocationInfoModal } from '../components/Location Components/LocationInfoModal';
 import { Location } from '../models/Location';
 import '../styles/main.css';
 

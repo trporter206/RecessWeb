@@ -1,7 +1,7 @@
 import { useContext } from 'react';
 import { LocationsContext } from '../services/LocationsProvider'; // Import the context
 import '../styles/main.css';
-import { LocationsList } from '../components/LocationsList';
+import { LocationsList } from '../components/Location Components/LocationsList';
 
 export const LocationsPage = () => {
   // Use LocationsContext to access locations

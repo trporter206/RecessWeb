@@ -8,6 +8,7 @@ const db = getFirestore(app);
 
 async function fetchLocations(): Promise<Location[]> {
     try {
+        console.log('Fetching locations');
         const snapshot = await getDocs(collection(db, 'Locations'));
         const locations = snapshot.docs.map(async (doc) => {
             const data = doc.data();
@@ -18,7 +19,6 @@ async function fetchLocations(): Promise<Location[]> {
                 games: await fetchGames(doc.id),
                 coordinates: {latitude: data.coordinates.latitude, longitude: data.coordinates.longitude}
             };
-            console.log(location.id);
             return location;
         });
         return Promise.all(locations);

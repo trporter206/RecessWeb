@@ -1,6 +1,6 @@
 // gameInfoModal component
 import React from 'react';
-import { Game } from '../models/Game'; // Import the game type
+import { Game } from '../../models/Game'; // Import the game type
 
 interface GameInfoModalProps {
   game: Game;

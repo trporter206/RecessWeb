@@ -1,7 +1,7 @@
 // GamesList component
 import React from 'react';
 import { GameItem } from './GameItem';
-import { Game } from '../models/Game';
+import { Game } from '../../models/Game';
 
 type GamesListProps = {
   games: Game[];
