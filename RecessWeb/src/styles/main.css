@@ -32,11 +32,15 @@
 }
 
 .nav-style {
-    background: lightblue; /* Changed to light blue */
-    padding: 10px;        /* Removed quotes for numeric value */
-    position: fixed;
-    top: 0;
-    width: 100%;          /* Removed quotes for percentage value */
+  background: lightblue; /* Changed to light blue */
+  padding: 10px;        /* Removed quotes for numeric value */
+  position: fixed;
+  top: 0;
+  width: 100%;          /* Removed quotes for percentage value */
+}
+
+.sorting-dropdown {
+  margin: 10px;
 }
 
 .nav-buttons {
