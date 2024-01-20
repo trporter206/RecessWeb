@@ -5,22 +5,21 @@ import { Location } from '../../models/Location';
 import { UserContext } from '../../services/UserContext';
 
 interface GameCreationModalProps {
-    show: boolean;
-    onClose: () => void;
-    onGameCreated: () => void;
-    locationId?: string; // Optional prop for default location ID
-  }
+  show: boolean;
+  onClose: () => void;
+  onGameCreated: () => void;
+  locationId?: string; // Optional prop for default location ID
+}
 
 export const GameCreationModal: React.FC<GameCreationModalProps> = ({ show, onClose, onGameCreated, locationId }) => {
   const { locations, addGameToLocation } = useContext(LocationsContext);
   const [selectedLocation, setSelectedLocation] = useState('');
-  const [date, setDate] = useState('');
-  const [minimumSkill, setMinimumSkill] = useState(0);
-  const userContext = useContext(UserContext); // Get the entire user context
+  const [date, setDate] = useState(new Date().toISOString().split('T')[0]); // Default date set to today
+  const [minimumSkill, setMinimumSkill] = useState(1); // Default skill level set to 1
+  const userContext = useContext(UserContext);
   const user = userContext ? userContext.user : null;
 
   useEffect(() => {
-    // Set the default selected location to the provided locationId or the first location in the list
     const defaultLocationId = locationId || (locations.length > 0 ? locations[0].id : '');
     setSelectedLocation(defaultLocationId);
   }, [locations, locationId]);
@@ -49,7 +48,7 @@ export const GameCreationModal: React.FC<GameCreationModalProps> = ({ show, onCl
     };
 
     try {
-      const newGameId = await createGame(newGame); // Ensure createGame returns the new game ID
+      const newGameId = await createGame(newGame);
       addGameToLocation(newGameId, selectedLocation);
       onGameCreated();
       console.log('Game created successfully');
@@ -70,11 +69,11 @@ export const GameCreationModal: React.FC<GameCreationModalProps> = ({ show, onCl
             <h2>Create Game</h2>
             <select value={selectedLocation} onChange={e => setSelectedLocation(e.target.value)}>
             {locations.map((location: Location) => (
-            <option key={location.id} value={location.id}>{location.name}</option>
+                <option key={location.id} value={location.id}>{location.name}</option>
             ))}
             </select>
             <select value={minimumSkill} onChange={e => setMinimumSkill(parseInt(e.target.value))}>
-            {[1, 2, 3, 4, 5].map(s => <option key={s} value={s}>{s}</option>)}
+                {[1, 2, 3, 4, 5].map(s => <option key={s} value={s}>{s}</option>)}
             </select>
             <input type="date" value={date} onChange={e => setDate(e.target.value)} />
             <button onClick={handleSave}>Save</button>

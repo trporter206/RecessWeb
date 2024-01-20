@@ -1,9 +1,10 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { deleteGame } from '../../services/GameServices';
 import { LocationsContext } from '../../services/LocationsProvider';
-import { UserContext } from '../../services/UserContext'; // Import UserContext
+import { UserContext } from '../../services/UserContext';
 import { GameInfoModal } from './GameInfoModal';
 import { Game } from '../../models/Game';
+import { fetchUsernameById } from '../../services/UserServices'; // Import your fetchUsernameById function
 
 interface GameItemProps {
   game: Game;
@@ -12,34 +13,52 @@ interface GameItemProps {
 
 export const GameItem: React.FC<GameItemProps> = ({ game, onDelete }) => {
   const { id, locationId, players, time, hostId } = game;
-  const { removeGameFromLocation } = useContext(LocationsContext);
-  const userContext = useContext(UserContext); // Get the entire user context
-  const user = userContext ? userContext.user : null; // Destructure user from the context
+  const { locations } = useContext(LocationsContext);
+  const removeGameFromLocation = useContext(LocationsContext).removeGameFromLocation;
+  const userContext = useContext(UserContext);
+  const [hostUsername, setHostUsername] = useState('');
+  const [locationName, setLocationName] = useState('');
   const [showModal, setShowModal] = useState(false);
-    
+
+  useEffect(() => {
+    // Fetch host username
+    const loadHostUsername = async () => {
+      const username = await fetchUsernameById(hostId);
+      setHostUsername(username);
+    };
+
+    loadHostUsername();
+
+    // Fetch location name
+    const location = locations.find(loc => loc.id === locationId);
+    setLocationName(location ? location.name : locationId);
+  }, [hostId, locationId, locations]);
+
   const handleToggleModal = () => {
     setShowModal(!showModal);
   };
 
   const handleDelete = async () => {
-    try {
-      await deleteGame(id);
-      onDelete(id);
-      removeGameFromLocation(id, locationId);
-    } catch (error) {
-      console.error('Error deleting game:', error);
+    if (userContext?.user?.uid === hostId) {
+      try {
+        await deleteGame(id);
+        onDelete(id);
+        removeGameFromLocation(id, locationId);
+      } catch (error) {
+        console.error('Error deleting game:', error);
+      }
     }
   };
 
   return (
     <div className='game-item' onClick={handleToggleModal}>
-      <h3>{locationId}</h3>
+      <h3>{locationName}</h3>
       <div className="game-info">
-        <p className="game-host">{hostId}</p>
+        <p className="game-host">{hostUsername}</p>
         <p className="game-date">{time.toDateString()}</p>
         <p className="game-players">{players.length} players</p>
       </div>
-      {user && user.uid === hostId && (
+      {userContext?.user?.uid === hostId && (
         <button onClick={handleDelete}>Delete</button>
       )}
       {showModal && (

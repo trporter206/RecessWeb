@@ -21,6 +21,7 @@ async function fetchLocations(): Promise<Location[]> {
             };
             return location;
         });
+        console.log('fetched locations: ', locations.length);
         return Promise.all(locations);
     } catch (error) {
         console.error('Error fetching locations:', error);
@@ -31,6 +32,7 @@ async function fetchGames(locationId: string): Promise<string[]> {
     try {
         const gamesSnapshot = await getDocs(query(collection(db, 'Games'), where('locationId', '==', locationId)));
         const games = gamesSnapshot.docs.map((doc) => doc.id);
+        console.log('fetched games: ', games.length);
         return games;
     } catch (error) {
         console.error('Error fetching games:', error);
