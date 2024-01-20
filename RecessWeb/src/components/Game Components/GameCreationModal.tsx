@@ -1,6 +1,6 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { createGame } from '../../services/GameServices';
-import { LocationsContext } from '../../services/LocationsProvider';
+import { DataContext } from '../../services/DataProvider';
 import { Location } from '../../models/Location';
 import { UserContext } from '../../services/UserContext';
 
@@ -12,7 +12,7 @@ interface GameCreationModalProps {
 }
 
 export const GameCreationModal: React.FC<GameCreationModalProps> = ({ show, onClose, onGameCreated, locationId }) => {
-  const { locations, addGameToLocation } = useContext(LocationsContext);
+  const { locations, addGameToLocation, addGame } = useContext(DataContext);
   const [selectedLocation, setSelectedLocation] = useState('');
   const [date, setDate] = useState(new Date().toISOString().split('T')[0]); // Default date set to today
   const [minimumSkill, setMinimumSkill] = useState(1); // Default skill level set to 1
@@ -49,6 +49,8 @@ export const GameCreationModal: React.FC<GameCreationModalProps> = ({ show, onCl
 
     try {
       const newGameId = await createGame(newGame);
+      const createdGame = { ...newGame, id: newGameId };
+      addGame(createdGame);
       addGameToLocation(newGameId, selectedLocation);
       onGameCreated();
       console.log('Game created successfully');

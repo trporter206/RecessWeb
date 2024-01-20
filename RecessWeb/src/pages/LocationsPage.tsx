@@ -1,17 +1,17 @@
 import { useContext } from 'react';
-import { LocationsContext } from '../services/LocationsProvider'; // Import the context
+import { DataContext } from '../services/DataProvider'; // Import the context
 import '../styles/main.css';
 import { LocationsList } from '../components/Location Components/LocationsList';
 
 export const LocationsPage = () => {
   // Use LocationsContext to access locations
-  const { locations } = useContext(LocationsContext);
+  const data = useContext(DataContext);
 
   return (
     <div className="main-container">
       <h1>Discover Locations</h1>
       <div className='list-container'>
-        <LocationsList locations={locations} />
+        <LocationsList locations={data.locations} />
       </div>
     </div>
   );

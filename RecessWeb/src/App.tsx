@@ -3,7 +3,7 @@ import { LandingPage } from './pages/LandingPage';
 import { NavigationBar } from './components/NavigationBar';
 import { GamesPage } from './pages/GamesPage'; // Import the Games component
 import { LocationsPage } from './pages/LocationsPage'; // Import the LocationsPage component
-import { LocationsProvider } from './services/LocationsProvider';
+import { DataProvider } from './services/DataProvider';
 import { ProfilePage } from './pages/ProfilePage';
 import { UserProvider } from './services/UserContext';
 
@@ -12,7 +12,7 @@ export const App = () => {
 
   return (
     <UserProvider>
-      <LocationsProvider>
+      <DataProvider>
         <Router>
           <NavigationBar />
           <Routes>
@@ -23,7 +23,7 @@ export const App = () => {
             {/* Other routes */}
           </Routes>
         </Router>
-      </LocationsProvider>
+      </DataProvider>
     </UserProvider>
   );
 };

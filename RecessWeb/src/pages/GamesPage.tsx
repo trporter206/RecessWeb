@@ -1,16 +1,15 @@
-import { useEffect, useState, useContext } from 'react';
+import { useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { UserContext } from '../services/UserContext';
-import { Game } from '../models/Game';
-import { fetchGames } from '../services/GameServices';
+import { DataContext } from '../services/DataProvider';
 import { GamesList } from '../components/Game Components/GamesList';
 import { GameCreationModal } from '../components/Game Components/GameCreationModal';
 
 export const GamesPage = () => {
-    const context = useContext(UserContext);
-    const user = context?.user;
+    const userContext = useContext(UserContext);
+    const user = userContext ? userContext.user : null;
     const navigate = useNavigate();
-    const [games, setGames] = useState<Game[]>([]);
+    const { games, removeGame } = useContext(DataContext); // Use games and removeGame from DataContext
     const [showModal, setShowModal] = useState(false);
 
     const handleOpenModal = () => {
@@ -23,24 +22,15 @@ export const GamesPage = () => {
 
     const handleCloseModal = () => {
         setShowModal(false);
-    }
-
-    const handleGameCreated = async () => {
-        await fetchAndSetGames();
-        handleCloseModal();
-    }
-
-    const fetchAndSetGames = async () => {
-        const fetchedGames = await fetchGames();
-        setGames(fetchedGames);
     };
 
-    useEffect(() => {
-        fetchAndSetGames();
-    }, []);
+    const handleGameCreated = () => {
+        // No need to fetch games here, as it should be automatically updated by the DataContext
+        handleCloseModal();
+    };
 
-    const handleDeleteGame = (gameId: String) => {
-        setGames(games.filter(game => game.id !== gameId));
+    const handleDeleteGame = (gameId: string) => {
+        removeGame(gameId); // Update DataContext
     };
 
     return (

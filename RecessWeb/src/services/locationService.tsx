@@ -1,12 +1,12 @@
 import { initializeApp } from 'firebase/app';
-import { getFirestore, collection, getDocs, query, where } from 'firebase/firestore';
+import { getFirestore, collection, getDocs, query, where, doc, getDoc } from 'firebase/firestore';
 import { Location } from '../models/Location';
 import { firebaseConfig } from '../firebaseConfig';
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-async function fetchLocations(): Promise<Location[]> {
+export async function fetchLocations(): Promise<Location[]> {
     try {
         console.log('Fetching locations');
         const snapshot = await getDocs(collection(db, 'Locations'));
@@ -28,7 +28,8 @@ async function fetchLocations(): Promise<Location[]> {
         throw error;
     }
 }
-async function fetchGames(locationId: string): Promise<string[]> {
+
+export async function fetchGames(locationId: string): Promise<string[]> {
     try {
         const gamesSnapshot = await getDocs(query(collection(db, 'Games'), where('locationId', '==', locationId)));
         const games = gamesSnapshot.docs.map((doc) => doc.id);
@@ -40,5 +41,23 @@ async function fetchGames(locationId: string): Promise<string[]> {
     }
 }
 
-export default fetchLocations;
-
+export function getLocationCoordinates(locationId: string): Promise<{ latitude: number, longitude: number }> {
+    return new Promise(async (resolve, reject) => {
+        try {
+            const docRef = doc(collection(db, 'Locations'), locationId);
+            const docSnapshot = await getDoc(docRef);
+            if (docSnapshot.exists()) {
+                const data = docSnapshot.data();
+                const coordinates = {
+                    latitude: data.coordinates.latitude,
+                    longitude: data.coordinates.longitude
+                };
+                resolve(coordinates);
+            } else {
+                reject(new Error('Location not found'));
+            }
+        } catch (error) {
+            reject(error);
+        }
+    });
+}
