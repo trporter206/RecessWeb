@@ -33,6 +33,26 @@ export async function fetchGames(): Promise<Game[]> {
     }
 }
 
+export const fetchGameDetails = async (gameId: string): Promise<Game> => {
+    try {
+        const gameRef = doc(firestore, 'Games', gameId);
+        const gameSnapshot = await getDoc(gameRef);
+
+        if (!gameSnapshot.exists()) {
+            throw new Error('Game not found');
+        }
+
+        const gameData = gameSnapshot.data();
+        return {
+            id: gameSnapshot.id,
+            ...gameData
+        } as Game;
+    } catch (error) {
+        console.error('Error fetching game details:', error);
+        throw error;
+    }
+};
+
 export async function deleteGame(gameId: string): Promise<void> {
     try {
         const gameRef = doc(db, 'Games', gameId);

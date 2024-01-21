@@ -3,6 +3,8 @@ import { Location } from '../../models/Location';
 import { GameCreationModal } from '../Game Components/GameCreationModal';
 import { UserContext } from '../../services/UserContext';
 import { useNavigate } from 'react-router-dom';
+import { GamesList } from '../Game Components/GamesList';
+import { DataContext } from '../../services/DataProvider';
 
 interface LocationInfoModalProps {
   location: Location;
@@ -10,18 +12,22 @@ interface LocationInfoModalProps {
 }
 
 export const LocationInfoModal: React.FC<LocationInfoModalProps> = ({ location, onClose }) => {
-  const { name, description, games } = location;
+  const { name, description } = location;
   const context = useContext(UserContext);
   const user = context?.user;
   const navigate = useNavigate();
+  const { games } = useContext(DataContext);
   const [showGameCreation, setShowGameCreation] = useState(false);
+
+  // Filter games to only show those associated with this location
+  const gamesAtLocation = games.filter(game => game.locationId === location.id);
 
   const handleOpenGameCreation = (event: React.MouseEvent) => {
     event.stopPropagation();
     if (user) {
       setShowGameCreation(true);
     } else {
-      navigate('/profile')
+      navigate('/profile');
     }
   };
 
@@ -30,6 +36,7 @@ export const LocationInfoModal: React.FC<LocationInfoModalProps> = ({ location, 
   };
 
   const handleGameCreated = () => {
+    // Refresh games list or trigger a state update as needed
     setShowGameCreation(false);
   };
 
@@ -38,14 +45,9 @@ export const LocationInfoModal: React.FC<LocationInfoModalProps> = ({ location, 
       <div className="locationInfoModal-content">
         <h3>{name}</h3>
         <p>{description}</p>
-        <ul>
-          {games.map(game => (
-            <li key={game.toString()}>{game}</li>
-          ))}
-        </ul>
+        <GamesList games={gamesAtLocation} onDeleteGame={() => {}} />
         <button onClick={handleOpenGameCreation}>Create Game at this Location</button>
         <button onClick={onClose}>Close</button>
-
         {showGameCreation && (
           <GameCreationModal
             show={showGameCreation}

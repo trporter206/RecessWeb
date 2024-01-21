@@ -16,7 +16,7 @@ export async function fetchLocations(): Promise<Location[]> {
                 id: doc.id,
                 name: data.name,
                 description: data.description,
-                games: await fetchGames(doc.id),
+                games: await fetchGames(doc.id), // Fetches an array of game IDs
                 coordinates: {latitude: data.coordinates.latitude, longitude: data.coordinates.longitude}
             };
             return location;
@@ -32,11 +32,11 @@ export async function fetchLocations(): Promise<Location[]> {
 export async function fetchGames(locationId: string): Promise<string[]> {
     try {
         const gamesSnapshot = await getDocs(query(collection(db, 'Games'), where('locationId', '==', locationId)));
-        const games = gamesSnapshot.docs.map((doc) => doc.id);
-        console.log('fetched games: ', games.length);
-        return games;
+        const gameIds = gamesSnapshot.docs.map(doc => doc.id);
+        console.log('fetched game IDs: ', gameIds.length);
+        return gameIds;
     } catch (error) {
-        console.error('Error fetching games:', error);
+        console.error('Error fetching game IDs:', error);
         throw error;
     }
 }

@@ -4,7 +4,7 @@ import { UserContext } from '../../services/UserContext';
 import { GameInfoModal } from './GameInfoModal';
 import { Game } from '../../models/Game';
 import { fetchUsernameById } from '../../services/UserServices';
-import { deleteGame } from '../../services/GameServices'; // Import your fetchUsernameById function
+import { deleteGame } from '../../services/GameServices';
 
 interface GameItemProps {
   game: Game;
@@ -20,6 +20,13 @@ export const GameItem: React.FC<GameItemProps> = ({ game, onDelete }) => {
   const [locationName, setLocationName] = useState('');
   const [showModal, setShowModal] = useState(false);
 
+  let displayDate = '';
+  if (time instanceof Date) {
+    displayDate = time.toDateString();
+  } else {
+    console.error('Invalid date object:', time);
+  }
+
   useEffect(() => {
     // Fetch host username
     const loadHostUsername = async () => {
@@ -31,17 +38,16 @@ export const GameItem: React.FC<GameItemProps> = ({ game, onDelete }) => {
 
     // Fetch location name
     const location = locations.find(loc => loc.id === locationId);
-    setLocationName(location ? location.name : locationId);
+    setLocationName(location ? location.name : 'Unknown Location');
   }, [hostId, locationId, locations]);
 
-  const handleToggleModal = () => {
+  const handleToggleModal = (event: React.MouseEvent) => {
+    event.stopPropagation();
     setShowModal(!showModal);
   };
 
   const handleDelete = async (event: React.MouseEvent<HTMLButtonElement>) => {
-    // Prevent event from bubbling up to parent elements
     event.stopPropagation();
-  
     if (userContext?.user?.uid === hostId) {
       const confirmDelete = window.confirm('Are you sure you want to delete this game?');
       if (confirmDelete) {
@@ -61,7 +67,7 @@ export const GameItem: React.FC<GameItemProps> = ({ game, onDelete }) => {
       <h3>{locationName}</h3>
       <div className="game-info">
         <p className="game-host">{hostUsername}</p>
-        <p className="game-date">{time.toDateString()}</p>
+        <p className="game-date">{displayDate}</p>
         <p className="game-players">{players.length} players</p>
       </div>
       {userContext?.user?.uid === hostId && (
