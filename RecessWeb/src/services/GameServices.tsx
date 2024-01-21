@@ -1,7 +1,7 @@
 import { initializeApp } from 'firebase/app';
 import { getFirestore, collection, getDocs, addDoc, doc, deleteDoc, updateDoc, arrayUnion, arrayRemove, getDoc } from 'firebase/firestore';
 import { Game } from '../models/Game';
-import { firebaseConfig } from '../firebaseConfig';
+import { firebaseConfig, firestore } from '../firebaseConfig';
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
@@ -83,4 +83,30 @@ export async function createGame(gameData: Omit<Game, 'id'>): Promise<string> {
     }
 }
 
+type UpdateGameCallback = (gameId: string, userId: string, isJoining: boolean) => void;
 
+export const joinGame = async (gameId: string, userId: string, updateGameCallback: UpdateGameCallback) => {
+  try {
+    const gameRef = doc(firestore, 'Games', gameId);
+    await updateDoc(gameRef, {
+      players: arrayUnion(userId)
+    });
+    updateGameCallback(gameId, userId, true);
+  } catch (error) {
+    console.error('Error joining game:', error);
+    throw error;
+  }
+};
+
+export const leaveGame = async (gameId: string, userId: string, updateGameCallback: UpdateGameCallback) => {
+  try {
+    const gameRef = doc(firestore, 'Games', gameId);
+    await updateDoc(gameRef, {
+      players: arrayRemove(userId)
+    });
+    updateGameCallback(gameId, userId, false);
+  } catch (error) {
+    console.error('Error leaving game:', error);
+    throw error;
+  }
+};

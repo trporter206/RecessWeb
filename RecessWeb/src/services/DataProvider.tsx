@@ -15,6 +15,7 @@ interface DataProviderType {
   removeGameFromLocation: (gameId: string, locationId: string) => void;
   removeGame: (gameId: string) => void;
   addGame: (newGame: Game) => void; // Added function
+  updateGamePlayers: (gameId: string, userId: string, isJoining: boolean) => void;
 }
 
 export const DataContext = createContext<DataProviderType>({
@@ -25,7 +26,8 @@ export const DataContext = createContext<DataProviderType>({
   addGameToLocation: () => {},
   removeGameFromLocation: () => {},
   removeGame: () => {},
-  addGame: () => {} // Added function
+  addGame: () => {},
+  updateGamePlayers: () => {},
 });
 
 export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -75,6 +77,18 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setGames(prevGames => prevGames.filter(game => game.id !== gameId));
   }; // Added function
 
+  const updateGamePlayers = (gameId: string, userId: string, isJoining: boolean) => {
+    setGames(prevGames => prevGames.map(game => {
+      if (game.id === gameId) {
+        const updatedPlayers = isJoining
+          ? [...game.players, userId]
+          : game.players.filter(playerId => playerId !== userId);
+        return { ...game, players: updatedPlayers };
+      }
+      return game;
+    }));
+  };
+
   const value = {
     locations,
     games,
@@ -83,7 +97,8 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     addGameToLocation,
     removeGameFromLocation,
     removeGame,
-    addGame // Added function
+    addGame,
+    updateGamePlayers
   };
 
   return (
