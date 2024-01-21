@@ -14,14 +14,42 @@ export const LandingPage = () => {
   const [sortMethod, setSortMethod] = useState('');
   const [displayedLocations, setDisplayedLocations] = useState(locations);
   const [showGames, setShowGames] = useState(false);
+  const [gameSortMethod, setGameSortMethod] = useState('');
+  const [displayedGames, setDisplayedGames] = useState(games);
+
 
   useEffect(() => {
     setDisplayedLocations(locations);
-  }, [locations]);
+    setDisplayedGames(games); // Update displayed games whenever the games data changes
+  }, [locations, games]);
 
   const handleSortChange = (event: { target: { value: string }; }) => {
-    setSortMethod(event.target.value);
-    sortLocations(event.target.value);
+    if (showGames) {
+      setGameSortMethod(event.target.value);
+      sortGames(event.target.value);
+    } else {
+      setSortMethod(event.target.value);
+      sortLocations(event.target.value);
+    }
+  };
+
+  const sortGames = (method: string) => {
+    let sortedGames;
+    switch (method) {
+      case 'players':
+        sortedGames = [...games].sort((a, b) => b.players.length - a.players.length);
+        break;
+      case 'alphabetical':
+        sortedGames = [...games].sort((a, b) => {
+          const locA = locations.find(loc => loc.id === a.locationId)?.name || '';
+          const locB = locations.find(loc => loc.id === b.locationId)?.name || '';
+          return locA.localeCompare(locB);
+        });
+        break;
+      default:
+        sortedGames = [...games];
+    }
+    setDisplayedGames(sortedGames); // Update the displayed games state
   };
 
   const sortLocations = (method: string) => {
@@ -77,25 +105,34 @@ export const LandingPage = () => {
           <button onClick={handleToggleDisplay}>
             {showGames ? 'Show Locations' : 'Show Games'}
           </button>
-          {showGames ? 
-            <GamesList games={games} onDeleteGame={handleDeleteGame}/> 
-            : 
-            <div>
-              <div className="sorting-dropdown">
-                <label htmlFor="sort">Sort Locations: </label>
-                <select id="sort" value={sortMethod} onChange={handleSortChange}>
-                  <option value="">Select...</option>
-                  <option value="alphabetically">Alphabetically</option>
-                  <option value="games">By Number of Games</option>
-                </select>
-              </div>
-              <LocationsList locations={displayedLocations} />
-            </div>
-          }
-        </div>
+        <div className="sorting-dropdown">
+        <label htmlFor="sort">
+          Sort {showGames ? 'Games' : 'Locations'}: 
+        </label>
+        <select id="sort" value={showGames ? gameSortMethod : sortMethod} onChange={handleSortChange}>
+          <option value="">Select...</option>
+          {showGames ? (
+            <>
+              <option value="players">By Number of Players</option>
+              <option value="alphabetical">Alphabetically by Location</option>
+            </>
+          ) : (
+            <>
+              <option value="alphabetically">Alphabetically</option>
+              <option value="games">By Number of Games</option>
+            </>
+          )}
+        </select>
+       </div>
+       {showGames ? (
+        <GamesList games={displayedGames} onDeleteGame={handleDeleteGame} /> // Use displayedGames here
+      ) : (
+        <LocationsList locations={displayedLocations} />
+      )}
       </div>
-      {selectedLocation && <LocationInfoModal location={selectedLocation} onClose={handleCloseModal} />}
     </div>
-  );
+  {selectedLocation && <LocationInfoModal location={selectedLocation} onClose={handleCloseModal} />}
+</div>
+);
 };
 

@@ -41,17 +41,20 @@ export const GameItem: React.FC<GameItemProps> = ({ game, onDelete }) => {
   const handleDelete = async (event: React.MouseEvent<HTMLButtonElement>) => {
     // Prevent event from bubbling up to parent elements
     event.stopPropagation();
-
+  
     if (userContext?.user?.uid === hostId) {
-      try {
-        await deleteGame(game.id);
-        onDelete(game.id);
-        removeGameFromLocation(id, locationId);
-      } catch (error) {
-        console.error('Error deleting game:', error);
+      const confirmDelete = window.confirm('Are you sure you want to delete this game?');
+      if (confirmDelete) {
+        try {
+          await deleteGame(game.id);
+          onDelete(game.id);
+          removeGameFromLocation(id, locationId);
+        } catch (error) {
+          console.error('Error deleting game:', error);
+        }
       }
     }
-};
+  };
 
   return (
     <div className='game-item' onClick={handleToggleModal}>
