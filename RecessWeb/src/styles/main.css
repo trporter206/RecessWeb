@@ -25,10 +25,10 @@
 }
 
 /* Style the list container to take up 20% of the width */
-.list-container {
-  width: 300px; /* Or use percentage like 20% */
-  height: 100%; /* Full height */
-  overflow-y: auto; /* Scroll if content overflows */
+.scrollable-list-container {
+  max-height: 400px; /* Adjust as needed */
+  overflow-y: auto; /* Enable vertical scrolling */
+  margin-top: 20px;
 }
 
 .nav-style {

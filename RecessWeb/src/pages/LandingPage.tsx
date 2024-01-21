@@ -124,11 +124,13 @@ export const LandingPage = () => {
           )}
         </select>
        </div>
-       {showGames ? (
-        <GamesList games={displayedGames} onDeleteGame={handleDeleteGame} /> // Use displayedGames here
-      ) : (
-        <LocationsList locations={displayedLocations} />
-      )}
+       <div className="scrollable-list-container">
+          {showGames ? (
+            <GamesList games={displayedGames} onDeleteGame={handleDeleteGame} />
+          ) : (
+            <LocationsList locations={displayedLocations} />
+          )}
+        </div>
       </div>
     </div>
   {selectedLocation && <LocationInfoModal location={selectedLocation} onClose={handleCloseModal} />}

@@ -4,6 +4,7 @@ import { UserContext } from '../services/UserContext';
 import { DataContext } from '../services/DataProvider';
 import { GamesList } from '../components/Game Components/GamesList';
 import { GameCreationModal } from '../components/Game Components/GameCreationModal';
+import '../styles/main.css';
 
 export const GamesPage = () => {
     const userContext = useContext(UserContext);
@@ -44,7 +45,7 @@ export const GamesPage = () => {
                     onGameCreated={handleGameCreated}
                 />
             )}
-            <div>
+            <div className='scrollable-list-container'>
                 <GamesList games={games} onDeleteGame={handleDeleteGame}/>
             </div>
         </div>
