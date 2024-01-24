@@ -103,18 +103,21 @@ export async function createGame(gameData: Omit<Game, 'id'>, updateTotalGames: (
 
 type UpdateGameCallback = (gameId: string, userId: string, isJoining: boolean) => void;
 
-export const joinGame = async (gameId: string, userId: string, updateGameCallback: UpdateGameCallback) => {
-  try {
-    const gameRef = doc(firestore, 'Games', gameId);
-    await updateDoc(gameRef, {
-      players: arrayUnion(userId)
-    });
-    updateGameCallback(gameId, userId, true);
-  } catch (error) {
-    console.error('Error joining game:', error);
-    throw error;
-  }
-};
+export const joinGame = async (gameId: string, userId: string, updateGameCallback: UpdateGameCallback, updatePoints: (pointsToAdd: number) => void) => {
+    try {
+      const gameRef = doc(firestore, 'Games', gameId);
+      await updateDoc(gameRef, {
+        players: arrayUnion(userId)
+      });
+      updateGameCallback(gameId, userId, true);
+  
+      updatePoints(5);
+    } catch (error) {
+      console.error('Error joining game:', error);
+      throw error;
+    }
+  };
+  
 
 export const leaveGame = async (gameId: string, userId: string, updateGameCallback: UpdateGameCallback) => {
   try {

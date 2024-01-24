@@ -20,24 +20,25 @@ export const GameInfoModal: React.FC<GameInfoModalProps> = ({ game, onClose }) =
     setIsUserInGame(user ? game.players.includes(user.uid) : false);
   }, [user, game.players]);
 
-  const handleJoinLeaveGame = async (event: React.MouseEvent) => {
-    event.stopPropagation();
-    if (!user) {
-      console.error("User not logged in");
-      return;
-    }
+  // GameInfoModal component
+const handleJoinLeaveGame = async (event: React.MouseEvent) => {
+  event.stopPropagation();
+  if (!user) {
+    console.error("User not logged in");
+    return;
+  }
 
-    try {
-      if (isUserInGame) {
-        await leaveGame(game.id, user.uid, updateGamePlayers);
-      } else {
-        await joinGame(game.id, user.uid, updateGamePlayers);
-      }
-      setIsUserInGame(!isUserInGame);
-    } catch (error) {
-      console.error('Error handling game join/leave:', error);
+  try {
+    if (isUserInGame) {
+      await leaveGame(game.id, user.uid, updateGamePlayers);
+    } else {
+      await joinGame(game.id, user.uid, updateGamePlayers, userContext.updatePoints);
     }
-  };
+    setIsUserInGame(!isUserInGame);
+  } catch (error) {
+    console.error('Error handling game join/leave:', error);
+  }
+};
 
   return (
     <div className="InfoModal-backdrop">
