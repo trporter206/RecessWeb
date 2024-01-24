@@ -16,7 +16,8 @@ export async function fetchLocations(): Promise<Location[]> {
                 id: doc.id,
                 name: data.name,
                 description: data.description,
-                games: await fetchGames(doc.id), // Fetches an array of game IDs
+                games: await fetchGames(doc.id),
+                totalGames: data.totalGames,
                 coordinates: {latitude: data.coordinates.latitude, longitude: data.coordinates.longitude}
             };
             return location;

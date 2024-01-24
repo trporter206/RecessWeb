@@ -3,6 +3,7 @@ export interface Location {
   name: string;
   description: string;
   games: string[];
+  totalGames: number;
   coordinates: {
     latitude: number;
     longitude: number;

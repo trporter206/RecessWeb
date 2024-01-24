@@ -93,6 +93,12 @@ export async function createGame(gameData: Omit<Game, 'id'>, updateTotalGames: (
       await updateDoc(locationRef, { games: arrayUnion(firestoreId) });
   
       updateTotalGames(true);  // Update the total games count
+      const locationSnapshot = await getDoc(locationRef);
+      if (locationSnapshot.exists()) {
+          const locationData = locationSnapshot.data();
+          const newTotalGames = (locationData.totalGames || 0) + 1;
+          await updateDoc(locationRef, { totalGames: newTotalGames });
+      }
       return firestoreId;
     } catch (error) {
       console.error('Error creating game:', error);
