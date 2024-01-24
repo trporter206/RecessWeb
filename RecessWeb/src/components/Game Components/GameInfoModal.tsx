@@ -20,7 +20,7 @@ export const GameInfoModal: React.FC<GameInfoModalProps> = ({ game, onClose }) =
     setIsUserInGame(user ? game.players.includes(user.uid) : false);
   }, [user, game.players]);
 
-  // GameInfoModal component
+// GameInfoModal component
 const handleJoinLeaveGame = async (event: React.MouseEvent) => {
   event.stopPropagation();
   if (!user) {
@@ -30,7 +30,7 @@ const handleJoinLeaveGame = async (event: React.MouseEvent) => {
 
   try {
     if (isUserInGame) {
-      await leaveGame(game.id, user.uid, updateGamePlayers);
+      await leaveGame(game.id, user.uid, updateGamePlayers, userContext.updatePoints);
     } else {
       await joinGame(game.id, user.uid, updateGamePlayers, userContext.updatePoints);
     }
