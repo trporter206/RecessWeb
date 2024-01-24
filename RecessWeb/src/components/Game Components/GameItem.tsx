@@ -19,6 +19,8 @@ export const GameItem: React.FC<GameItemProps> = ({ game, onDelete }) => {
   const [hostUsername, setHostUsername] = useState('');
   const [locationName, setLocationName] = useState('');
   const [showModal, setShowModal] = useState(false);
+  const { removeGame } = useContext(DataContext);
+  const { updatePoints, user } = useContext(UserContext);
 
   let displayDate = '';
   if (time instanceof Date) {
@@ -48,13 +50,13 @@ export const GameItem: React.FC<GameItemProps> = ({ game, onDelete }) => {
 
   const handleDelete = async (event: React.MouseEvent<HTMLButtonElement>) => {
     event.stopPropagation();
-    if (userContext?.user?.uid === hostId) {
+    if (user?.uid === hostId) {
       const confirmDelete = window.confirm('Are you sure you want to delete this game?');
       if (confirmDelete) {
         try {
-          await deleteGame(game.id);
+          await deleteGame(game.id, user.uid, removeGame, updatePoints);
+          removeGameFromLocation(game.id, game.locationId);
           onDelete(game.id);
-          removeGameFromLocation(id, locationId);
         } catch (error) {
           console.error('Error deleting game:', error);
         }

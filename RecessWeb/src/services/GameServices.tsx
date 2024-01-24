@@ -52,7 +52,7 @@ export const fetchGameDetails = async (gameId: string): Promise<Game> => {
     }
 };
 
-export async function deleteGame(gameId: string): Promise<void> {
+export async function deleteGame(gameId: string, userId: string, removeGameCallback: (gameId: string) => void, updatePoints: (pointsToAdd: number) => void): Promise<void> {
     try {
         const gameRef = doc(db, 'Games', gameId);
         const gameSnapshot = await getDoc(gameRef);
@@ -63,24 +63,24 @@ export async function deleteGame(gameId: string): Promise<void> {
         }
 
         const gameData = gameSnapshot.data();
-        if (gameData === undefined) {
-            console.error('Game data is undefined');
-            throw new Error('Game data is undefined');
-        }
 
+        // Delete game from Firebase
         const locationRef = doc(db, 'Locations', gameData.locationId);
-        
         await Promise.all([
             deleteDoc(gameRef),
-            updateDoc(locationRef, {
-                games: arrayRemove(gameId)
-            })
+            updateDoc(locationRef, { games: arrayRemove(gameId) })
         ]);
+
+        // Update the DataContext and points
+        removeGameCallback(gameId);
+        updatePoints(-10);
+
     } catch (error) {
         console.error('Error deleting game:', error);
         throw error;
     }
 }
+
 
 
 export async function createGame(gameData: Omit<Game, 'id'>, updateTotalGames: (increment: boolean) => void): Promise<string> {
