@@ -20,7 +20,8 @@ export async function fetchGames(): Promise<Game[]> {
                 locationId: data.locationId,
                 players: data.players || [], // Assuming 'players' field exists
                 time: data.time.toDate(),
-                hostId: data.hostId, // Make sure 'time' field exists and is a Timestamp
+                hostId: data.hostId,
+                minimumPoints: data.minimumPoints, // Make sure 'time' field exists and is a Timestamp
             };
             return game;
         });
@@ -52,7 +53,7 @@ export const fetchGameDetails = async (gameId: string): Promise<Game> => {
     }
 };
 
-export async function deleteGame(gameId: string, userId: string, removeGameCallback: (gameId: string) => void, updatePoints: (pointsToAdd: number) => void): Promise<void> {
+export async function deleteGame(gameId: string, removeGameCallback: (gameId: string) => void, updatePoints: (pointsToAdd: number) => void): Promise<void> {
     try {
         const gameRef = doc(db, 'Games', gameId);
         const gameSnapshot = await getDoc(gameRef);

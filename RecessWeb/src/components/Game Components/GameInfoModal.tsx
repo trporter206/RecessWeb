@@ -13,6 +13,7 @@ interface GameInfoModalProps {
 export const GameInfoModal: React.FC<GameInfoModalProps> = ({ game, onClose }) => {
   const userContext = useContext(UserContext);
   const user = userContext ? userContext.user : null;
+  const profile = userContext ? userContext.profile : null;
   const [isUserInGame, setIsUserInGame] = useState(false);
   const { updateGamePlayers } = useContext(DataContext);
 
@@ -20,32 +21,33 @@ export const GameInfoModal: React.FC<GameInfoModalProps> = ({ game, onClose }) =
     setIsUserInGame(user ? game.players.includes(user.uid) : false);
   }, [user, game.players]);
 
-// GameInfoModal component
-const handleJoinLeaveGame = async (event: React.MouseEvent) => {
-  event.stopPropagation();
-  if (!user) {
-    console.error("User not logged in");
-    return;
-  }
+  const canJoinGame = profile && profile.points >= game.minimumPoints;
 
-  try {
-    if (isUserInGame) {
-      await leaveGame(game.id, user.uid, updateGamePlayers, userContext.updatePoints);
-    } else {
-      await joinGame(game.id, user.uid, updateGamePlayers, userContext.updatePoints);
+  const handleJoinLeaveGame = async (event: React.MouseEvent) => {
+    event.stopPropagation();
+    if (!user) {
+      console.error("User not logged in");
+      return;
     }
-    setIsUserInGame(!isUserInGame);
-  } catch (error) {
-    console.error('Error handling game join/leave:', error);
-  }
-};
+
+    try {
+      if (isUserInGame) {
+        await leaveGame(game.id, user.uid, updateGamePlayers, userContext.updatePoints);
+      } else {
+        await joinGame(game.id, user.uid, updateGamePlayers, userContext.updatePoints);
+      }
+      setIsUserInGame(!isUserInGame);
+    } catch (error) {
+      console.error('Error handling game join/leave:', error);
+    }
+  };
 
   return (
     <div className="InfoModal-backdrop">
       <div className="gameInfoModal-content">
         <h3>{game.locationId}</h3>
         <p>Players: {game.players.length}</p>
-        {user && user.uid !== game.hostId && (
+        {user && user.uid !== game.hostId && canJoinGame && (
           <button onClick={handleJoinLeaveGame}>
             {isUserInGame ? 'Leave Game' : 'Join Game'}
           </button>

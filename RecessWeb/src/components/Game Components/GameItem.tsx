@@ -54,8 +54,8 @@ export const GameItem: React.FC<GameItemProps> = ({ game, onDelete }) => {
       const confirmDelete = window.confirm('Are you sure you want to delete this game?');
       if (confirmDelete) {
         try {
-          await deleteGame(game.id, user.uid, removeGame, updatePoints);
-          removeGameFromLocation(game.id, game.locationId);
+          await deleteGame(id, removeGame, updatePoints);
+          removeGameFromLocation(id, locationId);
           onDelete(game.id);
         } catch (error) {
           console.error('Error deleting game:', error);
