@@ -15,7 +15,6 @@ export const GameCreationModal: React.FC<GameCreationModalProps> = ({ show, onCl
   const { locations, addGameToLocation, addGame } = useContext(DataContext);
   const [selectedLocation, setSelectedLocation] = useState('');
   const [date, setDate] = useState(new Date().toISOString().split('T')[0]); // Default date set to today
-  const [minimumSkill, setMinimumSkill] = useState(1); // Default skill level set to 1
   const userContext = useContext(UserContext);
   const user = userContext ? userContext.user : null;
 
@@ -34,7 +33,7 @@ export const GameCreationModal: React.FC<GameCreationModalProps> = ({ show, onCl
   };
 
   const handleSave = async () => {
-    if (!selectedLocation || !date || !minimumSkill || !user) {
+    if (!selectedLocation || !date || !user) {
       // Handle validation error
       return;
     }
@@ -43,7 +42,6 @@ export const GameCreationModal: React.FC<GameCreationModalProps> = ({ show, onCl
       locationId: selectedLocation,
       players: [],
       time: new Date(date),
-      minimumSkill: minimumSkill,
       hostId: user.uid,
     };
 
@@ -76,9 +74,6 @@ export const GameCreationModal: React.FC<GameCreationModalProps> = ({ show, onCl
             {locations.map((location: Location) => (
                 <option key={location.id} value={location.id}>{location.name}</option>
             ))}
-            </select>
-            <select value={minimumSkill} onChange={e => setMinimumSkill(parseInt(e.target.value))}>
-                {[1, 2, 3, 4, 5].map(s => <option key={s} value={s}>{s}</option>)}
             </select>
             <input type="date" value={date} onChange={e => setDate(e.target.value)} />
             <button onClick={handleSave}>Save</button>

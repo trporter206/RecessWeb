@@ -20,7 +20,6 @@ export async function fetchGames(): Promise<Game[]> {
                 locationId: data.locationId,
                 players: data.players || [], // Assuming 'players' field exists
                 time: data.time.toDate(),
-                minimumSkill: data.minimumSkill,
                 hostId: data.hostId, // Make sure 'time' field exists and is a Timestamp
             };
             return game;

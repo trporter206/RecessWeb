@@ -3,6 +3,5 @@ export interface Game {
     locationId: string;
     players: string[]; // Array of User IDs
     time: Date;
-    minimumSkill: number;
     hostId: string;
   }
