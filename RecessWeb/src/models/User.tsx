@@ -3,5 +3,7 @@ export interface User {
     username: string;
     email: string;
     password: string;
-    skill: number;
+    points: number;
+    rating: number;
+    totalGames: number;
   }

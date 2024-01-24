@@ -12,7 +12,8 @@ export const ProfileCreationModal: React.FC<ProfileCreationModalProps> = ({ show
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [skill, setSkill] = useState(1);
+  const points = 0
+  const rating = 0
 
   const handleCreateProfile = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -23,8 +24,9 @@ export const ProfileCreationModal: React.FC<ProfileCreationModalProps> = ({ show
       if (userId) {
         await setDoc(doc(firestore, 'Users', userId), {
           username,
-          skill,
+          points,
           email,
+          rating,
         });
       }
       onClose();
@@ -45,9 +47,6 @@ export const ProfileCreationModal: React.FC<ProfileCreationModalProps> = ({ show
           <input type="text" value={username} onChange={e => setUsername(e.target.value)} placeholder="Username" />
           <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="Email" />
           <input type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="Password" />
-          <select value={skill} onChange={e => setSkill(parseInt(e.target.value))}>
-            {[1, 2, 3, 4, 5].map(s => <option key={s} value={s}>{s}</option>)}
-          </select>
           <button type="submit">Create Profile</button>
           <button onClick={onClose}>Cancel</button>
         </form>

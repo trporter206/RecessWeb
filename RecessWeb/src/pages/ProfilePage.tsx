@@ -13,6 +13,7 @@ export const ProfilePage = () => {
   const user = userContext?.user;
   const profile = userContext?.profile;
   const games = dataContext?.games || []; 
+  const { username, points, rating, totalGames } = profile || { username: '', points: 0, rating: 0, totalGames: 0 };
 
   const [showProfileCreationModal, setShowProfileCreationModal] = useState(false);
 
@@ -36,10 +37,16 @@ export const ProfilePage = () => {
     <div className='main-container'>
       {user ? (
         <div>
-          <p>Welcome, {profile?.username}</p>
+          <p>Welcome, {username}</p>
           <button onClick={handleLogout}>Log Out</button>
+          <div>
+            <h2>Profile Stats</h2>
+            <h3>Points: {points}</h3>
+            <h3>Rating: {rating}</h3>
+            <h3>Games: {totalGames}</h3>
+          </div>
           <div className="user-games-container">
-            <h2>Your Games</h2>
+            <h2>Your Total Games</h2>
             <GamesList games={userGames} onDeleteGame={() => {}} />
           </div>
         </div>

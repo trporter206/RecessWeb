@@ -48,7 +48,7 @@ export const GameCreationModal: React.FC<GameCreationModalProps> = ({ show, onCl
     };
 
     try {
-      const newGameId = await createGame(newGame);
+      const newGameId = await createGame(newGame, userContext.updateTotalGames);
       const createdGame = { ...newGame, id: newGameId };
       addGame(createdGame);
       addGameToLocation(newGameId, selectedLocation);

@@ -84,24 +84,22 @@ export async function deleteGame(gameId: string): Promise<void> {
 }
 
 
-export async function createGame(gameData: Omit<Game, 'id'>): Promise<string> {
+export async function createGame(gameData: Omit<Game, 'id'>, updateTotalGames: (increment: boolean) => void): Promise<string> {
     try {
-        const gameRef = await addDoc(collection(db, 'Games'), gameData);
-        const firestoreId = gameRef.id;
-
-        await updateDoc(gameRef, { id: firestoreId });
-
-        const locationRef = doc(db, 'Locations', gameData.locationId);
-        await updateDoc(locationRef, {
-            games: arrayUnion(firestoreId)
-        });
-
-        return firestoreId; // Return the new game ID
+      const gameRef = await addDoc(collection(db, 'Games'), gameData);
+      const firestoreId = gameRef.id;
+      await updateDoc(gameRef, { id: firestoreId });
+      const locationRef = doc(db, 'Locations', gameData.locationId);
+      await updateDoc(locationRef, { games: arrayUnion(firestoreId) });
+  
+      updateTotalGames(true);  // Update the total games count
+      return firestoreId;
     } catch (error) {
-        console.error('Error creating game:', error);
-        throw error;
+      console.error('Error creating game:', error);
+      throw error;
     }
-}
+  }
+  
 
 type UpdateGameCallback = (gameId: string, userId: string, isJoining: boolean) => void;
 
