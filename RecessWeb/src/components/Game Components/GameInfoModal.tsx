@@ -16,12 +16,13 @@ export const GameInfoModal: React.FC<GameInfoModalProps> = ({ game, onClose }) =
   const profile = userContext ? userContext.profile : null;
   const [isUserInGame, setIsUserInGame] = useState(false);
   const { updateGamePlayers } = useContext(DataContext);
+  const { id, locationId, hostId, players, minimumPoints, description } = game;
 
   useEffect(() => {
-    setIsUserInGame(user ? game.players.includes(user.uid) : false);
-  }, [user, game.players]);
+    setIsUserInGame(user ? players.includes(user.uid) : false);
+  }, [user, players]);
 
-  const canJoinGame = profile && profile.points >= game.minimumPoints;
+  const canJoinGame = profile && profile.points >= minimumPoints;
 
   const handleJoinLeaveGame = async (event: React.MouseEvent) => {
     event.stopPropagation();
@@ -32,9 +33,9 @@ export const GameInfoModal: React.FC<GameInfoModalProps> = ({ game, onClose }) =
 
     try {
       if (isUserInGame) {
-        await leaveGame(game.id, user.uid, updateGamePlayers, userContext.updatePoints);
+        await leaveGame(id, user.uid, updateGamePlayers, userContext.updatePoints);
       } else {
-        await joinGame(game.id, user.uid, updateGamePlayers, userContext.updatePoints);
+        await joinGame(id, user.uid, updateGamePlayers, userContext.updatePoints);
       }
       setIsUserInGame(!isUserInGame);
     } catch (error) {
@@ -45,10 +46,11 @@ export const GameInfoModal: React.FC<GameInfoModalProps> = ({ game, onClose }) =
   return (
     <div className="InfoModal-backdrop">
       <div className="gameInfoModal-content">
-        <h3>{game.locationId}</h3>
-        <p>Minimum Points: {game.minimumPoints}</p>
-        <p>Players: {game.players.length}</p>
-        {user && user.uid !== game.hostId && canJoinGame && (
+        <h3>{locationId}</h3>
+        <p>Minimum Points: {minimumPoints}</p>
+        <p>Players: {players.length}</p>
+        <p>{description}</p>
+        {user && user.uid !== hostId && canJoinGame && (
           <button onClick={handleJoinLeaveGame}>
             {isUserInGame ? 'Leave Game' : 'Join Game'}
           </button>

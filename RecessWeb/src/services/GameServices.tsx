@@ -12,16 +12,17 @@ const db = getFirestore(app);
 export async function fetchGames(): Promise<Game[]> {
     try {
         console.log('Fetching games');
-        const snapshot = await getDocs(collection(db, 'Games')); // Changed to 'Games'
+        const snapshot = await getDocs(collection(db, 'Games'));
         const games = snapshot.docs.map((doc) => {
             const data = doc.data();
             const game: Game = {
                 id: doc.id,
                 locationId: data.locationId,
-                players: data.players || [], // Assuming 'players' field exists
+                players: data.players || [],
                 time: data.time.toDate(),
                 hostId: data.hostId,
-                minimumPoints: data.minimumPoints, // Make sure 'time' field exists and is a Timestamp
+                minimumPoints: data.minimumPoints,
+                description: data.description,
             };
             return game;
         });

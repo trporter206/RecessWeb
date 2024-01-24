@@ -5,4 +5,5 @@ export interface Game {
     time: Date;
     hostId: string;
     minimumPoints: number;
+    description: string;
   }

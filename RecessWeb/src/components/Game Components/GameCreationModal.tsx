@@ -20,6 +20,7 @@ export const GameCreationModal: React.FC<GameCreationModalProps> = ({ show, onCl
   const profile = userContext ? userContext.profile : null;
   const [minimumPoints, setMinimumPoints] = useState(0);
   const maxPoints = profile ? profile.points : 0;
+  const [description, setDescription] = useState('');
 
   useEffect(() => {
     const defaultLocationId = locationId || (locations.length > 0 ? locations[0].id : '');
@@ -47,6 +48,7 @@ export const GameCreationModal: React.FC<GameCreationModalProps> = ({ show, onCl
       time: new Date(date),
       hostId: user.uid,
       minimumPoints,
+      description,
     };
 
     try {
@@ -74,6 +76,7 @@ export const GameCreationModal: React.FC<GameCreationModalProps> = ({ show, onCl
     <div className='gameCreationModal-backdrop' onClick={handleClose}>
         <div className='gameCreationModal-content' onClick={stopPropagation}>
             <h2>Create Game</h2>
+            <label>Location: </label>
             <select value={selectedLocation} onChange={e => setSelectedLocation(e.target.value)}>
             {locations.map((location: Location) => (
                 <option key={location.id} value={location.id}>{location.name}</option>
@@ -88,7 +91,17 @@ export const GameCreationModal: React.FC<GameCreationModalProps> = ({ show, onCl
                 min="0"
               />
             </div>
-            <input type="date" value={date} onChange={e => setDate(e.target.value)} />
+            <div>
+              <label htmlFor="gameDescription">Game Description:</label>
+              <textarea 
+                id="gameDescription"
+                value={description}
+                onChange={e => setDescription(e.target.value)}
+                rows={3}
+              />
+            </div>
+            <label>Date: </label>
+            <input type="date" value={date} onChange={e => setDate(e.target.value)} /><br/>
             <button onClick={handleSave}>Save</button>
             <button onClick={handleClose}>Cancel</button>
         </div>
