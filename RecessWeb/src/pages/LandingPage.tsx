@@ -7,6 +7,8 @@ import { LocationsList } from '../components/Location Components/LocationsList';
 import { GamesList } from '../components/Game Components/GamesList';
 import '../styles/main.css';
 import { Game } from '../models/Game';
+import LocationSorter from '../components/Location Components/LocationSorter';
+import GameSorter from '../components/Game Components/GameSorter';
 
 export const LandingPage = () => {
   const { locations, games, removeGame } = useContext(DataContext); // Use games from DataContext
@@ -22,50 +24,6 @@ export const LandingPage = () => {
     setDisplayedLocations(locations);
     setDisplayedGames(games); // Update displayed games whenever the games data changes
   }, [locations, games]);
-
-  const handleSortChange = (event: { target: { value: string }; }) => {
-    if (showGames) {
-      setGameSortMethod(event.target.value);
-      sortGames(event.target.value);
-    } else {
-      setSortMethod(event.target.value);
-      sortLocations(event.target.value);
-    }
-  };
-
-  const sortGames = (method: string) => {
-    let sortedGames;
-    switch (method) {
-      case 'players':
-        sortedGames = [...games].sort((a, b) => b.players.length - a.players.length);
-        break;
-      case 'alphabetical':
-        sortedGames = [...games].sort((a, b) => {
-          const locA = locations.find(loc => loc.id === a.locationId)?.name || '';
-          const locB = locations.find(loc => loc.id === b.locationId)?.name || '';
-          return locA.localeCompare(locB);
-        });
-        break;
-      default:
-        sortedGames = [...games];
-    }
-    setDisplayedGames(sortedGames); // Update the displayed games state
-  };
-
-  const sortLocations = (method: string) => {
-    let sortedLocations;
-    switch (method) {
-      case 'alphabetically':
-        sortedLocations = [...locations].sort((a, b) => a.name.localeCompare(b.name));
-        break;
-      case 'games':
-        sortedLocations = [...locations].sort((a, b) => b.games.length - a.games.length);
-        break;
-      default:
-        sortedLocations = [...locations];
-    }
-    setDisplayedLocations(sortedLocations);
-  };
 
   const handleMarkerClick = (item: Location | Game) => {
     let locationToShow;
@@ -95,6 +53,43 @@ export const LandingPage = () => {
     setShowGames(!showGames);
   };
 
+  const sortGames = (method: string) => {
+    let sortedGames;
+    switch (method) {
+      case 'players':
+        sortedGames = [...games].sort((a, b) => b.players.length - a.players.length);
+        break;
+      case 'alphabetical':
+        sortedGames = [...games].sort((a, b) => {
+          const locA = locations.find(loc => loc.id === a.locationId)?.name || '';
+          const locB = locations.find(loc => loc.id === b.locationId)?.name || '';
+          return locA.localeCompare(locB);
+        });
+        break;
+      case 'minimumPoints':
+        sortedGames = [...games].sort((a, b) => a.minimumPoints - b.minimumPoints);
+        break;
+      default:
+        sortedGames = [...games];
+    }
+    setDisplayedGames(sortedGames); // Update the displayed games state
+  };
+
+  const sortLocations = (method: string) => {
+    let sortedLocations;
+    switch (method) {
+      case 'alphabetically':
+        sortedLocations = [...locations].sort((a, b) => a.name.localeCompare(b.name));
+        break;
+      case 'games':
+        sortedLocations = [...locations].sort((a, b) => b.games.length - a.games.length);
+        break;
+      default:
+        sortedLocations = [...locations];
+    }
+    setDisplayedLocations(sortedLocations);
+  };
+
   return (
     <div className="main-container">
       <div className="map-and-list-container">
@@ -106,23 +101,19 @@ export const LandingPage = () => {
             {showGames ? 'Show Locations' : 'Show Games'}
           </button>
         <div className="sorting-dropdown">
-        <label htmlFor="sort">
-          Sort {showGames ? 'Games' : 'Locations'}: 
-        </label>
-        <select id="sort" value={showGames ? gameSortMethod : sortMethod} onChange={handleSortChange}>
-          <option value="">Select...</option>
           {showGames ? (
-            <>
-              <option value="players">By Number of Players</option>
-              <option value="alphabetical">Alphabetically by Location</option>
-            </>
+            <GameSorter 
+              gameSortMethod={gameSortMethod} 
+              setGameSortMethod={setGameSortMethod}
+              onSortChange={sortGames} 
+            />
           ) : (
-            <>
-              <option value="alphabetically">Alphabetically</option>
-              <option value="games">By Number of Games</option>
-            </>
+            <LocationSorter 
+              sortMethod={sortMethod} 
+              setSortMethod={setSortMethod}
+              onSortChange={sortLocations} 
+            />
           )}
-        </select>
        </div>
        <div className="scrollable-list-container">
           {showGames ? (

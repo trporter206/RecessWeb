@@ -12,7 +12,7 @@ interface GameItemProps {
 }
 
 export const GameItem: React.FC<GameItemProps> = ({ game, onDelete }) => {
-  const { id, locationId, players, time, hostId } = game;
+  const { id, locationId, players, time, hostId, minimumPoints } = game;
   const { locations } = useContext(DataContext);
   const removeGameFromLocation = useContext(DataContext).removeGameFromLocation;
   const userContext = useContext(UserContext);
@@ -67,8 +67,9 @@ export const GameItem: React.FC<GameItemProps> = ({ game, onDelete }) => {
   return (
     <div className='game-item' onClick={handleToggleModal}>
       <h3>{locationName}</h3>
+      <p className="game-host">Host: {hostUsername}</p>
+      <p className="game-host">Minimum: {minimumPoints}</p>
       <div className="game-info">
-        <p className="game-host">{hostUsername}</p>
         <p className="game-date">{displayDate}</p>
         <p className="game-players">{players.length} players</p>
       </div>

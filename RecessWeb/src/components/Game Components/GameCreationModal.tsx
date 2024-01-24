@@ -17,7 +17,9 @@ export const GameCreationModal: React.FC<GameCreationModalProps> = ({ show, onCl
   const [date, setDate] = useState(new Date().toISOString().split('T')[0]); // Default date set to today
   const userContext = useContext(UserContext);
   const user = userContext ? userContext.user : null;
+  const profile = userContext ? userContext.profile : null;
   const [minimumPoints, setMinimumPoints] = useState(0);
+  const maxPoints = profile ? profile.points : 0;
 
   useEffect(() => {
     const defaultLocationId = locationId || (locations.length > 0 ? locations[0].id : '');
@@ -82,7 +84,7 @@ export const GameCreationModal: React.FC<GameCreationModalProps> = ({ show, onCl
               <input 
                 type="number" 
                 value={minimumPoints} 
-                onChange={e => setMinimumPoints(parseInt(e.target.value))} 
+                onChange={e => setMinimumPoints(Math.min(parseInt(e.target.value) || 0, maxPoints))} 
                 min="0"
               />
             </div>

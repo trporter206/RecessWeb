@@ -46,6 +46,7 @@ export const GameInfoModal: React.FC<GameInfoModalProps> = ({ game, onClose }) =
     <div className="InfoModal-backdrop">
       <div className="gameInfoModal-content">
         <h3>{game.locationId}</h3>
+        <p>Minimum Points: {game.minimumPoints}</p>
         <p>Players: {game.players.length}</p>
         {user && user.uid !== game.hostId && canJoinGame && (
           <button onClick={handleJoinLeaveGame}>
