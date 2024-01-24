@@ -53,6 +53,9 @@ export const GameCreationModal: React.FC<GameCreationModalProps> = ({ show, onCl
       addGame(createdGame);
       addGameToLocation(newGameId, selectedLocation);
       onGameCreated();
+      if (userContext.updatePoints) {
+        userContext.updatePoints(10);
+      }
       console.log('Game created successfully');
     } catch (error) {
       console.error('Error creating game:', error);

@@ -17,13 +17,15 @@ interface UserContextType {
     user: User | null;
     profile: UserProfile | null;
     updateTotalGames: (increment: boolean) => void;
+    updatePoints: (pointsToAdd: number) => void;
 }
 
 // Create a context
 export const UserContext = createContext<UserContextType>({
     user: null,
     profile: null,
-    updateTotalGames: async () => {} // Provide a default implementation
+    updateTotalGames: async () => {},
+    updatePoints: async () => {}, // Provide a default implementation
   });
   
 
@@ -53,6 +55,17 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
         return () => unsubscribe();
     }, []);
 
+    const updatePoints = async (pointsToAdd: number) => {
+        if (!user || !profile) return;
+
+        const newPoints = profile.points + pointsToAdd;
+        setProfile({ ...profile, points: newPoints });
+
+        // Update Firestore
+        const userRef = doc(firestore, 'Users', user.uid);
+        await updateDoc(userRef, { points: newPoints });
+    };
+
     const updateTotalGames = async (increment: boolean) => {
         if (!user || !profile) return;
       
@@ -65,7 +78,7 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
     };
 
     return (
-        <UserContext.Provider value={{ user, profile, updateTotalGames }}>
+        <UserContext.Provider value={{ user, profile, updateTotalGames, updatePoints }}>
             {children}
         </UserContext.Provider>
     );
