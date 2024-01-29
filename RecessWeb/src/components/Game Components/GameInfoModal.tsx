@@ -33,9 +33,9 @@ export const GameInfoModal: React.FC<GameInfoModalProps> = ({ game, onClose }) =
 
     try {
       if (isUserInGame) {
-        await leaveGame(id, user.uid, updateGamePlayers, userContext.updatePoints);
+        await leaveGame(id, user.uid, updateGamePlayers);
       } else {
-        await joinGame(id, user.uid, updateGamePlayers, userContext.updatePoints);
+        await joinGame(id, user.uid, updateGamePlayers);
       }
       setIsUserInGame(!isUserInGame);
     } catch (error) {

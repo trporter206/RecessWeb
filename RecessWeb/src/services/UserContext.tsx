@@ -1,7 +1,7 @@
 import React, { createContext, useState, useEffect, ReactNode } from 'react';
 import { auth, firestore } from '../firebaseConfig';
 import { User } from 'firebase/auth'; // Import User type
-import { doc, getDoc, updateDoc } from 'firebase/firestore';
+import { doc, onSnapshot } from 'firebase/firestore';
 
 // Define UserProfile type
 interface UserProfile {
@@ -16,16 +16,12 @@ interface UserProfile {
 interface UserContextType {
     user: User | null;
     profile: UserProfile | null;
-    updateTotalGames: (increment: boolean) => void;
-    updatePoints: (pointsToAdd: number) => void;
 }
 
 // Create a context
 export const UserContext = createContext<UserContextType>({
     user: null,
     profile: null,
-    updateTotalGames: async () => {},
-    updatePoints: async () => {}, // Provide a default implementation
   });
   
 
@@ -38,47 +34,32 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
     const [profile, setProfile] = useState<UserProfile | null>(null);
 
     useEffect(() => {
-        const unsubscribe = auth.onAuthStateChanged(async (currentUser) => {
-            setUser(currentUser);
-            if (currentUser) {
-                const userDoc = await getDoc(doc(firestore, 'Users', currentUser.uid));
-                if (userDoc.exists()) {
-                    setProfile(userDoc.data() as UserProfile);
+        // Auth state listener
+        const unsubscribeAuth = auth.onAuthStateChanged(user => setUser(user));
+
+        // Firestore user data listener
+        let unsubscribeUser: () => void = () => {};
+        if (user) {
+            const userRef = doc(firestore, 'Users', user.uid);
+            unsubscribeUser = onSnapshot(userRef, (doc) => {
+                if (doc.exists()) {
+                    setProfile(doc.data() as UserProfile);
                 } else {
                     setProfile(null);
                 }
-            } else {
-                setProfile(null);
-            }
-        });
+            });
+        } else {
+            setProfile(null);
+        }
 
-        return () => unsubscribe();
-    }, []);
-
-    const updatePoints = async (pointsToAdd: number) => {
-        if (!user || !profile) return;
-
-        const newPoints = profile.points + pointsToAdd;
-        setProfile({ ...profile, points: newPoints });
-
-        // Update Firestore
-        const userRef = doc(firestore, 'Users', user.uid);
-        await updateDoc(userRef, { points: newPoints });
-    };
-
-    const updateTotalGames = async (increment: boolean) => {
-        if (!user || !profile) return;
-      
-        const newTotalGames = increment ? profile.totalGames + 1 : profile.totalGames;
-        setProfile({ ...profile, totalGames: newTotalGames });
-      
-        // Update Firestore
-        const userRef = doc(firestore, 'Users', user.uid);
-        await updateDoc(userRef, { totalGames: newTotalGames });
-    };
+        return () => {
+            unsubscribeAuth();
+            unsubscribeUser();
+        };
+    }, [user]);
 
     return (
-        <UserContext.Provider value={{ user, profile, updateTotalGames, updatePoints }}>
+        <UserContext.Provider value={{ user, profile }}>
             {children}
         </UserContext.Provider>
     );

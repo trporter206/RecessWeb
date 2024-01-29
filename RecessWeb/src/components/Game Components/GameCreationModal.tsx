@@ -3,6 +3,7 @@ import { createGame } from '../../services/GameServices';
 import { DataContext } from '../../services/DataProvider';
 import { Location } from '../../models/Location';
 import { UserContext } from '../../services/UserContext';
+import { updateGamesHostedForLoggedInUser, updatePointsForLoggedInUser } from '../../services/UserServices';
 
 interface GameCreationModalProps {
   show: boolean;
@@ -41,7 +42,7 @@ export const GameCreationModal: React.FC<GameCreationModalProps> = ({ show, onCl
       // Handle validation error
       return;
     }
-
+  
     const newGame = {
       locationId: selectedLocation,
       players: [],
@@ -50,21 +51,22 @@ export const GameCreationModal: React.FC<GameCreationModalProps> = ({ show, onCl
       minimumPoints,
       description,
     };
-
+  
     try {
-      const newGameId = await createGame(newGame, userContext.updateTotalGames);
+      const newGameId = await createGame(newGame);
       const createdGame = { ...newGame, id: newGameId };
       addGame(createdGame);
       addGameToLocation(newGameId, selectedLocation);
       onGameCreated();
-      if (userContext.updatePoints) {
-        userContext.updatePoints(10);
-      }
+  
+      // Update points using the new function
+      await updatePointsForLoggedInUser(10);
+      await updateGamesHostedForLoggedInUser(true);
       console.log('Game created successfully');
     } catch (error) {
       console.error('Error creating game:', error);
     }
-
+  
     onClose();
   };
 

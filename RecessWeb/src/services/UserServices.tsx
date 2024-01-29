@@ -1,7 +1,8 @@
 import { initializeApp } from 'firebase/app';
-import { getFirestore, collection, getDocs, doc, getDoc } from 'firebase/firestore';
+import { getFirestore, collection, getDocs, doc, getDoc, updateDoc } from 'firebase/firestore';
 import { User } from '../models/User';
-import { firebaseConfig } from '../firebaseConfig';
+import { firebaseConfig, firestore } from '../firebaseConfig';
+import { getAuth } from 'firebase/auth';
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
@@ -47,6 +48,68 @@ export async function fetchUsernameById(userId: string): Promise<string> {
     } catch (error) {
         console.error('Error fetching user by ID:', error);
         throw error;
+    }
+}
+
+export async function updatePointsForLoggedInUser(pointsChange: number) {
+    const auth = getAuth();
+    const user = auth.currentUser;
+  
+    if (!user) {
+      throw new Error('No user logged in');
+    }
+  
+    const userRef = doc(firestore, 'Users', user.uid);
+  
+    try {
+      // Get current user data
+      const userSnapshot = await getDoc(userRef);
+      if (!userSnapshot.exists()) {
+        throw new Error('User not found');
+      }
+      const userData = userSnapshot.data();
+  
+      // Calculate new points
+      const newPoints = Math.max((userData.points || 0) + pointsChange, 0);
+  
+      // Update points in Firestore
+      await updateDoc(userRef, {
+        points: newPoints
+      });
+    } catch (error) {
+      console.error('Error updating points:', error);
+      throw error;
+    }
+}
+
+export async function updateGamesHostedForLoggedInUser(increment: boolean) {
+    const auth = getAuth();
+    const user = auth.currentUser;
+  
+    if (!user) {
+      throw new Error('No user logged in');
+    }
+  
+    const userRef = doc(db, 'Users', user.uid);
+  
+    try {
+      // Get current user data
+      const userSnapshot = await getDoc(userRef);
+      if (!userSnapshot.exists()) {
+        throw new Error('User not found');
+      }
+      const userData = userSnapshot.data();
+  
+      // Calculate new gamesHosted count
+      const newGamesHosted = (userData.gamesHosted || 0) + (increment ? 1 : -1);
+  
+      // Update gamesHosted in Firestore
+      await updateDoc(userRef, {
+        gamesHosted: newGamesHosted
+      });
+    } catch (error) {
+      console.error('Error updating games hosted:', error);
+      throw error;
     }
 }
 

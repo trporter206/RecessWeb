@@ -20,7 +20,7 @@ export const GameItem: React.FC<GameItemProps> = ({ game, onDelete }) => {
   const [locationName, setLocationName] = useState('');
   const [showModal, setShowModal] = useState(false);
   const { removeGame } = useContext(DataContext);
-  const { updatePoints, user } = useContext(UserContext);
+  const { user } = useContext(UserContext);
 
   let displayDate = '';
   if (time instanceof Date) {
@@ -54,7 +54,7 @@ export const GameItem: React.FC<GameItemProps> = ({ game, onDelete }) => {
       const confirmDelete = window.confirm('Are you sure you want to delete this game?');
       if (confirmDelete) {
         try {
-          await deleteGame(id, removeGame, updatePoints);
+          await deleteGame(id, removeGame);
           removeGameFromLocation(id, locationId);
           onDelete(game.id);
         } catch (error) {

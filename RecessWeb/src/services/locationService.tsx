@@ -1,5 +1,5 @@
 import { initializeApp } from 'firebase/app';
-import { getFirestore, collection, getDocs, query, where, doc, getDoc } from 'firebase/firestore';
+import { getFirestore, collection, getDocs, query, where, doc, getDoc, updateDoc } from 'firebase/firestore';
 import { Location } from '../models/Location';
 import { firebaseConfig } from '../firebaseConfig';
 
@@ -61,4 +61,28 @@ export function getLocationCoordinates(locationId: string): Promise<{ latitude: 
             reject(error);
         }
     });
+}
+
+export async function updateTotalGamesForLocation(locationId: string, increment: boolean) {
+    const locationRef = doc(db, 'Locations', locationId);
+  
+    try {
+      // Get current location data
+      const locationSnapshot = await getDoc(locationRef);
+      if (!locationSnapshot.exists()) {
+        throw new Error('Location not found');
+      }
+      const locationData = locationSnapshot.data();
+  
+      // Calculate new totalGames count
+      const newTotalGames = (locationData.totalGames || 0) + (increment ? 1 : -1);
+  
+      // Update totalGames in Firestore
+      await updateDoc(locationRef, {
+        totalGames: newTotalGames
+      });
+    } catch (error) {
+      console.error('Error updating total games for location:', error);
+      throw error;
+    }
 }

@@ -2,6 +2,8 @@ import { initializeApp } from 'firebase/app';
 import { getFirestore, collection, getDocs, addDoc, doc, deleteDoc, updateDoc, arrayUnion, arrayRemove, getDoc } from 'firebase/firestore';
 import { Game } from '../models/Game';
 import { firebaseConfig, firestore } from '../firebaseConfig';
+import { updatePointsForLoggedInUser } from './UserServices';
+import { updateTotalGamesForLocation } from './locationService';
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
@@ -54,7 +56,7 @@ export const fetchGameDetails = async (gameId: string): Promise<Game> => {
     }
 };
 
-export async function deleteGame(gameId: string, removeGameCallback: (gameId: string) => void, updatePoints: (pointsToAdd: number) => void): Promise<void> {
+export async function deleteGame(gameId: string, removeGameCallback: (gameId: string) => void): Promise<void> {
     try {
         const gameRef = doc(db, 'Games', gameId);
         const gameSnapshot = await getDoc(gameRef);
@@ -75,7 +77,8 @@ export async function deleteGame(gameId: string, removeGameCallback: (gameId: st
 
         // Update the DataContext and points
         removeGameCallback(gameId);
-        updatePoints(-10);
+        await updatePointsForLoggedInUser(-10);
+        await updateTotalGamesForLocation(gameData.locationId, false);
 
     } catch (error) {
         console.error('Error deleting game:', error);
@@ -85,7 +88,7 @@ export async function deleteGame(gameId: string, removeGameCallback: (gameId: st
 
 
 
-export async function createGame(gameData: Omit<Game, 'id'>, updateTotalGames: (increment: boolean) => void): Promise<string> {
+export async function createGame(gameData: Omit<Game, 'id'>): Promise<string> {
     try {
       const gameRef = await addDoc(collection(db, 'Games'), gameData);
       const firestoreId = gameRef.id;
@@ -93,7 +96,7 @@ export async function createGame(gameData: Omit<Game, 'id'>, updateTotalGames: (
       const locationRef = doc(db, 'Locations', gameData.locationId);
       await updateDoc(locationRef, { games: arrayUnion(firestoreId) });
   
-      updateTotalGames(true);  // Update the total games count
+      await updateTotalGamesForLocation(gameData.locationId, true);  // Update the total games count
       const locationSnapshot = await getDoc(locationRef);
       if (locationSnapshot.exists()) {
           const locationData = locationSnapshot.data();
@@ -110,21 +113,21 @@ export async function createGame(gameData: Omit<Game, 'id'>, updateTotalGames: (
 
 type UpdateGameCallback = (gameId: string, userId: string, isJoining: boolean) => void;
 
-export const joinGame = async (gameId: string, userId: string, updateGameCallback: UpdateGameCallback, updatePoints: (pointsToAdd: number) => void) => {
+export const joinGame = async (gameId: string, userId: string, updateGameCallback: UpdateGameCallback) => {
     try {
       const gameRef = doc(firestore, 'Games', gameId);
       await updateDoc(gameRef, {
         players: arrayUnion(userId)
       });
       updateGameCallback(gameId, userId, true);
-      updatePoints(5);
+      await updatePointsForLoggedInUser(5);
     } catch (error) {
       console.error('Error joining game:', error);
       throw error;
     }
   };
   
-export const leaveGame = async (gameId: string, userId: string, updateGameCallback: UpdateGameCallback, updatePoints: (pointsToAdd: number) => void) => {
+export const leaveGame = async (gameId: string, userId: string, updateGameCallback: UpdateGameCallback) => {
     try {
       const gameRef = doc(firestore, 'Games', gameId);
       await updateDoc(gameRef, {
@@ -133,7 +136,7 @@ export const leaveGame = async (gameId: string, userId: string, updateGameCallba
       updateGameCallback(gameId, userId, false);
   
       // Update user's points by -5 when leaving a game
-      updatePoints(-5);
+      await updatePointsForLoggedInUser(-5);
     } catch (error) {
       console.error('Error leaving game:', error);
       throw error;
