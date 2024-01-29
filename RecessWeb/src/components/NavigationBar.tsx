@@ -6,7 +6,7 @@ export const NavigationBar = () => {
         <nav className='nav-style'>
             <ul className='nav-buttons' style={{ listStyleType: 'none' }}>
                 <li><Link to="/">Recess</Link></li>
-                <li><Link to="/locations">Locations</Link></li>
+                <li><Link to="/players">Players</Link></li>
                 <li><Link to="/Games">Games</Link></li>
                 <li><Link to="/profile">Profile</Link></li>
             </ul>
