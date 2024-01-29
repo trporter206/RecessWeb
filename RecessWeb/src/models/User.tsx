@@ -5,5 +5,6 @@ export interface User {
     password: string;
     points: number;
     rating: number;
-    totalGames: number;
+    gamesHosted: number;
+    gamesJoined: number;
   }

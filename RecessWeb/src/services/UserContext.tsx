@@ -9,7 +9,8 @@ interface UserProfile {
   email: string;
   points: number;
   rating: number;
-  totalGames: number;
+  gamesHosted: number;
+  gamesJoined: number;
   // Add other fields as necessary
 }
 

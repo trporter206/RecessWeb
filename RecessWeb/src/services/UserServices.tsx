@@ -18,7 +18,8 @@ export async function fetchUsers(): Promise<User[]> {
                 username: data.username,
                 points: data.points,
                 rating: data.rating,
-                totalGames: data.totalGames,
+                gamesHosted: data.gamesHosted,
+                gamesJoined: data.gamesJoined,
                 id: data.id,
                 password: ''
             };
