@@ -112,3 +112,34 @@ export async function updateGamesHostedForLoggedInUser(increment: boolean) {
       throw error;
     }
 }
+
+export async function updateGamesJoinedForLoggedInUser(increment: boolean) {
+    const auth = getAuth();
+    const user = auth.currentUser;
+  
+    if (!user) {
+      throw new Error('No user logged in');
+    }
+  
+    const userRef = doc(db, 'Users', user.uid);
+  
+    try {
+      // Get current user data
+      const userSnapshot = await getDoc(userRef);
+      if (!userSnapshot.exists()) {
+        throw new Error('User not found');
+      }
+      const userData = userSnapshot.data();
+  
+      // Calculate new gamesHosted count
+      const newGamesJoined = (userData.gamesJoined || 0) + (increment ? 1 : -1);
+  
+      // Update gamesHosted in Firestore
+      await updateDoc(userRef, {
+        gamesJoined: newGamesJoined
+      });
+    } catch (error) {
+      console.error('Error updating games joined:', error);
+      throw error;
+    }
+}

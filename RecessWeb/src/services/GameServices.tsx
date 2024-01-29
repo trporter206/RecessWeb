@@ -95,7 +95,6 @@ export async function createGame(gameData: Omit<Game, 'id'>): Promise<string> {
       //add game to location
       const locationRef = doc(db, 'Locations', gameData.locationId);
       await updateDoc(locationRef, { games: arrayUnion(firestoreId) });
-      await updateTotalGamesForLocation(gameData.locationId, true);
       return firestoreId;
     } catch (error) {
       console.error('Error creating game:', error);
@@ -113,7 +112,6 @@ export const joinGame = async (gameId: string, userId: string, updateGameCallbac
         players: arrayUnion(userId)
       });
       updateGameCallback(gameId, userId, true);
-      await updatePointsForLoggedInUser(5);
     } catch (error) {
       console.error('Error joining game:', error);
       throw error;
@@ -127,9 +125,6 @@ export const leaveGame = async (gameId: string, userId: string, updateGameCallba
         players: arrayRemove(userId)
       });
       updateGameCallback(gameId, userId, false);
-  
-      // Update user's points by -5 when leaving a game
-      await updatePointsForLoggedInUser(-5);
     } catch (error) {
       console.error('Error leaving game:', error);
       throw error;

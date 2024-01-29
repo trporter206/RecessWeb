@@ -4,6 +4,7 @@ import { Game } from '../../models/Game';
 import { UserContext } from '../../services/UserContext';
 import { joinGame, leaveGame } from '../../services/GameServices';
 import { DataContext } from '../../services/DataProvider';
+import { updateGamesJoinedForLoggedInUser, updatePointsForLoggedInUser } from '../../services/UserServices';
 
 interface GameInfoModalProps {
   game: Game;
@@ -34,8 +35,12 @@ export const GameInfoModal: React.FC<GameInfoModalProps> = ({ game, onClose }) =
     try {
       if (isUserInGame) {
         await leaveGame(id, user.uid, updateGamePlayers);
+        await updatePointsForLoggedInUser(-5);
+        await updateGamesJoinedForLoggedInUser(false);
       } else {
         await joinGame(id, user.uid, updateGamePlayers);
+        await updatePointsForLoggedInUser(5);
+        await updateGamesJoinedForLoggedInUser(true);
       }
       setIsUserInGame(!isUserInGame);
     } catch (error) {
