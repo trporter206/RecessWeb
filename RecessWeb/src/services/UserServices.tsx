@@ -112,5 +112,3 @@ export async function updateGamesHostedForLoggedInUser(increment: boolean) {
       throw error;
     }
 }
-
-

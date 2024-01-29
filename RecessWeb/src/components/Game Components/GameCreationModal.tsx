@@ -4,15 +4,15 @@ import { DataContext } from '../../services/DataProvider';
 import { Location } from '../../models/Location';
 import { UserContext } from '../../services/UserContext';
 import { updateGamesHostedForLoggedInUser, updatePointsForLoggedInUser } from '../../services/UserServices';
+import { updateTotalGamesForLocation } from '../../services/locationService';
 
 interface GameCreationModalProps {
   show: boolean;
   onClose: () => void;
-  onGameCreated: () => void;
   locationId?: string; // Optional prop for default location ID
 }
 
-export const GameCreationModal: React.FC<GameCreationModalProps> = ({ show, onClose, onGameCreated, locationId }) => {
+export const GameCreationModal: React.FC<GameCreationModalProps> = ({ show, onClose, locationId }) => {
   const { locations, addGameToLocation, addGame } = useContext(DataContext);
   const [selectedLocation, setSelectedLocation] = useState('');
   const [date, setDate] = useState(new Date().toISOString().split('T')[0]); // Default date set to today
@@ -55,13 +55,13 @@ export const GameCreationModal: React.FC<GameCreationModalProps> = ({ show, onCl
     try {
       const newGameId = await createGame(newGame);
       const createdGame = { ...newGame, id: newGameId };
+      //update context
       addGame(createdGame);
       addGameToLocation(newGameId, selectedLocation);
-      onGameCreated();
-  
-      // Update points using the new function
+      //update firebase
       await updatePointsForLoggedInUser(10);
       await updateGamesHostedForLoggedInUser(true);
+      await updateTotalGamesForLocation(selectedLocation, true);
       console.log('Game created successfully');
     } catch (error) {
       console.error('Error creating game:', error);

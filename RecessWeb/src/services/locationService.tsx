@@ -1,5 +1,5 @@
 import { initializeApp } from 'firebase/app';
-import { getFirestore, collection, getDocs, query, where, doc, getDoc, updateDoc } from 'firebase/firestore';
+import { getFirestore, collection, getDocs, query, where, doc, getDoc, updateDoc, arrayUnion } from 'firebase/firestore';
 import { Location } from '../models/Location';
 import { firebaseConfig } from '../firebaseConfig';
 
@@ -83,6 +83,26 @@ export async function updateTotalGamesForLocation(locationId: string, increment:
       });
     } catch (error) {
       console.error('Error updating total games for location:', error);
+      throw error;
+    }
+}
+
+export async function addGameIdToLocation(locationId: string, gameId: string) {
+    const locationRef = doc(db, 'Locations', locationId);
+
+    try {
+      // Get current location data
+      const locationSnapshot = await getDoc(locationRef);
+      if (!locationSnapshot.exists()) {
+        throw new Error('Location not found');
+      }
+
+      // Update the location's games array by adding the new gameId
+      await updateDoc(locationRef, {
+        games: arrayUnion(gameId)
+      });
+    } catch (error) {
+      console.error('Error adding game ID to location:', error);
       throw error;
     }
 }

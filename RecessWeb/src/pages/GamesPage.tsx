@@ -25,11 +25,6 @@ export const GamesPage = () => {
         setShowModal(false);
     };
 
-    const handleGameCreated = () => {
-        // No need to fetch games here, as it should be automatically updated by the DataContext
-        handleCloseModal();
-    };
-
     const handleDeleteGame = (gameId: string) => {
         removeGame(gameId); // Update DataContext
     };
@@ -42,7 +37,6 @@ export const GamesPage = () => {
                 <GameCreationModal 
                     show={showModal} 
                     onClose={handleCloseModal} 
-                    onGameCreated={handleGameCreated}
                 />
             )}
             <div className='scrollable-list-container'>

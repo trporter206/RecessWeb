@@ -35,11 +35,6 @@ export const LocationInfoModal: React.FC<LocationInfoModalProps> = ({ location, 
     setShowGameCreation(false);
   };
 
-  const handleGameCreated = () => {
-    // Refresh games list or trigger a state update as needed
-    setShowGameCreation(false);
-  };
-
   return (
     <div className="InfoModal-backdrop">
       <div className="locationInfoModal-content">
@@ -52,7 +47,6 @@ export const LocationInfoModal: React.FC<LocationInfoModalProps> = ({ location, 
           <GameCreationModal
             show={showGameCreation}
             onClose={handleCloseGameCreation}
-            onGameCreated={handleGameCreated}
             locationId={location.id}
           />
         )}

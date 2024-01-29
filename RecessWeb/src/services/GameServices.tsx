@@ -2,7 +2,7 @@ import { initializeApp } from 'firebase/app';
 import { getFirestore, collection, getDocs, addDoc, doc, deleteDoc, updateDoc, arrayUnion, arrayRemove, getDoc } from 'firebase/firestore';
 import { Game } from '../models/Game';
 import { firebaseConfig, firestore } from '../firebaseConfig';
-import { updatePointsForLoggedInUser } from './UserServices';
+import { updateGamesHostedForLoggedInUser, updatePointsForLoggedInUser } from './UserServices';
 import { updateTotalGamesForLocation } from './locationService';
 
 // Initialize Firebase
@@ -58,27 +58,25 @@ export const fetchGameDetails = async (gameId: string): Promise<Game> => {
 
 export async function deleteGame(gameId: string, removeGameCallback: (gameId: string) => void): Promise<void> {
     try {
+      //find game reference
         const gameRef = doc(db, 'Games', gameId);
         const gameSnapshot = await getDoc(gameRef);
-
         if (!gameSnapshot.exists()) {
             console.error('Game does not exist');
             throw new Error('Game not found');
         }
-
+        // Delete game object and remove from location
         const gameData = gameSnapshot.data();
-
-        // Delete game from Firebase
         const locationRef = doc(db, 'Locations', gameData.locationId);
         await Promise.all([
             deleteDoc(gameRef),
             updateDoc(locationRef, { games: arrayRemove(gameId) })
         ]);
-
-        // Update the DataContext and points
+        await updateTotalGamesForLocation(gameData.locationId, false);
+        // Update user
         removeGameCallback(gameId);
         await updatePointsForLoggedInUser(-10);
-        await updateTotalGamesForLocation(gameData.locationId, false);
+        await updateGamesHostedForLoggedInUser(false);
 
     } catch (error) {
         console.error('Error deleting game:', error);
@@ -90,19 +88,14 @@ export async function deleteGame(gameId: string, removeGameCallback: (gameId: st
 
 export async function createGame(gameData: Omit<Game, 'id'>): Promise<string> {
     try {
+      //create game  in firebase
       const gameRef = await addDoc(collection(db, 'Games'), gameData);
       const firestoreId = gameRef.id;
       await updateDoc(gameRef, { id: firestoreId });
+      //add game to location
       const locationRef = doc(db, 'Locations', gameData.locationId);
       await updateDoc(locationRef, { games: arrayUnion(firestoreId) });
-  
-      await updateTotalGamesForLocation(gameData.locationId, true);  // Update the total games count
-      const locationSnapshot = await getDoc(locationRef);
-      if (locationSnapshot.exists()) {
-          const locationData = locationSnapshot.data();
-          const newTotalGames = (locationData.totalGames || 0) + 1;
-          await updateDoc(locationRef, { totalGames: newTotalGames });
-      }
+      await updateTotalGamesForLocation(gameData.locationId, true);
       return firestoreId;
     } catch (error) {
       console.error('Error creating game:', error);
