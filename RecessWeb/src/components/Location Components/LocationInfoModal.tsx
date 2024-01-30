@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { GamesList } from '../Game Components/GamesList';
 import { DataContext } from '../../services/DataProvider';
 import { addToFavoriteLocations, removeFromFavoriteLocations } from '../../services/UserServices';
+import { Favorite, FavoriteBorder } from '@mui/icons-material';
 
 interface LocationInfoModalProps {
   location: Location;
@@ -66,9 +67,13 @@ export const LocationInfoModal: React.FC<LocationInfoModalProps> = ({ location, 
     <div className="InfoModal-backdrop">
       <div className="locationInfoModal-content">
         <h3>{name}</h3>
-        <button onClick={handleToggleFavorite}>
-          {isFavorite ? 'Remove from Favorites' : 'Add to Favorites'}
-        </button>
+          {isFavorite ? 
+          <Favorite onClick={handleToggleFavorite} style={{color: 'green'}}>
+            </Favorite>
+          : 
+          <FavoriteBorder onClick={handleToggleFavorite} style={{color: 'green'}}>
+            </FavoriteBorder>
+          }
         <p>{description}</p>
         <GamesList games={gamesAtLocation} onDeleteGame={() => {}} />
         <button onClick={handleOpenGameCreation}>Create Game at this Location</button>
