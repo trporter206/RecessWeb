@@ -14,6 +14,7 @@ export const PlayerItem: React.FC<{ user: User }> = ({ user }) => {
     <div className='player-item' onClick={handleToggleInfo}>
       <div className='player-content'>
         <h3>{user.username}</h3>
+        <h3>Points: {user.points}</h3>
       </div>
       {showInfo && (
         <UserInfoModal 

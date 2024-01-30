@@ -9,12 +9,16 @@ interface UserInfoModalProps {
 }
 
 export const UserInfoModal: React.FC<UserInfoModalProps> = ({ user }) => {
-  const { username } = user;
+  const { username, points, gamesHosted, gamesJoined, rating } = user;
 
   return (
     <div className="InfoModal-backdrop">
       <div className="userInfoModal-content">
         <h3>{username}</h3>
+        <h3>Points: {points}</h3>
+        <h3>Rating: {rating}</h3>
+        <h4>Games Played: {gamesHosted}</h4>
+        <h4>Games Joined: {gamesJoined}</h4>
       </div>
     </div>
   );
