@@ -38,7 +38,11 @@ export const ProfilePage = () => {
   let favoriteLocations: Location[] = [];
 
   if (profile) {
-    favoriteLocations = dataContext.locations.filter(location => profile.favoriteLocations.includes(location.id));
+    // Ensure favoriteLocations is an array before using it
+    const favoriteLocationsIds = profile.favoriteLocations || [];
+    favoriteLocations = dataContext.locations.filter(location => 
+      favoriteLocationsIds.includes(location.id)
+    );
   }
 
   return (

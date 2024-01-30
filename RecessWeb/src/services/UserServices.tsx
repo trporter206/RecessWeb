@@ -85,6 +85,31 @@ export async function updatePointsForLoggedInUser(pointsChange: number) {
     }
 }
 
+// Function to update points for a specific user
+export async function updatePointsForUser(userId: string, pointsChange: number): Promise<void> {
+  const userRef = doc(db, 'Users', userId);
+
+  try {
+      // Get current user data
+      const userSnapshot = await getDoc(userRef);
+      if (!userSnapshot.exists()) {
+          throw new Error('User not found');
+      }
+      const userData = userSnapshot.data();
+
+      // Calculate new points
+      const newPoints = Math.max((userData.points || 0) + pointsChange, 0);
+
+      // Update points in Firestore
+      await updateDoc(userRef, {
+          points: newPoints
+      });
+  } catch (error) {
+      console.error(`Error updating points for user ${userId}:`, error);
+      throw error;
+  }
+}
+
 export async function updateGamesHostedForLoggedInUser(increment: boolean) {
     const auth = getAuth();
     const user = auth.currentUser;

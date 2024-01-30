@@ -22,6 +22,7 @@ export const GameCreationModal: React.FC<GameCreationModalProps> = ({ show, onCl
   const [minimumPoints, setMinimumPoints] = useState(0);
   const maxPoints = profile ? profile.points : 0;
   const [description, setDescription] = useState('');
+  const [time, setTime] = useState("12:00");
 
   useEffect(() => {
     const defaultLocationId = locationId || (locations.length > 0 ? locations[0].id : '');
@@ -42,11 +43,13 @@ export const GameCreationModal: React.FC<GameCreationModalProps> = ({ show, onCl
       // Handle validation error
       return;
     }
+
+    const dateTime = new Date(`${date}T${time}`);
   
     const newGame = {
       locationId: selectedLocation,
       players: [],
-      time: new Date(date),
+      time: dateTime,
       hostId: user.uid,
       minimumPoints,
       description,
@@ -104,6 +107,8 @@ export const GameCreationModal: React.FC<GameCreationModalProps> = ({ show, onCl
             </div>
             <label>Date: </label>
             <input type="date" value={date} onChange={e => setDate(e.target.value)} /><br/>
+            <label>Time: </label>
+            <input type="time" value={time} onChange={e => setTime(e.target.value)} /><br/>
             <button onClick={handleSave}>Save</button>
             <button onClick={handleClose}>Cancel</button>
         </div>
