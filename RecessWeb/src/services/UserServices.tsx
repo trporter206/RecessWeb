@@ -1,5 +1,5 @@
 import { initializeApp } from 'firebase/app';
-import { getFirestore, collection, getDocs, doc, getDoc, updateDoc } from 'firebase/firestore';
+import { getFirestore, collection, getDocs, doc, getDoc, updateDoc, arrayUnion, arrayRemove } from 'firebase/firestore';
 import { User } from '../models/User';
 import { firebaseConfig, firestore } from '../firebaseConfig';
 import { getAuth } from 'firebase/auth';
@@ -20,8 +20,10 @@ export async function fetchUsers(): Promise<User[]> {
                 rating: data.rating,
                 gamesHosted: data.gamesHosted,
                 gamesJoined: data.gamesJoined,
+                ratings: data.ratings,
                 id: data.id,
-                password: ''
+                password: '',
+                favoriteLocations: data.favoriteLocations
             };
             return user;
         });
@@ -143,4 +145,56 @@ export async function updateGamesJoinedForLoggedInUser(increment: boolean) {
       console.error('Error updating games joined:', error);
       throw error;
     }
+}
+
+export async function addToFavoriteLocations(locationId: string) {
+    const auth = getAuth();
+    const user = auth.currentUser;
+  
+    if (!user) {
+      throw new Error('No user logged in');
+    }
+  
+    const userRef = doc(db, 'Users', user.uid);
+  
+    try {
+      // Get current user data
+      const userSnapshot = await getDoc(userRef);
+      if (!userSnapshot.exists()) {
+        throw new Error('User not found');
+      }
+      // Update favoriteLocations in Firestore
+      await updateDoc(userRef, {
+        favoriteLocations: arrayUnion(locationId)
+      });
+    } catch (error) {
+      console.error('Error updating favorite locations:', error);
+      throw error;
+    }
+}
+
+export async function removeFromFavoriteLocations(locationId: string) {
+  const auth = getAuth();
+  const user = auth.currentUser;
+
+  if (!user) {
+    throw new Error('No user logged in');
+  }
+
+  const userRef = doc(db, 'Users', user.uid);
+
+  try {
+    // Get current user data
+    const userSnapshot = await getDoc(userRef);
+    if (!userSnapshot.exists()) {
+      throw new Error('User not found');
+    }
+    // Update favoriteLocations in Firestore
+    await updateDoc(userRef, {
+      favoriteLocations: arrayRemove(locationId)
+    });
+  } catch (error) {
+    console.error('Error updating favorite locations:', error);
+    throw error;
+  }
 }

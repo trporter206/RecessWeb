@@ -18,6 +18,10 @@ export async function fetchLocations(): Promise<Location[]> {
                 description: data.description,
                 games: await fetchGames(doc.id),
                 totalGames: data.totalGames,
+                address: data.address,
+                type: data.type,
+                courtCount: data.courtCount,
+                lights: data.lights,
                 coordinates: {latitude: data.coordinates.latitude, longitude: data.coordinates.longitude}
             };
             return location;

@@ -90,9 +90,9 @@
     justify-content: center;
     align-items: center;
     z-index: 1000; /* Ensure it's above other elements */
-  }
+}
 
-  .gameCreationModal-backdrop {
+.gameCreationModal-backdrop {
     position: fixed;
     top: 0;
     left: 0;
@@ -104,38 +104,44 @@
     justify-content: center;
     align-items: center;
     z-index: 1000; /* Ensure it's above other elements */
-  }
+}
 
-  .gameCreationModal-content {
+.gameCreationModal-content {
     background: white;
     color: black;
     padding: 20px;
     border-radius: 5px;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-  }
+}
   
-  .locationInfoModal-content {
+.locationInfoModal-content {
     background: white;
     color: black;
     padding: 20px;
     border-radius: 5px;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-  }
+}
 
-  .gameInfoModal-content {
+.gameInfoModal-content {
     background: white;
     color: black;
     padding: 20px;
     border-radius: 5px;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-  }
+}
 
-  .profileCreationModal-content {
+.profileCreationModal-content {
     background: white;
     color: black;
     padding: 20px;
     border-radius: 5px;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-  }
+}
 
-  
+.user-lists-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    width: 100%;
+    padding: 20px;
+}
