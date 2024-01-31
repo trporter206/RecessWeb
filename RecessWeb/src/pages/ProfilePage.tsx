@@ -15,7 +15,8 @@ export const ProfilePage = () => {
   const user = userContext?.user;
   const profile = userContext?.profile;
   const games = dataContext?.games || []; 
-  const { username, points, gamesHosted, gamesJoined } = profile || { username: '', points: 0, totalGames: 0, gamesHosted: 0, gamesJoined: 0 };
+  const { username, points, gamesHosted, gamesJoined, network } = profile || 
+  { username: '', points: 0, totalGames: 0, gamesHosted: 0, gamesJoined: 0, network: [] };
 
   const [showProfileCreationModal, setShowProfileCreationModal] = useState(false);
 
@@ -56,6 +57,7 @@ export const ProfilePage = () => {
             <h3>Points: {points}</h3>
             <h3>Games Hosted: {gamesHosted}</h3>
             <h3>Games Joined: {gamesJoined}</h3>
+            <h3>Network size: {network.length}</h3>
           </div>
           <div className='user-lists-container'>
             <div className="user-games-container">

@@ -21,6 +21,7 @@ export async function fetchUsers(): Promise<User[]> {
                 gamesHosted: data.gamesHosted,
                 gamesJoined: data.gamesJoined,
                 ratings: data.ratings,
+                network: data.network,
                 id: data.id,
                 password: '',
                 favoriteLocations: data.favoriteLocations
@@ -231,3 +232,28 @@ export async function removeFromFavoriteLocations(locationId: string) {
     throw error;
   }
 }
+
+export async function addUserToNetwork(userId: string, friendId: string) {
+  const userRef = doc(db, 'Users', userId);
+
+  try {
+    const userSnapshot = await getDoc(userRef);
+    if (!userSnapshot.exists()) {
+      throw new Error('User not found');
+    }
+
+    const userData = userSnapshot.data();
+    const existingNetwork = userData.network || [];
+
+    if (!existingNetwork.includes(friendId)) {
+      await updateDoc(userRef, {
+        network: arrayUnion(friendId)
+      });
+    }
+  } catch (error) {
+    console.error('Error updating network:', error);
+    throw error;
+  }
+}
+
+

@@ -8,5 +8,6 @@ export interface User {
   gamesHosted: number;
   gamesJoined: number;
   ratings: Record<string, number>;
+  network: string[];
   favoriteLocations: string[];
 }

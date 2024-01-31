@@ -9,6 +9,7 @@ interface UserProfile {
   email: string;
   points: number;
   rating: number;
+  network: string[];
   gamesHosted: number;
   gamesJoined: number;
   ratings: Record<string, number>;

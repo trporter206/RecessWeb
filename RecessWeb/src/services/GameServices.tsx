@@ -2,7 +2,7 @@ import { initializeApp } from 'firebase/app';
 import { getFirestore, collection, getDocs, addDoc, doc, deleteDoc, updateDoc, arrayUnion, arrayRemove, getDoc } from 'firebase/firestore';
 import { Game } from '../models/Game';
 import { firebaseConfig, firestore } from '../firebaseConfig';
-import { updateGamesHostedForLoggedInUser, updatePointsForLoggedInUser } from './UserServices';
+import { addUserToNetwork, updateGamesHostedForLoggedInUser, updatePointsForLoggedInUser } from './UserServices';
 import { addGameIdToLocation, updateTotalGamesForLocation } from './locationService';
 import { updatePointsForUser } from './UserServices';
 
@@ -125,26 +125,37 @@ export async function rewardBonusPoints(gameId: string): Promise<void> {
 }
 
 export async function completeGame(gameId: string): Promise<void> {
-    try {
-        const gameRef = doc(db, 'Games', gameId);
-        const gameSnapshot = await getDoc(gameRef);
-        if (!gameSnapshot.exists()) {
-            console.error('Game does not exist');
-            throw new Error('Game not found');
-        }
-        // delete game object
-        const gameData = gameSnapshot.data();
-        const locationRef = doc(db, 'Locations', gameData.locationId);
-        await Promise.all([
-          deleteDoc(gameRef),
-          updateDoc(locationRef, { games: arrayRemove(gameId) })
+  try {
+      const gameRef = doc(db, 'Games', gameId);
+      const gameSnapshot = await getDoc(gameRef);
+      if (!gameSnapshot.exists()) {
+          console.error('Game does not exist');
+          throw new Error('Game not found');
+      }
+      const gameData = gameSnapshot.data();
+      
+      // Update player networks
+      const hostId = gameData.hostId;
+      const playerIds = gameData.players;
+
+      for (const playerId of playerIds) {
+          if (playerId !== hostId) {
+            await addUserToNetwork(playerId, hostId);
+            await addUserToNetwork(hostId, playerId);
+          }
+      }
+
+      // Delete game object
+      const locationRef = doc(db, 'Locations', gameData.locationId);
+      await Promise.all([
+        deleteDoc(gameRef),
+        updateDoc(locationRef, { games: arrayRemove(gameId) })
       ]);
-        // Update user
-        // removeGameCallback(gameId);
-    } catch (error) {
-        console.error('Error completing game:', error);
-        throw error;
-    }
+      // Additional user update logic here if needed
+  } catch (error) {
+      console.error('Error completing game:', error);
+      throw error;
+  }
 }
 
 type UpdateGameCallback = (gameId: string, userId: string, isJoining: boolean) => void;
