@@ -35,24 +35,32 @@ export async function fetchUsers(): Promise<User[]> {
     }
 }
 
-export async function fetchUsernameById(userId: string): Promise<string> {
-    try {
-        const userRef = doc(db, 'Users', userId);
-        const userSnap = await getDoc(userRef);
+export async function fetchUsernameById(userIds: string | string[]): Promise<string[]> {
+  try {
+    // Ensure userIds is always an array
+    const userIdsArray = Array.isArray(userIds) ? userIds : [userIds];
 
-        if (userSnap.exists()) {
-            const userData = userSnap.data();
-            console.log('fetched username: ', userData.username);
-            return userData.username; // Assuming 'username' is the field name in your user document
-        } else {
-            console.error(`No user found with ID ${userId}`);
-            return ''; // Return empty string or handle as needed
-        }
-    } catch (error) {
-        console.error('Error fetching user by ID:', error);
-        throw error;
-    }
+    const userRefs = userIdsArray.map((userId) => doc(db, 'Users', userId));
+    const userSnaps = await Promise.all(userRefs.map(getDoc));
+
+    const usernames = userSnaps.map((userSnap) => {
+      if (userSnap.exists()) {
+        const userData = userSnap.data();
+        return userData.username; // Assuming 'username' is the field name in your user document
+      } else {
+        console.error(`No user found with ID ${userSnap.id}`);
+        return ''; // Return empty string or handle as needed
+      }
+    });
+
+    console.log('fetched usernames: ', usernames);
+    return usernames;
+  } catch (error) {
+    console.error('Error fetching users by IDs:', error);
+    throw error;
+  }
 }
+
 
 export async function updatePointsForLoggedInUser(pointsChange: number) {
     const auth = getAuth();

@@ -85,8 +85,6 @@ export async function deleteGame(gameId: string, removeGameCallback: (gameId: st
     }
 }
 
-
-
 export async function createGame(gameData: Omit<Game, 'id'>): Promise<string> {
     try {
       //create game  in firebase
@@ -148,7 +146,6 @@ export async function completeGame(gameId: string): Promise<void> {
         throw error;
     }
 }
-  
 
 type UpdateGameCallback = (gameId: string, userId: string, isJoining: boolean) => void;
 

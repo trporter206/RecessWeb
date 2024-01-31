@@ -43,12 +43,10 @@ export const GameInfoModal: React.FC<GameInfoModalProps> = ({ game, onClose }) =
       await completeGame(id);
       removeGameFromLocation(id, locationId);
       removeGame(id);
-      onClose();
     } catch (error) {
       console.error('Error completing game:', error);
     }
   }
-
 
   const handleJoinLeaveGame = async (event: React.MouseEvent) => {
     event.stopPropagation();

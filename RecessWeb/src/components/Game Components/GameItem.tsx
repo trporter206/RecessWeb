@@ -33,7 +33,7 @@ export const GameItem: React.FC<GameItemProps> = ({ game, onDelete }) => {
     // Fetch host username
     const loadHostUsername = async () => {
       const username = await fetchUsernameById(hostId);
-      setHostUsername(username);
+      setHostUsername(username[0]);
     };
 
     loadHostUsername();
