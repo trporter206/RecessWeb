@@ -12,8 +12,6 @@ export const ProfileCreationModal: React.FC<ProfileCreationModalProps> = ({ show
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const points = 0
-  const rating = 0
 
   const handleCreateProfile = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -24,9 +22,15 @@ export const ProfileCreationModal: React.FC<ProfileCreationModalProps> = ({ show
       if (userId) {
         await setDoc(doc(firestore, 'Users', userId), {
           username,
-          points,
-          email,
-          rating,
+          email, // Password should not be stored in Firestore for security reasons
+          id: userId,
+          points: 0,
+          rating: 0,
+          gamesHosted: 0,
+          gamesJoined: 0,
+          ratings: {}, // Initialize as an empty object
+          network: [], // Initialize as an empty array
+          favoriteLocations: [] // Initialize as an empty array
         });
       }
       onClose();

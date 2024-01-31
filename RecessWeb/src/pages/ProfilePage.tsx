@@ -12,13 +12,15 @@ import { LocationsList } from '../components/Location Components/LocationsList';
 export const ProfilePage = () => {
   const userContext = useContext(UserContext);
   const dataContext = useContext(DataContext);
+  const [showProfileCreationModal, setShowProfileCreationModal] = useState(false);
   const user = userContext?.user;
   const profile = userContext?.profile;
   const games = dataContext?.games || []; 
   const { username, points, gamesHosted, gamesJoined, network } = profile || 
   { username: '', points: 0, totalGames: 0, gamesHosted: 0, gamesJoined: 0, network: [] };
 
-  const [showProfileCreationModal, setShowProfileCreationModal] = useState(false);
+  let userGames: Game[] = [];
+  let favoriteLocations: Location[] = [];
 
   const handleLogout = async () => {
     try {
@@ -28,15 +30,11 @@ export const ProfilePage = () => {
     }
   };
 
-  let userGames: Game[] = []; // Explicitly type userGames as an array of Game objects
-
   if (user && user.uid) {
     userGames = games.filter(game => 
       game.hostId === user.uid || game.players.includes(user.uid)
     );
   }
-
-  let favoriteLocations: Location[] = [];
 
   if (profile) {
     // Ensure favoriteLocations is an array before using it
