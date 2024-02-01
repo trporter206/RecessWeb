@@ -6,6 +6,8 @@ import { completeGame, joinGame, leaveGame, rewardBonusPoints } from '../../serv
 import { DataContext } from '../../services/DataProvider';
 import { updateGamesJoinedForLoggedInUser, updatePointsForLoggedInUser } from '../../services/UserServices';
 import CircularProgress from '@mui/material/CircularProgress';
+import { PlayerItem } from '../User Components/PlayerItem';
+import { User } from '../../models/User';
 
 interface GameInfoModalProps {
   game: Game;
@@ -14,12 +16,19 @@ interface GameInfoModalProps {
 
 export const GameInfoModal: React.FC<GameInfoModalProps> = ({ game, onClose }) => {
   const userContext = useContext(UserContext);
+  const dataContext = useContext(DataContext);
   const user = userContext ? userContext.user : null;
   const profile = userContext ? userContext.profile : null;
   const [isUserInGame, setIsUserInGame] = useState(false);
-  const { updateGamePlayers, removeGameFromLocation, removeGame } = useContext(DataContext);
+  const { updateGamePlayers, removeGameFromLocation, removeGame, users } = dataContext;
   const { id, locationId, hostId, players, minimumPoints, description } = game;
   const [isLoading, setIsLoading] = useState(false);
+
+  const locationName = dataContext.locations.find(loc => loc.id === locationId)?.name || 'Unknown Location';
+
+  const gamePlayerDetails = players
+      .map(playerId => users.find(user => user.id === playerId))
+      .filter((user): user is User => user !== undefined);
 
   useEffect(() => {
     setIsUserInGame(user ? players.includes(user.uid) : false);
@@ -84,10 +93,16 @@ export const GameInfoModal: React.FC<GameInfoModalProps> = ({ game, onClose }) =
         </div>
       ) : (
         <div className="gameInfoModal-content">
-            <h3>{locationId}</h3>
+            <h3>{locationName}</h3>
             <p>Minimum Points: {minimumPoints}</p>
             <p>Players: {players.length}</p>
             <p>{description}</p>
+            <h3>Players:</h3>
+            {gamePlayerDetails.map(player => (
+              <div key={player.id}>
+                <PlayerItem user={player} />
+              </div>
+            ))}
             {user && user.uid !== hostId && canJoinGame && (
               <button onClick={handleJoinLeaveGame}>
                 {isUserInGame ? 'Leave Game' : 'Join Game'}
