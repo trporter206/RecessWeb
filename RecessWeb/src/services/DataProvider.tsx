@@ -16,6 +16,8 @@ interface DataProviderType {
   removeGame: (gameId: string) => void;
   addGame: (newGame: Game) => void; // Added function
   updateGamePlayers: (gameId: string, userId: string, isJoining: boolean) => void;
+  updateUserRatings: (targetUserId: string, raterId: string, rating: 1 | 0) => void;
+  getAverageRating: (userId: string) => number;
 }
 
 export const DataContext = createContext<DataProviderType>({
@@ -28,6 +30,8 @@ export const DataContext = createContext<DataProviderType>({
   removeGame: () => {},
   addGame: () => {},
   updateGamePlayers: () => {},
+  updateUserRatings: () => {},
+  getAverageRating: () => 0,
 });
 
 export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -48,6 +52,37 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     fetchData();
   }, []);
+
+  const getAverageRating = (userId: string) => {
+    const user = users.find(user => user.id === userId);
+    if (!user || Object.keys(user.ratings).length === 0) {
+      return 0; // Return 0 if user not found or has no ratings
+    }
+    const totalRatings = Object.values(user.ratings).reduce((acc, rating) => acc + rating, 0);
+    const averageRating = totalRatings / Object.keys(user.ratings).length;
+    return averageRating;
+  };
+
+  const updateUserRatings = (targetUserId: string, raterId: string, rating: 1 | 0) => {
+    setUsers(prevUsers => prevUsers.map(user => {
+      if (user.id === targetUserId) {
+        // Check if there's an existing rating by the rater
+        const existingRating = user.ratings[raterId];
+        let updatedRatings = {...user.ratings};
+
+        if (existingRating === rating) {
+          // If the new rating is the same as the existing one, remove the rating
+          delete updatedRatings[raterId];
+        } else {
+          // Otherwise, update or add the new rating
+          updatedRatings[raterId] = rating;
+        }
+
+        return {...user, ratings: updatedRatings};
+      }
+      return user;
+    }));
+  };
 
   const addGameToLocation = (gameId: string, locationId: string) => {
     setLocations(prevLocations =>
@@ -98,7 +133,9 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     removeGameFromLocation,
     removeGame,
     addGame,
-    updateGamePlayers
+    updateGamePlayers,
+    updateUserRatings,
+    getAverageRating,
   };
 
   return (

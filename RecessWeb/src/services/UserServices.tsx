@@ -62,6 +62,47 @@ export async function fetchUsernameById(userIds: string | string[]): Promise<str
   }
 }
 
+export async function updateRatingsForUser(targetUserId: string, rating: 1 | 0): Promise<void> {
+  const auth = getAuth();
+  const currentUser = auth.currentUser;
+
+  if (!currentUser) {
+    throw new Error('No user logged in');
+  }
+
+  const loggedInUserId = currentUser.uid; // Get the logged-in user's ID
+  const targetUserRef = doc(firestore, 'Users', targetUserId); // Reference to the target user document
+
+  try {
+    const targetUserSnapshot = await getDoc(targetUserRef);
+
+    if (!targetUserSnapshot.exists()) {
+      throw new Error('Target user not found');
+    }
+
+    const targetUserData = targetUserSnapshot.data();
+    const currentRating = targetUserData.ratings ? targetUserData.ratings[loggedInUserId] : undefined;
+
+    let updatedRatings = { ...targetUserData.ratings };
+
+    if (currentRating === rating) {
+      // If trying to set the same rating, remove the rating entirely
+      delete updatedRatings[loggedInUserId];
+    } else {
+      // If setting a different rating, update or add the new rating
+      updatedRatings[loggedInUserId] = rating;
+    }
+
+    // Update the target user's ratings
+    await updateDoc(targetUserRef, {
+      ratings: updatedRatings
+    });
+
+  } catch (error) {
+    console.error('Error updating user ratings:', error);
+    throw error;
+  }
+}
 
 export async function updatePointsForLoggedInUser(pointsChange: number) {
     const auth = getAuth();
