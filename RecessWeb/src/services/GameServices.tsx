@@ -13,8 +13,8 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 export async function fetchGames(): Promise<Game[]> {
+  console.log('fetching...games');
     try {
-        console.log('Fetching games');
         const snapshot = await getDocs(collection(db, 'Games'));
         const games = snapshot.docs.map((doc) => {
             const data = doc.data();
@@ -38,6 +38,7 @@ export async function fetchGames(): Promise<Game[]> {
 }
 
 export const fetchGameDetails = async (gameId: string): Promise<Game> => {
+  console.log('fetching...game details');
     try {
         const gameRef = doc(firestore, 'Games', gameId);
         const gameSnapshot = await getDoc(gameRef);
@@ -58,6 +59,7 @@ export const fetchGameDetails = async (gameId: string): Promise<Game> => {
 };
 
 export async function deleteGame(gameId: string, removeGameCallback: (gameId: string) => void): Promise<void> {
+  console.log('fetching...game deletion');
     try {
       //find game reference
         const gameRef = doc(db, 'Games', gameId);
@@ -86,6 +88,7 @@ export async function deleteGame(gameId: string, removeGameCallback: (gameId: st
 }
 
 export async function createGame(gameData: Omit<Game, 'id'>): Promise<string> {
+  console.log('fetching...game creation');
     try {
       //create game  in firebase
       const gameRef = await addDoc(collection(db, 'Games'), gameData);
@@ -100,6 +103,7 @@ export async function createGame(gameData: Omit<Game, 'id'>): Promise<string> {
 }
 
 export async function rewardBonusPoints(gameId: string): Promise<void> {
+  console.log('fetching...bonus points');
   try {
       const gameRef = doc(db, 'Games', gameId);
       const gameSnapshot = await getDoc(gameRef);
@@ -125,6 +129,7 @@ export async function rewardBonusPoints(gameId: string): Promise<void> {
 }
 
 export async function completeGame(gameId: string): Promise<void> {
+  console.log('fetching...game completion');
   try {
       const gameRef = doc(db, 'Games', gameId);
       const gameSnapshot = await getDoc(gameRef);
@@ -161,6 +166,7 @@ export async function completeGame(gameId: string): Promise<void> {
 type UpdateGameCallback = (gameId: string, userId: string, isJoining: boolean) => void;
 
 export const joinGame = async (gameId: string, userId: string, updateGameCallback: UpdateGameCallback) => {
+  console.log('fetching...joining game');
     try {
       const gameRef = doc(firestore, 'Games', gameId);
       await updateDoc(gameRef, {
@@ -174,6 +180,7 @@ export const joinGame = async (gameId: string, userId: string, updateGameCallbac
   };
   
 export const leaveGame = async (gameId: string, userId: string, updateGameCallback: UpdateGameCallback) => {
+  console.log('fetching...leaving game');
     try {
       const gameRef = doc(firestore, 'Games', gameId);
       await updateDoc(gameRef, {

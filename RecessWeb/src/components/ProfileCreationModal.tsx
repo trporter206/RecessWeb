@@ -14,6 +14,7 @@ export const ProfileCreationModal: React.FC<ProfileCreationModalProps> = ({ show
   const [password, setPassword] = useState('');
 
   const handleCreateProfile = async (e: React.FormEvent) => {
+    console.log('fetching...');
     e.preventDefault();
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);

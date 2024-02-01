@@ -23,6 +23,7 @@ export const ProfilePage = () => {
   let favoriteLocations: Location[] = [];
 
   const handleLogout = async () => {
+    console.log('fetching...logout');
     try {
       await auth.signOut();
     } catch (error) {

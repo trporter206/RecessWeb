@@ -8,8 +8,8 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 export async function fetchUsers(): Promise<User[]> {
+  console.log('fetching...users');
     try {
-        console.log('Fetching users');
         const snapshot = await getDocs(collection(db, 'Users'));
         const users = snapshot.docs.map(async (doc) => {
             const data = doc.data();
@@ -37,6 +37,7 @@ export async function fetchUsers(): Promise<User[]> {
 }
 
 export async function fetchUsernameById(userIds: string | string[]): Promise<string[]> {
+  console.log('fetching...user ID');
   try {
     // Ensure userIds is always an array
     const userIdsArray = Array.isArray(userIds) ? userIds : [userIds];
@@ -63,6 +64,7 @@ export async function fetchUsernameById(userIds: string | string[]): Promise<str
 }
 
 export async function updateRatingsForUser(targetUserId: string, rating: 1 | 0): Promise<void> {
+  console.log('fetching...user ratings');
   const auth = getAuth();
   const currentUser = auth.currentUser;
 
@@ -105,6 +107,7 @@ export async function updateRatingsForUser(targetUserId: string, rating: 1 | 0):
 }
 
 export async function updatePointsForLoggedInUser(pointsChange: number) {
+  console.log('fetching... logged in user points');
     const auth = getAuth();
     const user = auth.currentUser;
   
@@ -137,6 +140,7 @@ export async function updatePointsForLoggedInUser(pointsChange: number) {
 
 // Function to update points for a specific user
 export async function updatePointsForUser(userId: string, pointsChange: number): Promise<void> {
+  console.log('fetching...user points');
   const userRef = doc(db, 'Users', userId);
 
   try {
@@ -161,6 +165,7 @@ export async function updatePointsForUser(userId: string, pointsChange: number):
 }
 
 export async function updateGamesHostedForLoggedInUser(increment: boolean) {
+  console.log('fetching...update for login user games hosted');
     const auth = getAuth();
     const user = auth.currentUser;
   
@@ -192,6 +197,7 @@ export async function updateGamesHostedForLoggedInUser(increment: boolean) {
 }
 
 export async function updateGamesJoinedForLoggedInUser(increment: boolean) {
+  console.log('fetching...games joined for login user');
     const auth = getAuth();
     const user = auth.currentUser;
   
@@ -223,6 +229,7 @@ export async function updateGamesJoinedForLoggedInUser(increment: boolean) {
 }
 
 export async function addToFavoriteLocations(locationId: string) {
+  console.log('fetching...favorite locations');
     const auth = getAuth();
     const user = auth.currentUser;
   
@@ -249,6 +256,7 @@ export async function addToFavoriteLocations(locationId: string) {
 }
 
 export async function removeFromFavoriteLocations(locationId: string) {
+  console.log('fetching...remove favorite');
   const auth = getAuth();
   const user = auth.currentUser;
 
@@ -275,6 +283,7 @@ export async function removeFromFavoriteLocations(locationId: string) {
 }
 
 export async function addUserToNetwork(userId: string, friendId: string) {
+  console.log('fetching...user network');
   const userRef = doc(db, 'Users', userId);
 
   try {

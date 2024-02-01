@@ -7,8 +7,8 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 export async function fetchLocations(): Promise<Location[]> {
+    console.log('fetching...locations');
     try {
-        console.log('Fetching locations');
         const snapshot = await getDocs(collection(db, 'Locations'));
         const locations = snapshot.docs.map(async (doc) => {
             const data = doc.data();
@@ -26,7 +26,6 @@ export async function fetchLocations(): Promise<Location[]> {
             };
             return location;
         });
-        console.log('fetched locations: ', locations.length);
         return Promise.all(locations);
     } catch (error) {
         console.error('Error fetching locations:', error);
@@ -35,10 +34,10 @@ export async function fetchLocations(): Promise<Location[]> {
 }
 
 export async function fetchGames(locationId: string): Promise<string[]> {
+    console.log('fetching...games');
     try {
         const gamesSnapshot = await getDocs(query(collection(db, 'Games'), where('locationId', '==', locationId)));
         const gameIds = gamesSnapshot.docs.map(doc => doc.id);
-        console.log('fetched game IDs: ', gameIds.length);
         return gameIds;
     } catch (error) {
         console.error('Error fetching game IDs:', error);
@@ -47,6 +46,7 @@ export async function fetchGames(locationId: string): Promise<string[]> {
 }
 
 export function getLocationCoordinates(locationId: string): Promise<{ latitude: number, longitude: number }> {
+    console.log('fetching...coordinates');
     return new Promise(async (resolve, reject) => {
         try {
             const docRef = doc(collection(db, 'Locations'), locationId);
@@ -68,6 +68,7 @@ export function getLocationCoordinates(locationId: string): Promise<{ latitude: 
 }
 
 export async function updateTotalGamesForLocation(locationId: string, increment: boolean) {
+    console.log('fetching...total games');
     const locationRef = doc(db, 'Locations', locationId);
   
     try {
@@ -92,6 +93,7 @@ export async function updateTotalGamesForLocation(locationId: string, increment:
 }
 
 export async function addGameIdToLocation(locationId: string, gameId: string) {
+    console.log('fetching...game to location');
     const locationRef = doc(db, 'Locations', locationId);
 
     try {
