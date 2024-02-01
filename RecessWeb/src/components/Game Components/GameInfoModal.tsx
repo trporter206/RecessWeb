@@ -5,6 +5,7 @@ import { UserContext } from '../../services/UserContext';
 import { completeGame, joinGame, leaveGame, rewardBonusPoints } from '../../services/GameServices';
 import { DataContext } from '../../services/DataProvider';
 import { updateGamesJoinedForLoggedInUser, updatePointsForLoggedInUser } from '../../services/UserServices';
+import CircularProgress from '@mui/material/CircularProgress';
 
 interface GameInfoModalProps {
   game: Game;
@@ -18,6 +19,7 @@ export const GameInfoModal: React.FC<GameInfoModalProps> = ({ game, onClose }) =
   const [isUserInGame, setIsUserInGame] = useState(false);
   const { updateGamePlayers, removeGameFromLocation, removeGame } = useContext(DataContext);
   const { id, locationId, hostId, players, minimumPoints, description } = game;
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     setIsUserInGame(user ? players.includes(user.uid) : false);
@@ -38,6 +40,7 @@ export const GameInfoModal: React.FC<GameInfoModalProps> = ({ game, onClose }) =
       console.error("User not logged in");
       return;
     }
+    setIsLoading(true);
     try {
       await rewardBonusPoints(id);
       await completeGame(id);
@@ -45,6 +48,8 @@ export const GameInfoModal: React.FC<GameInfoModalProps> = ({ game, onClose }) =
       removeGame(id);
     } catch (error) {
       console.error('Error completing game:', error);
+    } finally {
+      setIsLoading(false); // Stop loading regardless of success or failure
     }
   }
 
@@ -73,23 +78,29 @@ export const GameInfoModal: React.FC<GameInfoModalProps> = ({ game, onClose }) =
 
   return (
     <div className="InfoModal-backdrop">
-      <div className="gameInfoModal-content">
-        <h3>{locationId}</h3>
-        <p>Minimum Points: {minimumPoints}</p>
-        <p>Players: {players.length}</p>
-        <p>{description}</p>
-        {user && user.uid !== hostId && canJoinGame && (
-          <button onClick={handleJoinLeaveGame}>
-            {isUserInGame ? 'Leave Game' : 'Join Game'}
-          </button>
-        )}
-        {hasOneHourPassed() && user && user.uid === hostId && (
-          <button onClick={handleCompleteGame}>
-            Complete Game
-          </button>
-        )}
-        <button onClick={onClose}>Close</button>
-      </div>
+      {isLoading ? (
+        <div className="gameInfoModal-content">
+          <CircularProgress /> // Show loading indicator
+        </div>
+      ) : (
+        <div className="gameInfoModal-content">
+            <h3>{locationId}</h3>
+            <p>Minimum Points: {minimumPoints}</p>
+            <p>Players: {players.length}</p>
+            <p>{description}</p>
+            {user && user.uid !== hostId && canJoinGame && (
+              <button onClick={handleJoinLeaveGame}>
+                {isUserInGame ? 'Leave Game' : 'Join Game'}
+              </button>
+            )}
+            {hasOneHourPassed() && user && user.uid === hostId && (
+              <button onClick={handleCompleteGame}>
+                Complete Game
+              </button>
+            )}
+            <button onClick={onClose}>Close</button>
+          </div>
+      )}
     </div>
   );
 };

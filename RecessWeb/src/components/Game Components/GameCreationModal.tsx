@@ -5,6 +5,7 @@ import { Location } from '../../models/Location';
 import { UserContext } from '../../services/UserContext';
 import { updateGamesHostedForLoggedInUser, updatePointsForLoggedInUser } from '../../services/UserServices';
 import { updateTotalGamesForLocation } from '../../services/locationService';
+import CircularProgress from '@mui/material/CircularProgress';
 
 interface GameCreationModalProps {
   show: boolean;
@@ -23,6 +24,7 @@ export const GameCreationModal: React.FC<GameCreationModalProps> = ({ show, onCl
   const maxPoints = profile ? profile.points : 0;
   const [description, setDescription] = useState('');
   const [time, setTime] = useState("12:00");
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     const defaultLocationId = locationId || (locations.length > 0 ? locations[0].id : '');
@@ -54,7 +56,8 @@ export const GameCreationModal: React.FC<GameCreationModalProps> = ({ show, onCl
       minimumPoints,
       description,
     };
-  
+    
+    setIsLoading(true);
     try {
       const newGameId = await createGame(newGame);
       const createdGame = { ...newGame, id: newGameId };
@@ -68,9 +71,10 @@ export const GameCreationModal: React.FC<GameCreationModalProps> = ({ show, onCl
       console.log('Game created successfully');
     } catch (error) {
       console.error('Error creating game:', error);
+    } finally {
+      setIsLoading(false); // Stop loading
+      onClose();
     }
-  
-    onClose();
   };
 
   if (!show) {
@@ -80,6 +84,10 @@ export const GameCreationModal: React.FC<GameCreationModalProps> = ({ show, onCl
   return (
     <div className='gameCreationModal-backdrop' onClick={handleClose}>
         <div className='gameCreationModal-content' onClick={stopPropagation}>
+        {isLoading ? (
+          <CircularProgress /> // Show loading indicator
+        ) : (
+          <div>
             <h2>Create Game</h2>
             <label>Location: </label>
             <select value={selectedLocation} onChange={e => setSelectedLocation(e.target.value)}>
@@ -111,6 +119,8 @@ export const GameCreationModal: React.FC<GameCreationModalProps> = ({ show, onCl
             <input type="time" value={time} onChange={e => setTime(e.target.value)} /><br/>
             <button onClick={handleSave}>Save</button>
             <button onClick={handleClose}>Cancel</button>
+          </div>
+        )}
         </div>
     </div>
   );
