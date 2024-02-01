@@ -1,7 +1,7 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useContext, useEffect, useRef } from 'react';
 import { Game } from '../models/Game';
 import { Location } from '../models/Location';
-import { getLocationCoordinates } from '../services/locationService';
+import { DataContext } from '../services/DataProvider';
 
 interface MapComponentProps {
   items: Location[] | Game[];
@@ -10,6 +10,7 @@ interface MapComponentProps {
 
 export const MapComponent: React.FC<MapComponentProps> = ({ items, onMarkerClick }) => {
   const mapRef = useRef<HTMLDivElement>(null);
+  const { locations } = useContext(DataContext);
 
   useEffect(() => {
     let map: google.maps.Map | null = null;
@@ -19,7 +20,8 @@ export const MapComponent: React.FC<MapComponentProps> = ({ items, onMarkerClick
       if ('coordinates' in item) {
         coordinates = item.coordinates;
       } else {
-        coordinates = await getLocationCoordinates(item.locationId);
+        const local = locations.find(loc => loc.id === item.locationId);
+        coordinates = local?.coordinates;
       }
 
       if (coordinates && map) {
