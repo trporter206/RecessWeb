@@ -16,7 +16,7 @@ export async function fetchLocations(): Promise<Location[]> {
                 id: doc.id,
                 name: data.name,
                 description: data.description,
-                games: await fetchGames(doc.id),
+                games: data.games,
                 totalGames: data.totalGames,
                 address: data.address,
                 type: data.type,

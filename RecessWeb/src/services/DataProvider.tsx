@@ -41,9 +41,9 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   useEffect(() => {
     const fetchData = async () => {
-      const fetchedLocations = await fetchLocations();
-      const fetchedGames = await fetchGames();
       const fetchedUsers = await fetchUsers();
+      const fetchedGames = await fetchGames();
+      const fetchedLocations = await fetchLocations();
 
       setLocations(fetchedLocations);
       setGames(fetchedGames);

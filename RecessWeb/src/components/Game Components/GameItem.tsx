@@ -3,7 +3,6 @@ import { DataContext } from '../../services/DataProvider';
 import { UserContext } from '../../services/UserContext';
 import { GameInfoModal } from './GameInfoModal';
 import { Game } from '../../models/Game';
-import { fetchUsernameById } from '../../services/UserServices';
 import { deleteGame } from '../../services/GameServices';
 
 interface GameItemProps {
@@ -13,13 +12,12 @@ interface GameItemProps {
 
 export const GameItem: React.FC<GameItemProps> = ({ game, onDelete }) => {
   const { id, locationId, players, time, hostId, minimumPoints } = game;
-  const { locations } = useContext(DataContext);
   const removeGameFromLocation = useContext(DataContext).removeGameFromLocation;
   const userContext = useContext(UserContext);
   const [hostUsername, setHostUsername] = useState('');
   const [locationName, setLocationName] = useState('');
   const [showModal, setShowModal] = useState(false);
-  const { removeGame } = useContext(DataContext);
+  const { removeGame, locations, users } = useContext(DataContext);
   const { user } = useContext(UserContext);
 
   let displayDate = '';
@@ -31,13 +29,8 @@ export const GameItem: React.FC<GameItemProps> = ({ game, onDelete }) => {
 
   useEffect(() => {
     // Fetch host username
-    const loadHostUsername = async () => {
-      const username = await fetchUsernameById(hostId);
-      setHostUsername(username[0]);
-    };
-
-    loadHostUsername();
-
+    const hostUser = users.find(user => user.id === hostId);
+    setHostUsername(hostUser ? hostUser.username : 'Unknown Host');
     // Fetch location name
     const location = locations.find(loc => loc.id === locationId);
     setLocationName(location ? location.name : 'Unknown Location');

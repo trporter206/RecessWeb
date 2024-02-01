@@ -28,7 +28,6 @@ export async function fetchUsers(): Promise<User[]> {
             };
             return user;
         });
-        console.log('fetched users: ', users.length);
         return Promise.all(users);
     } catch (error) {
         console.error('Error fetching locations:', error);
@@ -55,7 +54,6 @@ export async function fetchUsernameById(userIds: string | string[]): Promise<str
       }
     });
 
-    console.log('fetched usernames: ', usernames);
     return usernames;
   } catch (error) {
     console.error('Error fetching users by IDs:', error);

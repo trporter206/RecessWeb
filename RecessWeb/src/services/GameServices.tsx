@@ -29,7 +29,6 @@ export async function fetchGames(): Promise<Game[]> {
             };
             return game;
         });
-        console.log('fetched games: ', games.length);
         return games;
     } catch (error) {
         console.error('Error fetching games:', error);
