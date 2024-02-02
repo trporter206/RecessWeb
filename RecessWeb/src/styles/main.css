@@ -32,11 +32,20 @@
 }
 
 .nav-style {
-  background: lightblue; /* Changed to light blue */
+  background:rgba(61, 90, 128, 1); /* Changed to light blue */
   padding: 10px;        /* Removed quotes for numeric value */
   position: fixed;
   top: 0;
   width: 100%;          /* Removed quotes for percentage value */
+}
+
+.nav-style h2 {
+  margin: 0;
+}
+
+.nav-style a {
+    color: white;
+    text-decoration: none; /* Optional: Removes underline from links */
 }
 
 .sorting-dropdown {
@@ -50,7 +59,7 @@
 }
 
 .location-item {
-    background-color: green;
+    background-color:rgba(128, 187, 5, 1);
     border-radius: 10px;
     padding: 5px;
     margin: 10px 0;
@@ -65,7 +74,7 @@
 }
 
 .game-item {
-    background-color: red;
+    background-color: rgba(238, 108, 77, 1);
     border-radius: 10px;
     padding: 5px;
     margin: 10px 0;
@@ -128,6 +137,17 @@
     padding: 20px;
     border-radius: 5px;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    max-height: 80vh; /* Set a maximum height to prevent it from going off-screen */
+    overflow-y: auto; /* Enable vertical scrolling when content overflows */
+    width: 600px; /* Optional: Set a fixed width for consistency */
+}
+
+.game-playerlist-container {
+    display: flex;
+    flex-direction: row;
+    overflow-x: auto;
+    overflow-y: hidden;
+    white-space: nowrap; 
 }
 
 .profileCreationModal-content {

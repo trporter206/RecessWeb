@@ -93,16 +93,17 @@ export const GameInfoModal: React.FC<GameInfoModalProps> = ({ game, onClose }) =
         </div>
       ) : (
         <div className="gameInfoModal-content">
-            <h3>{locationName}</h3>
+            <h1>{locationName}</h1>
             <p>Minimum Points: {minimumPoints}</p>
-            <p>Players: {players.length}</p>
             <p>{description}</p>
-            <h3>Players:</h3>
-            {gamePlayerDetails.map(player => (
-              <div key={player.id}>
-                <PlayerItem user={player} />
-              </div>
-            ))}
+            <h3>Players: {players.length}</h3>
+            <div className="game-playerlist-container">
+              {gamePlayerDetails.map(player => (
+                <div key={player.id}>
+                  <PlayerItem user={player} />
+                </div>
+              ))}
+            </div>
             {user && user.uid !== hostId && canJoinGame && (
               <button onClick={handleJoinLeaveGame}>
                 {isUserInGame ? 'Leave Game' : 'Join Game'}
