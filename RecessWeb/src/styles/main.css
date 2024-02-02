@@ -146,20 +146,75 @@
     padding: 20px;
 }
 
+.playerlist-container {
+    display: flex;
+    flex-direction: row; /* Align items in a row */
+    align-items: center; /* Center items vertically */
+    justify-content: flex-start; /* Align items to the start of the container */
+    gap: 10px; /* Gap between items */
+    padding: 10px; /* Padding around the container */
+    overflow-x: auto; /* Enable horizontal scrolling */
+    overflow-y: hidden; /* Prevent vertical scrolling */
+    white-space: nowrap; /* Prevent wrapping to a new line */
+}
+
+.player-circle {
+    align-self: center;
+    width: 66.66%; /* Adjust the width as per your design */
+    padding-top: 66.66%; /* Height based on the width to keep it circular */
+    border-radius: 50%; /* Make it round */
+    background-color: lightblue; /* Circle color */
+    margin-bottom: 10px; /* Space below the circle */
+    box-sizing: border-box; /* Border and padding included in width/height */
+}
+
 .player-item {
-    background-color: blue;
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #007bff; /* Example background color, adjust as needed */
     border-radius: 10px;
-    padding: 5px;
-    margin: 10px 0;
+    padding: 20px; /* Adjust padding to increase size */
+    margin: 10px; /* Adjust margin for spacing between items */
     color: white;
+    cursor: pointer;
+    text-align: center;
+    width: 200px; /* Adjust width as needed */
+    height: 300px;
 }
 
 .player-content {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    align-items: center;
+    /* align-items: center; */
     width: 100%;
+}
+
+.playerItem-stats p {
+    margin-bottom: 0;
+}
+
+.playerItem-stats h3 {
+    margin-top: 0;
+}
+
+.playerItem-stats {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+}
+
+.player-points {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.player-rating {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
 }
 
 .userInfoModal-content {

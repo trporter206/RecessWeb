@@ -9,7 +9,7 @@ type PlayersListProps = {
 
 export const PlayersList: React.FC<PlayersListProps> = ({ users }) => {
     return (
-        <div>
+        <div className="playerlist-container">
             {users.map(user => (
                 <PlayerItem 
                     key={user.id} 
