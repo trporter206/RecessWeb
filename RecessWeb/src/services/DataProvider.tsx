@@ -11,13 +11,16 @@ interface DataProviderType {
   games: Game[];
   users: User[];
   setLocations: React.Dispatch<React.SetStateAction<Location[]>>;
-  addGameToLocation: (gameId: string, locationId: string) => void;
+  addGameToLocationContext: (gameId: string, locationId: string) => void;
   removeGameFromLocation: (gameId: string, locationId: string) => void;
   removeGame: (gameId: string) => void;
   addGame: (newGame: Game) => void; // Added function
   updateGamePlayers: (gameId: string, userId: string, isJoining: boolean) => void;
   updateUserRatings: (targetUserId: string, raterId: string, rating: 1 | 0) => void;
   getAverageRating: (userId: string) => number;
+  getUsernameById: (userId: string) => string | undefined;
+  toggleGamePendingStatusContext: (gameId: string) => void;
+
 }
 
 export const DataContext = createContext<DataProviderType>({
@@ -25,13 +28,15 @@ export const DataContext = createContext<DataProviderType>({
   games: [],
   users: [],
   setLocations: () => {},
-  addGameToLocation: () => {},
+  addGameToLocationContext: () => {},
   removeGameFromLocation: () => {},
   removeGame: () => {},
   addGame: () => {},
   updateGamePlayers: () => {},
   updateUserRatings: () => {},
   getAverageRating: () => 0,
+  getUsernameById: () => '',
+  toggleGamePendingStatusContext: () => {},
 });
 
 export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -52,6 +57,32 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     fetchData();
   }, []);
+
+  const toggleGamePendingStatusContext = (gameId: string) => {
+    setGames((currentGames) => {
+      // Find the index of the game that matches the gameId
+      const gameIndex = currentGames.findIndex((game) => game.id === gameId);
+      if (gameIndex === -1) {
+        console.error("Game not found");
+        return currentGames; // Return the current state if game not found
+      }
+      // Clone the currentGames array
+      const updatedGames = [...currentGames];
+      // Toggle the 'pending' status of the game
+      updatedGames[gameIndex] = {
+        ...updatedGames[gameIndex],
+        pending: !updatedGames[gameIndex].pending,
+      };
+  
+      return updatedGames; // Return the updated games array
+    });
+  };
+  
+
+  const getUsernameById = (userId: string) => {
+    const user = users.find(user => user.id === userId);
+    return user ? user.username : undefined;
+  };
 
   const getAverageRating = (userId: string) => {
     const user = users.find(user => user.id === userId);
@@ -84,7 +115,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }));
   };
 
-  const addGameToLocation = (gameId: string, locationId: string) => {
+  const addGameToLocationContext = (gameId: string, locationId: string) => {
     setLocations(prevLocations =>
       prevLocations.map(location =>
         location.id === locationId
@@ -129,13 +160,15 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     games,
     users,
     setLocations,
-    addGameToLocation,
+    addGameToLocationContext,
     removeGameFromLocation,
     removeGame,
     addGame,
     updateGamePlayers,
     updateUserRatings,
     getAverageRating,
+    getUsernameById,
+    toggleGamePendingStatusContext,
   };
 
   return (

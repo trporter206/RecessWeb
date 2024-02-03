@@ -1,17 +1,20 @@
-// GamesList component
 import React from 'react';
 import { GameItem } from './GameItem';
 import { Game } from '../../models/Game';
 
-type GamesListProps = {
+interface GamesListProps {
   games: Game[];
   onDeleteGame: (gameId: string) => void;
-};
+  includePending: boolean; // New prop to toggle pending games
+}
 
-export const GamesList: React.FC<GamesListProps> = ({ games, onDeleteGame }) => {
+export const GamesList: React.FC<GamesListProps> = ({ games, onDeleteGame, includePending }) => {
+  // Filter games based on the includePending prop
+  const filteredGames = games.filter(game => includePending || !game.pending);
+
   return (
     <div>
-      {games.map(game => (
+      {filteredGames.map(game => (
         <GameItem 
           key={game.id}
           game={game}

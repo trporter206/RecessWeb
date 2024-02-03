@@ -3,7 +3,7 @@ import { getFirestore, collection, getDocs, addDoc, doc, deleteDoc, updateDoc, a
 import { Game } from '../models/Game';
 import { firebaseConfig, firestore } from '../firebaseConfig';
 import { addUserToNetwork, updateGamesHostedForLoggedInUser, updatePointsForLoggedInUser } from './UserServices';
-import { addGameIdToLocation, updateTotalGamesForLocation } from './locationService';
+import { updateTotalGamesForLocation } from './locationService';
 import { updatePointsForUser } from './UserServices';
 
 // Initialize Firebase
@@ -26,6 +26,7 @@ export async function fetchGames(): Promise<Game[]> {
                 hostId: data.hostId,
                 minimumPoints: data.minimumPoints,
                 description: data.description,
+                pending: data.pending
             };
             return game;
         });
@@ -93,7 +94,6 @@ export async function createGame(gameData: Omit<Game, 'id'>): Promise<string> {
       const gameRef = await addDoc(collection(db, 'Games'), gameData);
       const firestoreId = gameRef.id;
       await updateDoc(gameRef, { id: firestoreId });
-      await addGameIdToLocation(gameData.locationId, firestoreId);
       return firestoreId;
     } catch (error) {
       console.error('Error creating game:', error);
@@ -176,7 +176,7 @@ export const joinGame = async (gameId: string, userId: string, updateGameCallbac
       console.error('Error joining game:', error);
       throw error;
     }
-  };
+};
   
 export const leaveGame = async (gameId: string, userId: string, updateGameCallback: UpdateGameCallback) => {
   console.log('fetching...leaving game');
@@ -190,5 +190,33 @@ export const leaveGame = async (gameId: string, userId: string, updateGameCallba
       console.error('Error leaving game:', error);
       throw error;
     }
-  };
+};
+
+export async function toggleGamePendingStatus(gameId: string): Promise<void> {
+  console.log('Toggling game pending status...');
+
+  const gameRef = doc(db, 'Games', gameId);
+
+  try {
+    const gameSnapshot = await getDoc(gameRef);
+    
+    if (!gameSnapshot.exists()) {
+      throw new Error('Game not found');
+    }
+
+    const gameData = gameSnapshot.data();
+    const currentPendingStatus = gameData.pending;
+
+    // Toggle the 'pending' status
+    await updateDoc(gameRef, {
+      pending: !currentPendingStatus
+    });
+
+    console.log(`Game pending status toggled to ${!currentPendingStatus}.`);
+  } catch (error) {
+    console.error('Error toggling game pending status:', error);
+    throw error;
+  }
+}
+
   

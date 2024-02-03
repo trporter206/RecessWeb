@@ -3,18 +3,20 @@ import { createGame } from '../../services/GameServices';
 import { DataContext } from '../../services/DataProvider';
 import { Location } from '../../models/Location';
 import { UserContext } from '../../services/UserContext';
-import { updateGamesHostedForLoggedInUser, updatePointsForLoggedInUser } from '../../services/UserServices';
-import { updateTotalGamesForLocation } from '../../services/locationService';
+import { addGameToPendingInvites, updateGamesHostedForLoggedInUser, updatePointsForLoggedInUser } from '../../services/UserServices';
+import { addGameIdToLocation, updateTotalGamesForLocation } from '../../services/locationService';
 import CircularProgress from '@mui/material/CircularProgress';
+import { User } from '../../models/User';
 
 interface GameCreationModalProps {
   show: boolean;
   onClose: () => void;
   locationId?: string; // Optional prop for default location ID
+  invitee?: User;
 }
 
-export const GameCreationModal: React.FC<GameCreationModalProps> = ({ show, onClose, locationId }) => {
-  const { locations, addGameToLocation, addGame } = useContext(DataContext);
+export const GameCreationModal: React.FC<GameCreationModalProps> = ({ show, onClose, locationId, invitee }) => {
+  const { locations, addGameToLocationContext, addGame } = useContext(DataContext);
   const [selectedLocation, setSelectedLocation] = useState('');
   const [date, setDate] = useState(new Date().toISOString().split('T')[0]); // Default date set to today
   const userContext = useContext(UserContext);
@@ -48,11 +50,16 @@ export const GameCreationModal: React.FC<GameCreationModalProps> = ({ show, onCl
 
     const dateTime = new Date(`${date}T${time}`);
   
+    const initialPlayers = invitee ? [invitee.id] : [];
+
+    const pendingGame = invitee ? true : false;
+
     const newGame = {
       locationId: selectedLocation,
-      players: [],
+      players: initialPlayers,
       time: dateTime,
       hostId: user.uid,
+      pending: pendingGame,
       minimumPoints,
       description,
     };
@@ -61,13 +68,18 @@ export const GameCreationModal: React.FC<GameCreationModalProps> = ({ show, onCl
     try {
       const newGameId = await createGame(newGame);
       const createdGame = { ...newGame, id: newGameId };
-      //update context
       addGame(createdGame);
-      addGameToLocation(newGameId, selectedLocation);
-      //update firebase
-      await updatePointsForLoggedInUser(10);
-      await updateGamesHostedForLoggedInUser(true);
-      await updateTotalGamesForLocation(selectedLocation, true);
+      if (pendingGame) {
+        await addGameToPendingInvites(invitee?.id ?? '', newGameId);
+      } else {
+        //update context
+        addGameToLocationContext(newGameId, selectedLocation);
+        //update firebase
+        await addGameIdToLocation(newGameId, selectedLocation);
+        await updatePointsForLoggedInUser(10);
+        await updateGamesHostedForLoggedInUser(true);
+        await updateTotalGamesForLocation(selectedLocation, true);
+      }
       console.log('Game created successfully');
     } catch (error) {
       console.error('Error creating game:', error);
@@ -89,6 +101,7 @@ export const GameCreationModal: React.FC<GameCreationModalProps> = ({ show, onCl
         ) : (
           <div>
             <h2>Create Game</h2>
+            {invitee && <h3>Inviting {invitee.username}</h3>}
             <label>Location: </label>
             <select value={selectedLocation} onChange={e => setSelectedLocation(e.target.value)}>
             {locations.map((location: Location) => (

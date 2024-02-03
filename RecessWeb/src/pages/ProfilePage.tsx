@@ -16,11 +16,12 @@ export const ProfilePage = () => {
   const user = userContext?.user;
   const profile = userContext?.profile;
   const games = dataContext?.games || []; 
-  const { username, points, gamesHosted, gamesJoined, network } = profile || 
+  const { username, points, gamesHosted, gamesJoined, network, id } = profile || 
   { username: '', points: 0, totalGames: 0, gamesHosted: 0, gamesJoined: 0, network: [] };
 
   let userGames: Game[] = [];
   let favoriteLocations: Location[] = [];
+  let pendingInvites: Game[] = [];
 
   const handleLogout = async () => {
     console.log('fetching...logout');
@@ -43,6 +44,10 @@ export const ProfilePage = () => {
     favoriteLocations = dataContext.locations.filter(location => 
       favoriteLocationsIds.includes(location.id)
     );
+
+    pendingInvites = games.filter(game => 
+      game.pending && game.players.includes(id || '')
+    );
   }
 
   return (
@@ -61,11 +66,15 @@ export const ProfilePage = () => {
           <div className='user-lists-container'>
             <div className="user-games-container">
               <h2>Your Current Games</h2>
-              <GamesList games={userGames} onDeleteGame={() => {}} />
+              <GamesList games={userGames} onDeleteGame={() => {}} includePending={false}/>
             </div>
             <div className="user-locations-container">
               <h2>Favorite Locations</h2>
               <LocationsList locations={favoriteLocations} />
+            </div>
+            <div className="invites-container">
+              <h2>Your Invites</h2>
+              <GamesList games={pendingInvites} onDeleteGame={() => {}} includePending={true} />
             </div>
           </div>
         </div>

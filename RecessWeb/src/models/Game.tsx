@@ -6,4 +6,5 @@ export interface Game {
     hostId: string;
     minimumPoints: number;
     description: string;
+    pending: boolean;
   }

@@ -75,7 +75,7 @@ export const LocationInfoModal: React.FC<LocationInfoModalProps> = ({ location, 
             </FavoriteBorder>
           }
         <p>{description}</p>
-        <GamesList games={gamesAtLocation} onDeleteGame={() => {}} />
+        <GamesList games={gamesAtLocation} onDeleteGame={() => {}} includePending={false}/>
         <button onClick={handleOpenGameCreation}>Create Game at this Location</button>
         <button onClick={onClose}>Close</button>
         {showGameCreation && (

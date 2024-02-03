@@ -24,7 +24,8 @@ export async function fetchUsers(): Promise<User[]> {
                 network: data.network,
                 id: data.id,
                 password: '',
-                favoriteLocations: data.favoriteLocations
+                favoriteLocations: data.favoriteLocations,
+                pendingInvites: data.pendingInvites
             };
             return user;
         });
@@ -34,6 +35,53 @@ export async function fetchUsers(): Promise<User[]> {
         throw error;
     }
 }
+
+// Function to remove a game from a user's pendingInvites
+export async function removeGameFromPendingInvites(userId: string, gameId: string): Promise<void> {
+  console.log('Removing game from pending invites...');
+  const userRef = doc(db, 'Users', userId);
+
+  try {
+    // Get the current user data to check if the user exists
+    const userSnapshot = await getDoc(userRef);
+    if (!userSnapshot.exists()) {
+      throw new Error('User not found');
+    }
+
+    // Remove the specified game from the user's pendingInvites
+    await updateDoc(userRef, {
+      pendingInvites: arrayRemove(gameId)
+    });
+
+    console.log('Game removed from pending invites successfully');
+  } catch (error) {
+    console.error('Error removing game from pending invites:', error);
+    throw error;
+  }
+}
+
+// Add a game to the user's pendingInvites
+export async function addGameToPendingInvites(userId: string, gameId: string): Promise<void> {
+  console.log('Adding game to pending invites...');
+  const userRef = doc(db, 'Users', userId);
+
+  try {
+    const userSnapshot = await getDoc(userRef);
+    if (!userSnapshot.exists()) {
+      throw new Error('User not found');
+    }
+
+    await updateDoc(userRef, {
+      pendingInvites: arrayUnion(gameId)
+    });
+
+    console.log('Game added to pending invites successfully');
+  } catch (error) {
+    console.error('Error adding game to pending invites:', error);
+    throw error;
+  }
+}
+
 
 export async function fetchUsernameById(userIds: string | string[]): Promise<string[]> {
   console.log('fetching...user ID');

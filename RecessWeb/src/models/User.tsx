@@ -10,4 +10,5 @@ export interface User {
   ratings: Record<string, number>;
   network: string[];
   favoriteLocations: string[];
+  pendingInvites: string[];
 }
