@@ -1,7 +1,7 @@
 import { initializeApp } from 'firebase/app';
-import { getFirestore, collection, getDocs, doc, getDoc, updateDoc, arrayUnion, arrayRemove, addDoc, deleteDoc } from 'firebase/firestore';
+import { getFirestore, collection, getDocs, doc, getDoc, updateDoc, arrayUnion, arrayRemove, addDoc, deleteDoc, DocumentSnapshot, DocumentData } from 'firebase/firestore';
 import { Team } from '../models/Team';
-import { firebaseConfig, firestore } from '../firebaseConfig';
+import { firebaseConfig } from '../firebaseConfig';
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
@@ -34,26 +34,37 @@ export async function fetchTeams(): Promise<Team[]> {
     }
 }
 
-export const fetchTeamDetails = async (teamName: string): Promise<Team> => {
-    console.log('fetching...team details');
+export async function verifyTeam(teamId: string): Promise<DocumentData> {
+    console.log('Verifying team...');
+
+    const teamRef = doc(db, 'Teams', teamId);
+    const teamSnap = await getDoc(teamRef);
+
+    if (!teamSnap.exists()) {
+        console.log(`Team ${teamId} does not exist.`);
+        throw new Error(`Team with ID ${teamId} not found.`);
+    }
+
+    console.log(`Team ${teamId} verified successfully.`);
+    return teamSnap.data(); // Return the document snapshot
+}
+
+
+export const fetchTeamDetails = async (teamId: string): Promise<Team> => {
+    console.log('Fetching team details...');
     try {
-        const teamRef = doc(firestore, 'Teams', teamName);
-        const teamSnapshot = await getDoc(teamRef);
-
-        if (!teamSnapshot.exists()) {
-            throw new Error('Team not found');
-        }
-
-        const teamData = teamSnapshot.data();
+        const teamData = await verifyTeam(teamId); // Verify and get the snapshot in one go
+        console.log(`Fetched details for team ${teamId}.`);
         return {
-            name: teamSnapshot.id,
+            id: teamId,
             ...teamData
-        } as Team;
+        } as Team; // Assuming Team is a type that includes id, name, members, etc.
     } catch (error) {
         console.error('Error fetching team details:', error);
-        throw error;
+        throw new Error(`Error fetching team details: ${error instanceof Error ? error.message : error}`);
     }
-}
+};
+
 
 export async function createTeam(team: Omit<Team, 'id'>): Promise<string> {
     console.log('creating...team');
@@ -69,40 +80,30 @@ export async function createTeam(team: Omit<Team, 'id'>): Promise<string> {
 }
 
 export async function deleteTeam(teamId: string): Promise<void> {
-    console.log('deleting...team');
+    console.log('Deleting team...');
     try {
+        await verifyTeam(teamId);
         const teamRef = doc(db, 'Teams', teamId);
-        const teamSnapshot = await getDoc(teamRef);
-        if (!teamSnapshot.exists()) {
-            console.error('Team does not exist');
-            throw new Error('Team not found');
-        }
-        deleteDoc(teamRef);
+        await deleteDoc(teamRef);
+        console.log(`Team ${teamId} successfully deleted.`);
     } catch (error) {
         console.error('Error deleting team:', error);
-        throw error;
+        throw error; // Re-throw the error to handle it further up the call stack if necessary.
     }
 }
 
+
 export async function removeMemberFromTeam(teamId: string, userId: string): Promise<void> {
-    console.log('removing...member from team');
+    console.log('Removing member from team...');
     try {
+        const teamData = await verifyTeam(teamId);
         const teamRef = doc(db, 'Teams', teamId);
-        const teamSnap = await getDoc(teamRef);
-
-        if (!teamSnap.exists()) {
-            throw new Error(`Team with ID ${teamId} not found.`);
-        }
-
-        const teamData = teamSnap.data();
-        // Check if userId is in the team's members array
-        if (teamData.members.includes(userId)) {
+        if (teamData.members && teamData.members.includes(userId)) {
             await updateDoc(teamRef, {
                 members: arrayRemove(userId)
             });
             console.log(`User ${userId} removed from team ${teamId}.`);
         } else {
-            // User is not a member of the team, handle accordingly
             console.log(`User ${userId} is not a member of team ${teamId}, skipping removal.`);
         }
     } catch (error) {
@@ -112,25 +113,18 @@ export async function removeMemberFromTeam(teamId: string, userId: string): Prom
 }
 
 
+
 export async function addMemberToTeam(teamId: string, userId: string): Promise<void> {
-    console.log('adding...member to team');
+    console.log('Adding member to team...');
     try {
+        const teamData = await verifyTeam(teamId);
         const teamRef = doc(db, 'Teams', teamId);
-        const teamSnap = await getDoc(teamRef);
-
-        if (!teamSnap.exists()) {
-            throw new Error(`Team with ID ${teamId} not found.`);
-        }
-
-        const teamData = teamSnap.data();
-        // Check if userId is already a member of the team's members array
-        if (!teamData.members.includes(userId)) {
+        if (teamData.members && !teamData.members.includes(userId)) {
             await updateDoc(teamRef, {
                 members: arrayUnion(userId)
             });
             console.log(`User ${userId} added to team ${teamId}.`);
         } else {
-            // User is already a member of the team, handle accordingly
             console.log(`User ${userId} is already a member of team ${teamId}, skipping addition.`);
         }
     } catch (error) {
@@ -139,4 +133,126 @@ export async function addMemberToTeam(teamId: string, userId: string): Promise<v
     }
 }
 
-    
+export async function addWin(teamId: string): Promise<void> {
+    console.log('Adding win...');
+    try {
+        const teamData = await verifyTeam(teamId);
+        const teamRef = doc(db, 'Teams', teamId);
+        const newWins = (teamData.wins || 0) + 1;
+        await updateDoc(teamRef, {
+            wins: newWins
+        });
+        console.log(`Win added to team ${teamId}.`);
+    } catch (error) {
+        console.error('Error adding win:', error);
+        throw error;
+    }
+}
+
+export async function addLoss(teamId: string): Promise<void> {
+    console.log('Adding loss...');
+    try {
+        const teamData = await verifyTeam(teamId);
+        const teamRef = doc(db, 'Teams', teamId);
+        const newLosses = (teamData.losses || 0) + 1;
+        await updateDoc(teamRef, {
+            losses: newLosses
+        });
+        console.log(`Loss added to team ${teamId}.`);
+    } catch (error) {
+        console.error('Error adding loss:', error);
+        throw error;
+    }
+}
+
+
+export async function addAvailableLocationToTeam(teamId: string, locationId: string): Promise<void> {
+    console.log('Adding available location to team...');
+    try {
+        const teamData = await verifyTeam(teamId);
+        const teamRef = doc(db, 'Teams', teamId);
+        if (!teamData.availableLocations.includes(locationId)) {
+            await updateDoc(teamRef, {
+                availableLocations: arrayUnion(locationId)
+            });
+            console.log(`Location ${locationId} added to team ${teamId}.`);
+        } else {
+            console.log(`Location ${locationId} is already in team ${teamId}, skipping addition.`);
+        }
+    } catch (error) {
+        console.error('Error adding available location to team:', error);
+        throw error;
+    }
+}
+
+
+export async function removeAvailableLocationFromTeam(teamId: string, locationId: string): Promise<void> {
+    console.log('Removing available location from team...');
+    try {
+        const teamData = await verifyTeam(teamId);
+        const teamRef = doc(db, 'Teams', teamId);
+        if (teamData.availableLocations.includes(locationId)) {
+            await updateDoc(teamRef, {
+                availableLocations: arrayRemove(locationId)
+            });
+            console.log(`Location ${locationId} removed from team ${teamId}.`);
+        } else {
+            console.log(`Location ${locationId} is not in team ${teamId}, skipping removal.`);
+        }
+    } catch (error) {
+        console.error('Error removing available location from team:', error);
+        throw error;
+    }
+}
+
+
+interface AvailableTime {
+    day: string;
+    startHour: string;
+    endHour: string;
+}
+  
+export async function addAvailableTimeToTeam(teamId: string, availableTime: AvailableTime): Promise<void> {
+    console.log('Adding available time to team...');
+    try {
+        await verifyTeam(teamId);
+        const teamRef = doc(db, 'Teams', teamId);
+        await updateDoc(teamRef, {
+            availableTimes: arrayUnion(availableTime)
+        });
+        console.log(`Available time added to team ${teamId}.`);
+    } catch (error) {
+        console.error('Error adding available time to team:', error);
+        throw error;
+    }
+}
+
+export async function removeAvailableTimeFromTeam(teamId: string, availableTime: AvailableTime): Promise<void> {
+    console.log('Removing available time from team...');
+    try {
+        await verifyTeam(teamId);
+        const teamRef = doc(db, 'Teams', teamId);
+        await updateDoc(teamRef, {
+            availableTimes: arrayRemove(availableTime)
+        });
+        console.log(`Available time removed from team ${teamId}.`);
+    } catch (error) {
+        console.error('Error removing available time from team:', error);
+        throw error;
+    }
+}
+
+export async function setLookingForPlayers(teamId: string, looking: boolean): Promise<void> {
+    console.log('Setting looking for players...');
+    try {
+        await verifyTeam(teamId);
+        const teamRef = doc(db, 'Teams', teamId);
+        await updateDoc(teamRef, {
+            lookingForPlayers: looking
+        });
+        console.log(`Looking for players set to ${looking} for team ${teamId}.`);
+    } catch (error) {
+        console.error('Error setting looking for players:', error);
+        throw error;
+    }
+}
