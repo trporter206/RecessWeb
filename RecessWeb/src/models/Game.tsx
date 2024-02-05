@@ -13,4 +13,5 @@ export interface Game {
     minimumPoints: number;
     description: string;
     pending: boolean;
+    // isTeamGame: boolean;
   }

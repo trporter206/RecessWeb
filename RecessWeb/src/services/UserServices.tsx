@@ -42,7 +42,45 @@ export async function fetchUsers(): Promise<User[]> {
     }
 }
 
-// Function to remove a game from a user's pendingInvites
+export async function isUserOnTeamOfType(teamType: string): Promise<boolean> {
+  const auth = getAuth();
+  const currentUser = auth.currentUser;
+  if (!currentUser) {
+    console.error('No user logged in');
+    return false;
+  }
+
+  const userRef = doc(db, 'Users', currentUser.uid);
+  try {
+    const userSnap = await getDoc(userRef);
+    if (!userSnap.exists()) {
+      console.error('User not found');
+      return false;
+    }
+    const userData = userSnap.data();
+    const userTeamIds = userData.teams || [];
+    return await checkTeamsForType(userTeamIds, teamType);
+  } catch (error) {
+    console.error('Error checking user teams:', error);
+    return false;
+  }
+}
+
+async function checkTeamsForType(teamIds: string[], teamType: string): Promise<boolean> {
+  for (const teamId of teamIds) {
+    const teamRef = doc(db, 'Teams', teamId);
+    const teamSnap = await getDoc(teamRef);
+
+    if (teamSnap.exists()) {
+      const teamData = teamSnap.data();
+      if (teamData.type === teamType) {
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
 export async function removeGameFromPendingInvites(userId: string, gameId: string): Promise<void> {
   console.log('Removing game from pending invites...');
   const userRef = doc(db, 'Users', userId);

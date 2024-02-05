@@ -8,6 +8,7 @@ export interface Team {
     sport: string;
     availableLocations: string[];
     availableTimes: string[];
+    pendingChallenges: string[];
     lookingForPlayers: boolean;
     joinInstructions: string;
 }

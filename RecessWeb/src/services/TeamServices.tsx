@@ -1,5 +1,5 @@
 import { initializeApp } from 'firebase/app';
-import { getFirestore, collection, getDocs, doc, getDoc, updateDoc, arrayUnion, arrayRemove, addDoc, deleteDoc, DocumentSnapshot, DocumentData } from 'firebase/firestore';
+import { getFirestore, collection, getDocs, doc, getDoc, updateDoc, arrayUnion, arrayRemove, addDoc, deleteDoc, DocumentData } from 'firebase/firestore';
 import { Team } from '../models/Team';
 import { firebaseConfig } from '../firebaseConfig';
 
@@ -23,7 +23,8 @@ export async function fetchTeams(): Promise<Team[]> {
                 availableLocations: data.availableLocations,
                 availableTimes: data.availableTimes,
                 lookingForPlayers: data.lookingForPlayers,
-                joinInstructions: data.joinInstructions
+                joinInstructions: data.joinInstructions,
+                pendingChallenges: data.pendingChallenges || []
             };
             return team;
         });
@@ -49,22 +50,58 @@ export async function verifyTeam(teamId: string): Promise<DocumentData> {
     return teamSnap.data(); // Return the document snapshot
 }
 
+export async function addGameInviteToTeam(teamId: string, gameId: string): Promise<void> {
+    console.log('Adding game to team invites...');
+    try {
+        const teamData = await verifyTeam(teamId);
+        const teamRef = doc(db, 'Teams', teamId);
+        if (!teamData.pendingChallenges.includes(gameId)) {
+            await updateDoc(teamRef, {
+                pendingChallenges: arrayUnion(gameId)
+            });
+            console.log(`Game ${gameId} added to team ${teamId}.`);
+        } else {
+            console.log(`Game ${gameId} is already in team ${teamId}, skipping addition.`);
+        }
+    } catch (error) {
+        console.error('Error adding game to team invites:', error);
+        throw error;
+    }
+}
+
+export async function removeGameInviteFromTeam(teamId: string, gameId: string): Promise<void> {
+    console.log('Removing game from team invites...');
+    try {
+        const teamData = await verifyTeam(teamId);
+        const teamRef = doc(db, 'Teams', teamId);
+        if (teamData.pendingChallenges.includes(gameId)) {
+            await updateDoc(teamRef, {
+                pendingChallenges: arrayRemove(gameId)
+            });
+            console.log(`Game ${gameId} removed from team ${teamId}.`);
+        } else {
+            console.log(`Game ${gameId} is not in team ${teamId}, skipping removal.`);
+        }
+    } catch (error) {
+        console.error('Error removing game from team invites:', error);
+        throw error;
+    }
+}
 
 export const fetchTeamDetails = async (teamId: string): Promise<Team> => {
     console.log('Fetching team details...');
     try {
-        const teamData = await verifyTeam(teamId); // Verify and get the snapshot in one go
+        const teamData = await verifyTeam(teamId); 
         console.log(`Fetched details for team ${teamId}.`);
         return {
             id: teamId,
             ...teamData
-        } as Team; // Assuming Team is a type that includes id, name, members, etc.
+        } as Team; 
     } catch (error) {
         console.error('Error fetching team details:', error);
         throw new Error(`Error fetching team details: ${error instanceof Error ? error.message : error}`);
     }
 };
-
 
 export async function createTeam(team: Omit<Team, 'id'>): Promise<string> {
     console.log('creating...team');
@@ -88,10 +125,9 @@ export async function deleteTeam(teamId: string): Promise<void> {
         console.log(`Team ${teamId} successfully deleted.`);
     } catch (error) {
         console.error('Error deleting team:', error);
-        throw error; // Re-throw the error to handle it further up the call stack if necessary.
+        throw error;
     }
 }
-
 
 export async function removeMemberFromTeam(teamId: string, userId: string): Promise<void> {
     console.log('Removing member from team...');
@@ -111,8 +147,6 @@ export async function removeMemberFromTeam(teamId: string, userId: string): Prom
         throw error;
     }
 }
-
-
 
 export async function addMemberToTeam(teamId: string, userId: string): Promise<void> {
     console.log('Adding member to team...');
@@ -165,7 +199,6 @@ export async function addLoss(teamId: string): Promise<void> {
     }
 }
 
-
 export async function addAvailableLocationToTeam(teamId: string, locationId: string): Promise<void> {
     console.log('Adding available location to team...');
     try {
@@ -185,7 +218,6 @@ export async function addAvailableLocationToTeam(teamId: string, locationId: str
     }
 }
 
-
 export async function removeAvailableLocationFromTeam(teamId: string, locationId: string): Promise<void> {
     console.log('Removing available location from team...');
     try {
@@ -204,7 +236,6 @@ export async function removeAvailableLocationFromTeam(teamId: string, locationId
         throw error;
     }
 }
-
 
 interface AvailableTime {
     day: string;
