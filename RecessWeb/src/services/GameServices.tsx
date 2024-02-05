@@ -32,7 +32,8 @@ export async function fetchGames(): Promise<Game[]> {
                 hostId: data.hostId,
                 minimumPoints: data.minimumPoints,
                 description: data.description,
-                pending: data.pending
+                pending: data.pending,
+                isTeamGame: data.isTeamGame
             };
             return game;
         });

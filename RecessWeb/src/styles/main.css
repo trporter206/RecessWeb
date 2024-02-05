@@ -121,6 +121,14 @@
     padding: 20px;
     border-radius: 5px;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    width: 800px; /* Adjusted width */
+    max-width: 90vw; /* Maximum width to ensure it doesn't overflow the viewport */
+    overflow-y: auto; /* Enable vertical scrolling if the content exceeds the modal height */
+    position: relative; /* To ensure the modal is properly positioned */
+    display: flex;
+    flex-direction: column; /* Aligns children in a column */
+    align-items: center; /* Centers children horizontally */
+    justify-content: center; /* Centers content vertically */
 }
   
 .locationInfoModal-content {
@@ -168,6 +176,46 @@
     border-radius: 4px;
 }
   
+.date-time-row {
+    display: flex;
+    justify-content: space-between; /* Adjust as needed for spacing */
+    gap: 10px; /* Space between date and time fields */
+}
+  
+.date-field, .time-field {
+    flex: 1; /* Each field takes equal width */
+}
+
+.teams-max-row {
+    display: flex;
+    justify-content: space-between; /* Adjust as needed for spacing */
+    gap: 10px; /* Space between fields */
+}
+  
+.teams-only-field, .max-players-field {
+    flex: 1; /* Each field takes equal width */
+    display: flex;
+    flex-direction: column; /* Aligns the label above the input/checkbox */
+}
+
+.skill-min-max-row {
+    display: flex;
+    justify-content: space-between; /* Adjust as needed for spacing */
+    gap: 10px; /* Space between fields */
+}
+  
+.skill-min-field, .skill-max-field {
+    flex: 1; /* Each field takes equal width */
+    display: flex;
+    flex-direction: column; /* Aligns the label above the input */
+}
+
+.date-time-row, .teams-max-row, .skill-min-max-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 30px; /* Increased gap for more horizontal spacing */
+}
+
 
 .profileCreationModal-content {
     display: flex;
