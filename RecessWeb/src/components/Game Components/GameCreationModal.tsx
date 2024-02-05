@@ -17,51 +17,55 @@ interface GameCreationModalProps {
 
 export const GameCreationModal: React.FC<GameCreationModalProps> = ({ show, onClose, locationId, invitee }) => {
   const { locations, addGameToLocationContext, addGame } = useContext(DataContext);
-  const [selectedLocation, setSelectedLocation] = useState('');
-  const [date, setDate] = useState(new Date().toISOString().split('T')[0]); // Default date set to today
+  const [selectedLocation, setSelectedLocation] = useState<string>('');
+  const [date, setDate] = useState<string>(new Date().toISOString().split('T')[0]);
+  const [startTime, setStartTime] = useState<string>("12:00");
+  const [endTime, setEndTime] = useState<string>("13:00");
+  const [maxPlayers, setMaxPlayers] = useState<number>(4);
+  const [skillMinimum, setSkillMinimum] = useState<number>(1);
+  const [skillMaximum, setSkillMaximum] = useState<number>(5);
+  const [title, setTitle] = useState<string>('');
+  const [description, setDescription] = useState<string>('');
+  const [minimumPoints, setMinimumPoints] = useState<number>(0);
   const userContext = useContext(UserContext);
   const user = userContext ? userContext.user : null;
-  const profile = userContext ? userContext.profile : null;
-  const [minimumPoints, setMinimumPoints] = useState(0);
-  const maxPoints = profile ? profile.points : 0;
-  const [description, setDescription] = useState('');
-  const [time, setTime] = useState("12:00");
-  const [isLoading, setIsLoading] = useState(false);
+  // const profile = userContext ? userContext.profile : null;
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   useEffect(() => {
     const defaultLocationId = locationId || (locations.length > 0 ? locations[0].id : '');
     setSelectedLocation(defaultLocationId);
   }, [locations, locationId]);
 
-  const stopPropagation = (event: React.MouseEvent) => {
-    event.stopPropagation();
-  };
-
   const handleClose = (event: React.MouseEvent) => {
     event.stopPropagation();
     onClose();
   };
 
+  const stopPropagation = (event: React.MouseEvent) => {
+    event.stopPropagation();
+  };
+
   const handleSave = async () => {
-    if (!selectedLocation || !date || !user) {
+    if (!selectedLocation || !date || !startTime || !endTime || !user) {
       // Handle validation error
       return;
     }
 
-    const dateTime = new Date(`${date}T${time}`);
-  
-    const initialPlayers = invitee ? [invitee.id] : [];
-
-    const pendingGame = invitee ? true : false;
-
     const newGame = {
       locationId: selectedLocation,
-      players: initialPlayers,
-      time: dateTime,
+      players: invitee ? [invitee.id] : [],
+      date: new Date(date),
+      startTime,
+      endTime,
+      skillMinimum,
+      skillMaximum,
+      maxPlayers,
+      title,
       hostId: user.uid,
-      pending: pendingGame,
       minimumPoints,
       description,
+      pending: !!invitee,
     };
     
     setIsLoading(true);
@@ -69,8 +73,8 @@ export const GameCreationModal: React.FC<GameCreationModalProps> = ({ show, onCl
       const newGameId = await createGame(newGame);
       const createdGame = { ...newGame, id: newGameId };
       addGame(createdGame);
-      if (pendingGame) {
-        await addGameToPendingInvites(invitee?.id ?? '', newGameId);
+      if (invitee) {
+        await addGameToPendingInvites(invitee.id, newGameId);
       } else {
         //update context
         addGameToLocationContext(newGameId, selectedLocation);
@@ -95,46 +99,62 @@ export const GameCreationModal: React.FC<GameCreationModalProps> = ({ show, onCl
 
   return (
     <div className='gameCreationModal-backdrop' onClick={handleClose}>
-        <div className='gameCreationModal-content' onClick={stopPropagation}>
+      <div className='gameCreationModal-content' onClick={stopPropagation}>
         {isLoading ? (
-          <CircularProgress /> // Show loading indicator
+          <CircularProgress />
         ) : (
           <div>
             <h2>Create Game</h2>
-            {invitee && <h3>Inviting {invitee.username}</h3>}
-            <label>Location: </label>
-            <select value={selectedLocation} onChange={e => setSelectedLocation(e.target.value)}>
-            {locations.map((location: Location) => (
-                <option key={location.id} value={location.id}>{location.name}</option>
-            ))}
-            </select>
-            <div>
-              <label>Minimum Points: </label>
-              <input 
-                type="number" 
-                value={minimumPoints} 
-                onChange={e => setMinimumPoints(Math.min(parseInt(e.target.value) || 0, maxPoints))} 
-                min="0"
-              />
+            {invitee && <div className="form-group"><h3>Inviting {invitee.username}</h3></div>}
+            <div className="form-group">
+              <label>Location: </label>
+              <select value={selectedLocation} onChange={e => setSelectedLocation(e.target.value)}>
+                {locations.map((location: Location) => (
+                  <option key={location.id} value={location.id}>{location.name}</option>
+                ))}
+              </select>
             </div>
-            <div>
-              <label htmlFor="gameDescription">Game Description:</label>
-              <textarea 
-                id="gameDescription"
-                value={description}
-                onChange={e => setDescription(e.target.value)}
-                rows={3}
-              />
+            <div className="form-group">
+              <label>Date: </label>
+              <input type="date" value={date} onChange={e => setDate(e.target.value)} required />
             </div>
-            <label>Date: </label>
-            <input type="date" value={date} onChange={e => setDate(e.target.value)} /><br/>
-            <label>Time: </label>
-            <input type="time" value={time} onChange={e => setTime(e.target.value)} /><br/>
+            <div className="form-group">
+              <label>Start Time: </label>
+              <input type="time" value={startTime} onChange={e => setStartTime(e.target.value)} required />
+            </div>
+            <div className="form-group">
+              <label>End Time: </label>
+              <input type="time" value={endTime} onChange={e => setEndTime(e.target.value)} required />
+            </div>
+            <div className="form-group">
+              <label>Max Players: </label>
+              <input type="number" value={maxPlayers} onChange={e => setMaxPlayers(Math.min(Number(e.target.value), 10))} min="1" max="10" required />
+            </div>
+            <div className="form-group">
+              <label>Skill Minimum (Optional): </label>
+              <input type="number" value={skillMinimum} onChange={e => setSkillMinimum(Number(e.target.value))} min="1" max="5" />
+            </div>
+            <div className="form-group">
+              <label>Skill Maximum (Optional): </label>
+              <input type="number" value={skillMaximum} onChange={e => setSkillMaximum(Number(e.target.value))} min="1" max="5" />
+            </div>
+            <div className="form-group">
+              <label>Title (Optional): </label>
+              <input type="text" value={title} onChange={e => setTitle(e.target.value)} />
+            </div>
+            <div className="form-group">
+              <label>Minimum Points (Optional): </label>
+              <input type="number" value={minimumPoints} onChange={e => setMinimumPoints(Number(e.target.value))} min="0" />
+            </div>
+            <div className="form-group">
+              <label>Game Description (Optional):</label>
+              <textarea id="gameDescription" value={description} onChange={e => setDescription(e.target.value)} rows={3} />
+            </div>
             <button onClick={handleSave}>Save</button>
             <button onClick={handleClose}>Cancel</button>
           </div>
         )}
-        </div>
+      </div>
     </div>
   );
 };

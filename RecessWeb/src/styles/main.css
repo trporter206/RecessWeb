@@ -150,7 +150,28 @@
     white-space: nowrap; 
 }
 
+.form-group {
+    margin-bottom: 10px;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+  
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+}
+  
+.form-group input, .form-group select {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+  
+
 .profileCreationModal-content {
+    display: flex;
+    flex-direction: column;
     background: white;
     color: black;
     padding: 20px;

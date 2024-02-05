@@ -25,7 +25,13 @@ export async function fetchUsers(): Promise<User[]> {
                 id: data.id,
                 password: '',
                 favoriteLocations: data.favoriteLocations,
-                pendingInvites: data.pendingInvites
+                pendingInvites: data.pendingInvites,
+                firstName: data.firstName,
+                lastName: data.lastName,
+                pickleballSkill: data.pickleballSkill,
+                age: data.age,
+                gender: data.gender,
+
             };
             return user;
         });

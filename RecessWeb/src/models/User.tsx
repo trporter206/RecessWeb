@@ -1,6 +1,11 @@
 export interface User {
   id: string;
   username: string;
+  firstName: string;
+  lastName: string;
+  pickleballSkill: number;
+  gender: string;
+  age: number;
   email: string;
   password: string;
   points: number;
