@@ -5,11 +5,14 @@ import { fetchUsers } from './UserServices';
 import { Location } from '../models/Location';
 import { Game } from '../models/Game';
 import { User } from '../models/User';
+import { Team } from '../models/Team';
+import { fetchTeams } from './TeamServices';
 
 interface DataProviderType {
   locations: Location[];
   games: Game[];
   users: User[];
+  teams: Team[];
   setLocations: React.Dispatch<React.SetStateAction<Location[]>>;
   addGameToLocationContext: (gameId: string, locationId: string) => void;
   removeGameFromLocation: (gameId: string, locationId: string) => void;
@@ -27,6 +30,7 @@ export const DataContext = createContext<DataProviderType>({
   locations: [],
   games: [],
   users: [],
+  teams: [],
   setLocations: () => {},
   addGameToLocationContext: () => {},
   removeGameFromLocation: () => {},
@@ -43,16 +47,19 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [locations, setLocations] = useState<Location[]>([]);
   const [games, setGames] = useState<Game[]>([]);
   const [users, setUsers] = useState<User[]>([]);
+  const [teams, setTeams] = useState<Team[]>([]);
 
   useEffect(() => {
     const fetchData = async () => {
       const fetchedUsers = await fetchUsers();
+      const fetchedTeams = await fetchTeams();
       const fetchedGames = await fetchGames();
       const fetchedLocations = await fetchLocations();
 
       setLocations(fetchedLocations);
       setGames(fetchedGames);
       setUsers(fetchedUsers);
+      setTeams(fetchedTeams);
     };
 
     fetchData();
@@ -159,6 +166,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     locations,
     games,
     users,
+    teams,
     setLocations,
     addGameToLocationContext,
     removeGameFromLocation,

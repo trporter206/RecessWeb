@@ -16,4 +16,5 @@ export interface User {
   network: string[];
   favoriteLocations: string[];
   pendingInvites: string[];
+  teams: string[];
 }

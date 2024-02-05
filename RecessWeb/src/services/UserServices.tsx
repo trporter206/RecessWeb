@@ -31,7 +31,7 @@ export async function fetchUsers(): Promise<User[]> {
                 pickleballSkill: data.pickleballSkill,
                 age: data.age,
                 gender: data.gender,
-
+                teams: data.teams
             };
             return user;
         });

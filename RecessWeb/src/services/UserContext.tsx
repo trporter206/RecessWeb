@@ -15,6 +15,8 @@ interface UserProfile {
   gamesJoined: number;
   ratings: Record<string, number>;
   favoriteLocations: string[];
+  pendingInvites: string[];
+  teams: string[];
   // Add other fields as necessary
 }
 

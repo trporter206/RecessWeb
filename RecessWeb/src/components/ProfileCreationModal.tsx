@@ -40,7 +40,8 @@ export const ProfileCreationModal: React.FC<ProfileCreationModalProps> = ({ show
         ratings: {},
         network: [],
         favoriteLocations: [],
-        pendingInvites: []
+        pendingInvites: [],
+        teams: [],
       });
 
       onClose(); // Close the modal upon successful profile creation
