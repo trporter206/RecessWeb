@@ -24,6 +24,8 @@ interface DataProviderType {
   getUsernameById: (userId: string) => string | undefined;
   toggleGamePendingStatusContext: (gameId: string) => void;
   addTeam: (newTeam: Team) => void;
+  addMemberToTeamContext: (teamId: string, userId: string) => void;
+  removeMemberFromTeamContext: (teamId: string, userId: string) => void;
 
 }
 
@@ -43,6 +45,8 @@ export const DataContext = createContext<DataProviderType>({
   getUsernameById: () => '',
   toggleGamePendingStatusContext: () => {},
   addTeam: () => {},
+  addMemberToTeamContext: () => {},
+  removeMemberFromTeamContext: () => {},
 });
 
 export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -66,6 +70,24 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     fetchData();
   }, []);
+
+  const addMemberToTeamContext = (teamId: string, userId: string) => {
+    setTeams(prevTeams => prevTeams.map(team => {
+      if (team.id === teamId) {
+        return { ...team, members: [...team.members, userId] };
+      }
+      return team;
+    }));
+  };
+
+  const removeMemberFromTeamContext = (teamId: string, userId: string) => {
+    setTeams(prevTeams => prevTeams.map(team => {
+      if (team.id === teamId) {
+        return { ...team, members: team.members.filter(memberId => memberId !== userId) };
+      }
+      return team;
+    }));
+  };
 
   const addTeam = (newTeam: Team) => {
     setTeams(prevTeams => [...prevTeams, newTeam]);
@@ -184,6 +206,8 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     getUsernameById,
     toggleGamePendingStatusContext,
     addTeam,
+    addMemberToTeamContext,
+    removeMemberFromTeamContext,
   };
 
   return (

@@ -14,7 +14,7 @@ export async function fetchTeams(): Promise<Team[]> {
             const data = doc.data();
             const team: Team = {
                 id: doc.id,
-                name: doc.id,
+                name: data.name,
                 members: data.members || [],
                 skill: data.skill,
                 wins: data.wins,

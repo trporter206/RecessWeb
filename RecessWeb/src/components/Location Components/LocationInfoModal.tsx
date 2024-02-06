@@ -25,7 +25,6 @@ export const LocationInfoModal: React.FC<LocationInfoModalProps> = ({ location, 
 
   useEffect(() => {
     const checkIfFavorite = () => {
-      // Ensure favoriteLocations is an array before using 'includes'
       const favoriteLocations = profile?.favoriteLocations ?? [];
       setIsFavorite(favoriteLocations.includes(location.id));
     };
@@ -33,7 +32,6 @@ export const LocationInfoModal: React.FC<LocationInfoModalProps> = ({ location, 
     checkIfFavorite();
   }, [user, profile, location.id]);
 
-  // Filter games to only show those associated with this location
   const gamesAtLocation = games.filter(game => game.locationId === location.id);
 
   const handleOpenGameCreation = (event: React.MouseEvent) => {

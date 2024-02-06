@@ -11,7 +11,7 @@ interface GameItemProps {
 }
 
 export const GameItem: React.FC<GameItemProps> = ({ game, onDelete }) => {
-  const { id, locationId, players, time, hostId, minimumPoints } = game;
+  const { id, locationId, players, date, hostId, minimumPoints } = game;
   const removeGameFromLocation = useContext(DataContext).removeGameFromLocation;
   const userContext = useContext(UserContext);
   const [hostUsername, setHostUsername] = useState('');
@@ -21,10 +21,10 @@ export const GameItem: React.FC<GameItemProps> = ({ game, onDelete }) => {
   const { user } = useContext(UserContext);
 
   let displayDate = '';
-  if (time instanceof Date) {
-    displayDate = time.toDateString();
+  if (date instanceof Date) {
+    displayDate = date.toDateString();
   } else {
-    console.error('Invalid date object:', time);
+    console.error('Invalid date object:', date);
   }
 
   useEffect(() => {

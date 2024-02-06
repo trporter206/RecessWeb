@@ -47,7 +47,7 @@ export const UserInfoModal: React.FC<UserInfoModalProps> = ({ user }) => {
   };
 
   return (
-    <div className="InfoModal-backdrop">
+    <div className="modal-backdrop">
       <div className="userInfoModal-content">
         <h3>{username}</h3>
         {isInNetwork && (

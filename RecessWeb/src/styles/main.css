@@ -87,6 +87,14 @@
     gap: 10px; /* Adjust the gap as needed */
 }
 
+.team-item {
+    background-color: grey;
+    border-radius: 10px;
+    padding: 5px;
+    margin: 10px 0;
+    color: white;
+}
+
 .modal-backdrop {
     position: fixed;
     top: 0;
