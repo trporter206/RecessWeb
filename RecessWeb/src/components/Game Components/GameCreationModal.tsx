@@ -101,7 +101,7 @@ export const GameCreationModal: React.FC<GameCreationModalProps> = ({ show, onCl
   }
 
   return (
-    <div className='gameCreationModal-backdrop' onClick={handleClose}>
+    <div className='modal-backdrop' onClick={handleClose}>
       <div className='gameCreationModal-content' onClick={stopPropagation}>
         {isLoading ? (
           <CircularProgress />

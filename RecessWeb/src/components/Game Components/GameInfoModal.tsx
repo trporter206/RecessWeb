@@ -118,7 +118,7 @@ export const GameInfoModal: React.FC<GameInfoModalProps> = ({ game, onClose }) =
   );
 
   return (
-    <div className="InfoModal-backdrop">
+    <div className="modal-backdrop">
       {isLoading ? <CircularProgress /> : (
         <div className="gameInfoModal-content">
           {game.pending && <h2>Invitation from {hostUsername}</h2>}

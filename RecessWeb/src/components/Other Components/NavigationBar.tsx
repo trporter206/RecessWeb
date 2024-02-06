@@ -1,6 +1,6 @@
 import { useContext } from 'react';
 import { Link } from 'react-router-dom';
-import '../styles/main.css';
+import '../../styles/main.css'
 import { UserContext } from '../../services/UserContext'; // Adjust the import path according to your project structure
 
 export const NavigationBar = () => {

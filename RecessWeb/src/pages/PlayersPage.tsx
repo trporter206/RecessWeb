@@ -1,18 +1,28 @@
-import { useContext } from 'react';
+import { useContext, useState } from 'react';
 import { DataContext } from '../services/DataProvider'; // Import the context
 import '../styles/main.css';
 import { PlayersList } from '../components/User Components/PlayersList';
+import { TeamsList } from '../components/Team Components/TeamsList';
 
 export const PlayersPage = () => {
-  // Use LocationsContext to access locations
   const data = useContext(DataContext);
+  const [showTeams, setShowTeams] = useState(false);
 
   return (
     <div className="main-container">
-      <h1>Players</h1>
+      {showTeams ? <h1>Teams</h1> : <h1>Players</h1>}
+      <button onClick={() => setShowTeams(!showTeams)}>
+        {showTeams ? 'Show Players' : 'Show Teams'}
+      </button>
+      {showTeams ? 
+        <div className='list-container'>
+          <TeamsList teams={data.teams} />
+        </div>
+      : 
       <div className='list-container'>
         <PlayersList users={data.users} />
       </div>
+      }
     </div>
   );
 };

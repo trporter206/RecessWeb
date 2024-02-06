@@ -8,11 +8,13 @@ import { GamesList } from '../components/Game Components/GamesList';
 import { Game } from '../models/Game'; // Import the Game type
 import { Location } from '../models/Location'; // Import the Location type
 import { LocationsList } from '../components/Location Components/LocationsList';
+import { TeamCreationModal } from '../components/Team Components/TeamCreationModal';
 
 export const ProfilePage = () => {
   const userContext = useContext(UserContext);
   const dataContext = useContext(DataContext);
   const [showProfileCreationModal, setShowProfileCreationModal] = useState(false);
+  const [showTeamCreationModal, setShowTeamCreationModal] = useState(false);
   const user = userContext?.user;
   const profile = userContext?.profile;
   const games = dataContext?.games || []; 
@@ -22,6 +24,10 @@ export const ProfilePage = () => {
   let userGames: Game[] = [];
   let favoriteLocations: Location[] = [];
   let pendingInvites: Game[] = [];
+
+  const handleToggleTeamCreationModal = () => {
+    setShowTeamCreationModal(!showTeamCreationModal);
+  }
 
   const handleLogout = async () => {
     console.log('fetching...logout');
@@ -63,6 +69,7 @@ export const ProfilePage = () => {
             <h3>Games Joined: {gamesJoined}</h3>
             <h3>Network size: {network.length}</h3>
           </div>
+          <button onClick={handleToggleTeamCreationModal}>Create Team</button>
           <div className='user-lists-container'>
             <div className="user-games-container">
               <h2>Your Current Games</h2>
@@ -86,6 +93,9 @@ export const ProfilePage = () => {
           show={showProfileCreationModal} 
           onClose={() => setShowProfileCreationModal(false)} 
         />
+      )}
+      {showTeamCreationModal && (
+        <TeamCreationModal show={showTeamCreationModal} onClose={handleToggleTeamCreationModal}/>
       )}
     </div>
   );

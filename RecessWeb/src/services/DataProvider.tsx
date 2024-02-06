@@ -23,6 +23,7 @@ interface DataProviderType {
   getAverageRating: (userId: string) => number;
   getUsernameById: (userId: string) => string | undefined;
   toggleGamePendingStatusContext: (gameId: string) => void;
+  addTeam: (newTeam: Team) => void;
 
 }
 
@@ -41,6 +42,7 @@ export const DataContext = createContext<DataProviderType>({
   getAverageRating: () => 0,
   getUsernameById: () => '',
   toggleGamePendingStatusContext: () => {},
+  addTeam: () => {},
 });
 
 export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -64,6 +66,10 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     fetchData();
   }, []);
+
+  const addTeam = (newTeam: Team) => {
+    setTeams(prevTeams => [...prevTeams, newTeam]);
+  }
 
   const toggleGamePendingStatusContext = (gameId: string) => {
     setGames((currentGames) => {
@@ -177,6 +183,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     getAverageRating,
     getUsernameById,
     toggleGamePendingStatusContext,
+    addTeam,
   };
 
   return (

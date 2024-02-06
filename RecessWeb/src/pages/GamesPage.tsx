@@ -40,7 +40,7 @@ export const GamesPage = () => {
                 />
             )}
             <div className='scrollable-list-container'>
-                <GamesList games={games} onDeleteGame={handleDeleteGame}/>
+                <GamesList games={games} onDeleteGame={handleDeleteGame} includePending={false}/>
             </div>
         </div>
     );

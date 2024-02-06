@@ -117,7 +117,7 @@ export const LandingPage = () => {
        </div>
        <div className="scrollable-list-container">
           {showGames ? (
-            <GamesList games={displayedGames} onDeleteGame={handleDeleteGame} />
+            <GamesList games={displayedGames} onDeleteGame={handleDeleteGame} includePending={false}/>
           ) : (
             <LocationsList locations={displayedLocations} />
           )}
