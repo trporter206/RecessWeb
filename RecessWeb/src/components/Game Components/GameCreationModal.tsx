@@ -31,7 +31,9 @@ export const GameCreationModal: React.FC<GameCreationModalProps> = ({ show, onCl
   const [isTeamGame, setIsTeamGame] = useState<boolean>(false); // New state for "Teams Only"
   const userContext = useContext(UserContext);
   const user = userContext ? userContext.user : null;
+  const profile = userContext ? userContext.profile : null;
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const isUserOnTeam = profile?.teams && profile.teams.length > 0;
 
   useEffect(() => {
     const defaultLocationId = locationId || (locations.length > 0 ? locations[0].id : '');
@@ -130,10 +132,12 @@ export const GameCreationModal: React.FC<GameCreationModalProps> = ({ show, onCl
               </div>
             </div>
             <div className="form-group teams-max-row"> {/* Added class for styling */}
-              <div className="teams-only-field">
-                <label>Teams Only:</label>
-                <input type="checkbox" checked={isTeamGame} onChange={(e) => setIsTeamGame(e.target.checked)} />
-              </div>
+              {isUserOnTeam && (
+                  <div className="teams-only-field">
+                    <label>Teams Only:</label>
+                    <input type="checkbox" checked={isTeamGame} onChange={(e) => setIsTeamGame(e.target.checked)} />
+                  </div>
+              )}
               <div className="max-players-field">
                 <label>{isTeamGame ? "Max Teams" : "Max Players"}: </label>
                 <input type="number" value={isTeamGame ? maxTeams : maxPlayers} onChange={e => isTeamGame ? setMaxTeams(Number(e.target.value)) : setMaxPlayers(Number(e.target.value))} min="1" max={isTeamGame ? 2 : 10} required />
