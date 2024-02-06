@@ -1,6 +1,6 @@
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { LandingPage } from './pages/LandingPage';
-import { NavigationBar } from './components/NavigationBar';
+import { NavigationBar } from './components/Other Components/NavigationBar';
 import { GamesPage } from './pages/GamesPage'; // Import the Games component
 import { LocationsPage } from './pages/LocationsPage'; // Import the LocationsPage component
 import { DataProvider } from './services/DataProvider';

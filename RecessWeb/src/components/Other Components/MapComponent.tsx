@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useRef } from 'react';
-import { Game } from '../models/Game';
-import { Location } from '../models/Location';
-import { DataContext } from '../services/DataProvider';
+import { Game } from '../../models/Game';
+import { Location } from '../../models/Location';
+import { DataContext } from '../../services/DataProvider';
 
 interface MapComponentProps {
   items: Location[] | Game[];

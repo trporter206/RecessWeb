@@ -1,7 +1,7 @@
 import { useContext, useState } from 'react';
 import { auth } from '../firebaseConfig';
-import { LoginForm } from '../components/LoginForm';
-import { ProfileCreationModal } from '../components/ProfileCreationModal';
+import { LoginForm } from '../components/User Components/LoginForm';
+import { ProfileCreationModal } from '../components/User Components/ProfileCreationModal';
 import { UserContext } from '../services/UserContext';
 import { DataContext } from '../services/DataProvider';
 import { GamesList } from '../components/Game Components/GamesList';

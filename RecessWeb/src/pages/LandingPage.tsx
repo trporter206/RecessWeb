@@ -1,6 +1,6 @@
 import { useState, useContext, useEffect } from 'react';
 import { DataContext } from '../services/DataProvider';
-import { MapComponent } from '../components/MapComponent';
+import { MapComponent } from '../components/Other Components/MapComponent';
 import { LocationInfoModal } from '../components/Location Components/LocationInfoModal';
 import { Location } from '../models/Location';
 import { LocationsList } from '../components/Location Components/LocationsList';

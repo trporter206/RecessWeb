@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
-import { auth, firestore } from '../firebaseConfig';
+import { auth, firestore } from '../../firebaseConfig';
 
 interface ProfileCreationModalProps {
   show: boolean;
