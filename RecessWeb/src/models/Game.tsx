@@ -2,6 +2,7 @@ export interface Game {
     id: string;
     locationId: string;
     players: string[]; // Array of User IDs
+    teams: string[]; // Array of Team IDs
     date: Date;
     startTime: string;
     endTime: string;

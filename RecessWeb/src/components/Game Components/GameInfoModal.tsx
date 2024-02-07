@@ -7,8 +7,9 @@ import { DataContext } from '../../services/DataProvider';
 import { removeGameFromPendingInvites, updateGamesJoinedForLoggedInUser, updatePointsForLoggedInUser } from '../../services/UserServices';
 import CircularProgress from '@mui/material/CircularProgress';
 import { PlayerItem } from '../User Components/PlayerItem';
-import { User } from '../../models/User';
+// import { User } from '../../models/User';
 import { addGameIdToLocation } from '../../services/locationService';
+import { TeamItem } from '../Team Components/TeamItem';
 
 interface GameInfoModalProps {
   game: Game;
@@ -19,7 +20,7 @@ export const GameInfoModal: React.FC<GameInfoModalProps> = ({ game, onClose }) =
   const userContext = useContext(UserContext);
   const dataContext = useContext(DataContext);
   const user = userContext ? userContext.user : null;
-  // const profile = userContext ? userContext.profile : null;
+  const { teams } = dataContext;
   const [isUserInGame, setIsUserInGame] = useState(false);
   const { updateGamePlayers, removeGameFromLocation, removeGame, users, addGameToLocationContext, toggleGamePendingStatusContext } = dataContext;
   const [isLoading, setIsLoading] = useState(false);
@@ -110,12 +111,34 @@ export const GameInfoModal: React.FC<GameInfoModalProps> = ({ game, onClose }) =
       <p><strong>Location:</strong> {dataContext.locations.find(loc => loc.id === game.locationId)?.name || 'Unknown Location'}</p>
       <p><strong>Date:</strong> {new Date(game.date).toLocaleDateString()}</p>
       <p><strong>Time:</strong> {`${game.startTime} - ${game.endTime}`}</p>
-      <p><strong>Max Players:</strong> {game.maxPlayers}</p>
+      {game.isTeamGame ? (
+        <>
+          <p><strong>Teams:</strong> {game.teams.length}</p>
+        </>
+      ) : (
+        <>
+          <p><strong>Max Players:</strong> {game.maxPlayers}</p>
+          <p><strong>Minimum Points:</strong> {game.minimumPoints || 'None'}</p>
+        </>
+      )}
       <p><strong>Skill Level:</strong> {game.skillMinimum ? `${game.skillMinimum} - ${game.skillMaximum}` : 'Not specified'}</p>
-      <p><strong>Minimum Points:</strong> {game.minimumPoints || 'None'}</p>
       <p><strong>Description:</strong> {game.description || 'No description provided'}</p>
     </>
   );
+
+  const renderParticipants = () => {
+    if (game.isTeamGame) {
+      return game.teams.map(teamId => {
+        const team = teams.find(t => t.id === teamId);
+        return team && <TeamItem key={team.id} team={team} />;
+      });
+    } else {
+      return game.players.map(playerId => {
+        const player = users.find(user => user.id === playerId);
+        return player && <PlayerItem key={player.id} user={player} />;
+      });
+    }
+  };
 
   return (
     <div className="modal-backdrop">
@@ -125,11 +148,9 @@ export const GameInfoModal: React.FC<GameInfoModalProps> = ({ game, onClose }) =
           {renderGameDetails()}
           {!game.pending && (
             <>
-              <h3>Players: {game.players.length}</h3>
-              <div className="game-playerlist-container">
-                {game.players.map(playerId => (
-                  <PlayerItem key={playerId} user={users.find(user => user.id === playerId) || {} as User} />
-                ))}
+              <h3>{game.isTeamGame ? 'Teams' : 'Players'}: </h3>
+              <div className="game-participantlist-container">
+                {renderParticipants()}
               </div>
               {user && user.uid !== game.hostId && (
                 <button onClick={handleJoinLeaveGame}>

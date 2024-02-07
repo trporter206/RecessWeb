@@ -16,7 +16,7 @@ interface GameCreationModalProps {
 }
 
 export const GameCreationModal: React.FC<GameCreationModalProps> = ({ show, onClose, locationId, invitee }) => {
-  const { locations, addGameToLocationContext, addGame } = useContext(DataContext);
+  const { locations, addGameToLocationContext, addGame, teams } = useContext(DataContext);
   const [selectedLocation, setSelectedLocation] = useState<string>('');
   const [date, setDate] = useState<string>(new Date().toISOString().split('T')[0]);
   const [startTime, setStartTime] = useState<string>("12:00");
@@ -34,11 +34,21 @@ export const GameCreationModal: React.FC<GameCreationModalProps> = ({ show, onCl
   const profile = userContext ? userContext.profile : null;
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const isUserOnTeam = profile?.teams && profile.teams.length > 0;
+  const [selectedTeam, setSelectedTeam] = useState<string>('');
+  const userTeams = profile?.teams?.map(teamId => teams.find(team => team.id === teamId)).filter(team => team) ?? [];
 
   useEffect(() => {
     const defaultLocationId = locationId || (locations.length > 0 ? locations[0].id : '');
     setSelectedLocation(defaultLocationId);
-  }, [locations, locationId]);
+  
+    if (userTeams.length === 1) {
+      const firstTeam = userTeams[0];
+      if (firstTeam) {
+        setSelectedTeam(firstTeam.id);
+      }
+    }
+  }, [locations, locationId, teams, profile?.teams]);
+  
 
   const handleClose = (event: React.MouseEvent) => {
     event.stopPropagation();
@@ -59,12 +69,13 @@ export const GameCreationModal: React.FC<GameCreationModalProps> = ({ show, onCl
     const gamePayload = {
       locationId: selectedLocation,
       players: invitee ? [invitee.id] : [],
+      teams: isTeamGame ? [selectedTeam] : [], // Add user to team if not a team game
       date: new Date(date),
       startTime,
       endTime,
       skillMinimum,
       skillMaximum,
-      maxPlayers: isTeamGame ? maxTeams : 0, // Use maxTeams for team games
+      maxPlayers: isTeamGame ? 2 : maxPlayers, // Use maxTeams for team games
       title,
       hostId: user.uid,
       minimumPoints: isTeamGame ? 0 : minimumPoints, // Hide minimum points for team games
@@ -81,8 +92,9 @@ export const GameCreationModal: React.FC<GameCreationModalProps> = ({ show, onCl
       if (invitee) {
         await addGameToPendingInvites(invitee.id, newGameId);
       } else {
+        console.log('not a pending game');
         addGameToLocationContext(newGameId, selectedLocation);
-        await addGameIdToLocation(newGameId, selectedLocation);
+        await addGameIdToLocation(selectedLocation, newGameId);
         await updatePointsForLoggedInUser(10);
         await updateGamesHostedForLoggedInUser(true);
         await updateTotalGamesForLocation(selectedLocation, true);
@@ -133,21 +145,33 @@ export const GameCreationModal: React.FC<GameCreationModalProps> = ({ show, onCl
             </div>
             <div className="form-group teams-max-row"> {/* Added class for styling */}
               {isUserOnTeam && (
-                  <div className="teams-only-field">
-                    <label>Teams Only:</label>
+                  <div className="form-group">
+                    <label>Team Game:</label>
                     <input type="checkbox" checked={isTeamGame} onChange={(e) => setIsTeamGame(e.target.checked)} />
                   </div>
               )}
-              <div className="max-players-field">
-                <label>{isTeamGame ? "Max Teams" : "Max Players"}: </label>
-                <input type="number" value={isTeamGame ? maxTeams : maxPlayers} onChange={e => isTeamGame ? setMaxTeams(Number(e.target.value)) : setMaxPlayers(Number(e.target.value))} min="1" max={isTeamGame ? 2 : 10} required />
-              </div>
+              {isTeamGame && userTeams && (
+                <div className="form-group">
+                  <label>Team: </label>
+                  <select value={selectedTeam} onChange={e => setSelectedTeam(e.target.value)}>
+                    {userTeams.map(team => (
+                      <option key={team?.id} value={team?.id}>{team?.name}</option>
+                    ))}
+                  </select>
+                </div>
+              )}
             </div>
             {!isTeamGame && (
-              <div className="form-group">
-                <label>Minimum Points (Optional): </label>
-                <input type="number" value={minimumPoints} onChange={e => setMinimumPoints(Number(e.target.value))} min="0" />
-              </div>
+              <>
+                <div className="form-group">
+                  <label>Max Players: </label>
+                  <input type="number" value={isTeamGame ? maxTeams : maxPlayers} onChange={e => isTeamGame ? setMaxTeams(Number(e.target.value)) : setMaxPlayers(Number(e.target.value))} min="1" max={isTeamGame ? 2 : 10} required />
+                </div>
+                <div className="form-group">
+                  <label>Minimum Points (Optional): </label>
+                  <input type="number" value={minimumPoints} onChange={e => setMinimumPoints(Number(e.target.value))} min="0" />
+                </div>
+              </>
             )}
             <div className="form-group skill-min-max-row"> {/* Added class for styling */}
               <div className="skill-min-field">
@@ -175,3 +199,4 @@ export const GameCreationModal: React.FC<GameCreationModalProps> = ({ show, onCl
     </div>
   );
 };
+
