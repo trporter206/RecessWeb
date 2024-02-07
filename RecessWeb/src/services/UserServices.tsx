@@ -43,6 +43,39 @@ export async function fetchUsers(): Promise<User[]> {
     }
 }
 
+export async function acceptTeamInvite(teamId: string, userId: string) {
+  // Add user to the team's members
+  const teamRef = doc(db, 'Teams', teamId);
+  await updateDoc(teamRef, {
+    members: arrayUnion(userId)
+  });
+
+  // Remove invitation from user's pendingTeamInvites
+  const userRef = doc(db, 'Users', userId);
+  await updateDoc(userRef, {
+    pendingTeamInvites: arrayRemove(teamId)
+  });
+}
+
+export async function declineTeamInvite(teamId: string, userId: string) {
+  const userRef = doc(db, 'Users', userId);
+  await updateDoc(userRef, {
+    pendingTeamInvites: arrayRemove(teamId)
+  });
+}
+
+export async function sendTeamInvite(teamId: string, userId: string) {
+  const userRef = doc(db, "Users", userId);
+  try {
+    await updateDoc(userRef, {
+      pendingTeamInvites: arrayUnion(teamId)
+    });
+    console.log("Team invite sent successfully.");
+  } catch (error) {
+    console.error("Error sending team invite: ", error);
+  }
+}
+
 export async function addTeamToUser(userId: string, teamId: string): Promise<void> {
   console.log('fetching...add team to user');
   const userRef = doc(db, 'Users', userId);

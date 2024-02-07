@@ -8,6 +8,7 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
 import Typography from '@mui/material/Typography'; // Import Typography for the text
+import { sendTeamInvite } from '../../services/UserServices';
 
 interface TeamInvitationModalProps {
   show: boolean;
@@ -37,10 +38,19 @@ export const TeamInvitationModal: React.FC<TeamInvitationModalProps> = ({ show, 
     setSelectedTeam(event.target.value);
   };
 
-  const handleInvite = () => {
-    console.log('Inviting', invitee.username, 'to team', selectedTeam);
-    // Placeholder for invite logic
-    onClose(); // Close the modal after inviting
+  const handleInvite = async () => {
+    if (!selectedTeam) {
+      console.error("No team selected");
+      return;
+    }
+
+    try {
+      await sendTeamInvite(selectedTeam, invitee.id);
+      console.log(`Invitation sent to ${invitee.username} for team ${selectedTeam}`);
+      onClose(); // Close the modal after inviting
+    } catch (error) {
+      console.error("Failed to send team invite: ", error);
+    }
   };
 
   if (!show) {

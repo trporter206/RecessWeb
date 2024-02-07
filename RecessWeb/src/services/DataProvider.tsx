@@ -82,11 +82,13 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const addTeamToPlayerContext = (teamId: string, userId: string) => {
     setUsers(prevUsers => prevUsers.map(user => {
       if (user.id === userId) {
-        return { ...user, teams: [...user.teams, teamId] };
+        const updatedTeams = [...(user.teams || []), teamId];
+        return { ...user, teams: updatedTeams };
       }
       return user;
     }));
   };
+  
 
   const removeTeamFromPlayerContext = (teamId: string, userId: string) => {
     setUsers(prevUsers => prevUsers.map(user => {
