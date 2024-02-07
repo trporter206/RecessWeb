@@ -1,6 +1,7 @@
 export interface Team {
     id: string;
     name: string;
+    creator: string;
     members: string[]; 
     skill: number;
     wins: number;

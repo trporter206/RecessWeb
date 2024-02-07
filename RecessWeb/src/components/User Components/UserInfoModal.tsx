@@ -6,6 +6,7 @@ import ThumbDownIcon from '@mui/icons-material/ThumbDown';
 import { DataContext } from '../../services/DataProvider';
 import Button from '@mui/material/Button'; // Assuming you're using Material-UI for UI components
 import { GameCreationModal } from '../Game Components/GameCreationModal';
+import { TeamInvitationModal } from '../Team Components/TeamInvitationModal';
 
 interface UserInfoModalProps {
   user: User;
@@ -20,6 +21,7 @@ export const UserInfoModal: React.FC<UserInfoModalProps> = ({ user }) => {
   const currentUserRating = user.ratings?.[profile?.id ?? ""] ?? null;
   const isNotCurrentUser = profile && profile.id !== id;
   const [showGameCreation, setShowGameCreation] = useState(false);
+  const [showTeamInvitation, setShowTeamInvitation] = useState(false);
 
 
   const averageRating = dataContext.getAverageRating(id);
@@ -42,8 +44,17 @@ export const UserInfoModal: React.FC<UserInfoModalProps> = ({ user }) => {
     setShowGameCreation(true);
   }
 
+  const handleInviteToTeam = (e: React.FormEvent) => {
+    e.stopPropagation();
+    setShowTeamInvitation(true);
+  }
+
   const handleCloseGameCreation = () => {
     setShowGameCreation(false);
+  };
+
+  const handleCloseTeamInvitation = () => {
+    setShowTeamInvitation(false); // Close the TeamInvitationModal
   };
 
   return (
@@ -69,14 +80,26 @@ export const UserInfoModal: React.FC<UserInfoModalProps> = ({ user }) => {
         <h4>Games Hosted: {gamesHosted}</h4>
         <h4>Games Joined: {gamesJoined}</h4>
         {isNotCurrentUser && (
-          <Button variant="contained" color="primary" style={{ marginTop: '20px' }} onClick={handleInvitePlayer}>
-            Invite to Game
-          </Button>
+          <div className='userInfo-buttons'>
+            <Button variant="contained" color="primary" style={{ marginTop: '20px' }} onClick={handleInvitePlayer}>
+              Invite to Game
+            </Button>
+            <Button variant="contained" color="primary" style={{ marginTop: '20px' }} onClick={handleInviteToTeam}>
+            Invite to Team
+            </Button>
+          </div>
         )}
         {showGameCreation && (
           <GameCreationModal
             show={showGameCreation}
             onClose={handleCloseGameCreation}
+            invitee={user}
+          />
+        )}
+        {showTeamInvitation && (
+          <TeamInvitationModal
+            show={showTeamInvitation}
+            onClose={handleCloseTeamInvitation}
             invitee={user}
           />
         )}

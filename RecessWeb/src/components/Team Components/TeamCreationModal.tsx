@@ -32,6 +32,7 @@ export const TeamCreationModal: React.FC<TeamCreationModalProps> = ({ show, onCl
 
     const newTeam = {
       name,
+      creator: profile?.id || '',
       skill,
       wins: 0, // Default value
       losses: 0, // Default value
