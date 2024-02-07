@@ -18,8 +18,9 @@ export const TeamInfoModal: React.FC<TeamInfoModalProps> = ({ team, onClose }) =
   const user = userContext?.user;
   const [isLoading, setIsLoading] = useState(false);
   const isUserInTeam = user ? team.members.includes(user.uid) : false;
+  const isUserTeamCreator = user ? team.creator === user.uid : false; // Check if the user is the team creator
 
-  const handleLeaveTeam = async (event: React.MouseEvent) =>  {
+  const handleLeaveTeam = async (event: React.MouseEvent) => {
     event.stopPropagation();
     if (!user) {
       console.error("User not logged in");
@@ -27,13 +28,13 @@ export const TeamInfoModal: React.FC<TeamInfoModalProps> = ({ team, onClose }) =
     }
     setIsLoading(true);
     try {
-        await removeMemberFromTeam(team.id, user.uid);
-        removeMemberFromTeamContext(team.id, user.uid);
+      await removeMemberFromTeam(team.id, user.uid);
+      removeMemberFromTeamContext(team.id, user.uid);
     } catch (error) {
-        console.error(error);
+      console.error(error);
     } finally {
-        setIsLoading(false);
-        onClose();
+      setIsLoading(false);
+      // onClose(); // Consider whether you want to close the modal after leaving the team
     }
   };
 
@@ -59,7 +60,7 @@ export const TeamInfoModal: React.FC<TeamInfoModalProps> = ({ team, onClose }) =
               <PlayerItem key={memberId} user={users.find(user => user.id === memberId) || {} as User} />
             ))}
           </div>
-          {user && isUserInTeam && (
+          {user && isUserInTeam && !isUserTeamCreator && ( // Only show the "Leave Team" button if the user is in the team and not the team creator
             <button onClick={handleLeaveTeam}>Leave Team</button>
           )}
           <button onClick={() => onClose()}>Close</button>

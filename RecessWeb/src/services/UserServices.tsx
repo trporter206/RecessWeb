@@ -31,7 +31,8 @@ export async function fetchUsers(): Promise<User[]> {
                 pickleballSkill: data.pickleballSkill,
                 age: data.age,
                 gender: data.gender,
-                teams: data.teams
+                teams: data.teams,
+                pendingTeamInvites: data.pendingTeamInvites
             };
             return user;
         });

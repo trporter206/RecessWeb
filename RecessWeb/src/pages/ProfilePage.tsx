@@ -6,9 +6,11 @@ import { UserContext } from '../services/UserContext';
 import { DataContext } from '../services/DataProvider';
 import { GamesList } from '../components/Game Components/GamesList';
 import { Game } from '../models/Game'; // Import the Game type
+import { Team } from '../models/Team'; // Import the Team type
 import { Location } from '../models/Location'; // Import the Location type
 import { LocationsList } from '../components/Location Components/LocationsList';
 import { TeamCreationModal } from '../components/Team Components/TeamCreationModal';
+import { TeamsList } from '../components/Team Components/TeamsList';
 
 export const ProfilePage = () => {
   const userContext = useContext(UserContext);
@@ -18,12 +20,13 @@ export const ProfilePage = () => {
   const user = userContext?.user;
   const profile = userContext?.profile;
   const games = dataContext?.games || []; 
-  const { username, points, gamesHosted, gamesJoined, network, id } = profile || 
+  const { username, points, gamesHosted, gamesJoined, network, id, pendingTeamInvites } = profile || 
   { username: '', points: 0, totalGames: 0, gamesHosted: 0, gamesJoined: 0, network: [] };
 
   let userGames: Game[] = [];
   let favoriteLocations: Location[] = [];
   let pendingInvites: Game[] = [];
+  let teamInvites: Team[] = [];
 
   const handleToggleTeamCreationModal = () => {
     setShowTeamCreationModal(!showTeamCreationModal);
@@ -37,6 +40,12 @@ export const ProfilePage = () => {
       console.error("Logout error:", error);
     }
   };
+
+  if (pendingTeamInvites) {
+    teamInvites = dataContext.teams.filter(team =>
+      pendingTeamInvites.includes(team.id)
+    );
+  }
 
   if (user && user.uid) {
     userGames = games.filter(game => 
@@ -59,7 +68,7 @@ export const ProfilePage = () => {
   return (
     <div className='main-container'>
       {user ? (
-        <div>
+        <div className='profile-container'>
           <p>Welcome, {username}</p>
           <button onClick={handleLogout}>Log Out</button>
           <div>
@@ -80,8 +89,16 @@ export const ProfilePage = () => {
               <LocationsList locations={favoriteLocations} />
             </div>
             <div className="invites-container">
-              <h2>Your Invites</h2>
+              <h2>Your Game Invites</h2>
               <GamesList games={pendingInvites} onDeleteGame={() => {}} includePending={true} />
+            </div>
+            <div className="invites-container">
+              <h2>Your Team Invites</h2>
+              {teamInvites.length > 0 ? (
+                <TeamsList teams={teamInvites} />
+              ) : (
+                <p>No team invitations.</p>
+              )}
             </div>
           </div>
         </div>

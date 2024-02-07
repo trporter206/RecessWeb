@@ -17,6 +17,7 @@ interface UserProfile {
   favoriteLocations: string[];
   pendingInvites: string[];
   teams: string[];
+    pendingTeamInvites: string[];
   // Add other fields as necessary
 }
 
