@@ -3,6 +3,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 import { DataContext } from '../../services/DataProvider';
 import { createTeam } from '../../services/TeamServices';
 import { UserContext } from '../../services/UserContext';
+import { addTeamToUser } from '../../services/UserServices';
 
 interface TeamCreationModalProps {
   show: boolean;
@@ -10,7 +11,7 @@ interface TeamCreationModalProps {
 }
 
 export const TeamCreationModal: React.FC<TeamCreationModalProps> = ({ show, onClose }) => {
-  const { addTeam } = useContext(DataContext);
+  const { addTeam, addTeamToPlayerContext } = useContext(DataContext);
   const userContext = useContext(UserContext);
   const profile = userContext ? userContext.profile : null;
   const [name, setName] = useState<string>('');
@@ -47,8 +48,12 @@ export const TeamCreationModal: React.FC<TeamCreationModalProps> = ({ show, onCl
 
     setIsLoading(true);
     try {
+      //add to firebase
       const newTeamId = await createTeam(newTeam);
+      addTeamToUser(newTeamId, profile?.id || '');
+      //add to context
       addTeam({ ...newTeam, id: newTeamId });
+      addTeamToPlayerContext(newTeamId, profile?.id || '');
       console.log('Team created successfully');
     } catch (error) {
       console.error('Error creating team:', error);

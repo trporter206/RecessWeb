@@ -43,6 +43,45 @@ export async function fetchUsers(): Promise<User[]> {
     }
 }
 
+export async function addTeamToUser(userId: string, teamId: string): Promise<void> {
+  console.log('fetching...add team to user');
+  const userRef = doc(db, 'Users', userId);
+
+  try {
+    const userSnapshot = await getDoc(userRef);
+    if (!userSnapshot.exists()) {
+      throw new Error('User not found');
+    }
+
+    await updateDoc(userRef, {
+      teams: arrayUnion(teamId)
+    });
+  } catch (error) {
+    console.error('Error adding team to user:', error);
+    throw error;
+  }
+
+}
+
+export async function removeTeamFromUser(userId: string, teamId: string): Promise<void> {
+  console.log('fetching...remove team from user');
+  const userRef = doc(db, 'Users', userId);
+
+  try {
+    const userSnapshot = await getDoc(userRef);
+    if (!userSnapshot.exists()) {
+      throw new Error('User not found');
+    }
+
+    await updateDoc(userRef, {
+      teams: arrayRemove(teamId)
+    });
+  } catch (error) {
+    console.error('Error removing team from user:', error);
+    throw error;
+  }
+}
+
 export async function isUserOnTeamOfType(teamType: string): Promise<boolean> {
   const auth = getAuth();
   const currentUser = auth.currentUser;

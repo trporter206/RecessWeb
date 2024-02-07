@@ -28,6 +28,8 @@ interface DataProviderType {
   removeMemberFromTeamContext: (teamId: string, userId: string) => void;
   addTeamInviteContext: (teamId: string, userId: string) => void;
   removeTeamInviteContext: (teamId: string, userId: string) => void;
+  addTeamToPlayerContext: (teamId: string, userId: string) => void;
+  removeTeamFromPlayerContext: (teamId: string, userId: string) => void;
 
 }
 
@@ -51,6 +53,8 @@ export const DataContext = createContext<DataProviderType>({
   removeMemberFromTeamContext: () => {},
   addTeamInviteContext: () => {},
   removeTeamInviteContext: () => {},
+  addTeamToPlayerContext: () => {},
+  removeTeamFromPlayerContext: () => {},
 });
 
 export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -74,6 +78,24 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     fetchData();
   }, []);
+
+  const addTeamToPlayerContext = (teamId: string, userId: string) => {
+    setUsers(prevUsers => prevUsers.map(user => {
+      if (user.id === userId) {
+        return { ...user, teams: [...user.teams, teamId] };
+      }
+      return user;
+    }));
+  };
+
+  const removeTeamFromPlayerContext = (teamId: string, userId: string) => {
+    setUsers(prevUsers => prevUsers.map(user => {
+      if (user.id === userId) {
+        return { ...user, teams: user.teams.filter(team => team !== teamId) };
+      }
+      return user;
+    }));
+  };
 
   const removeTeamInviteContext = (teamId: string, userId: string) => {
     setUsers(prevUsers => prevUsers.map(user => {
@@ -232,6 +254,8 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     removeMemberFromTeamContext,
     addTeamInviteContext,
     removeTeamInviteContext,
+    addTeamToPlayerContext,
+    removeTeamFromPlayerContext,
   };
 
   return (

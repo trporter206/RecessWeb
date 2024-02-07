@@ -27,6 +27,7 @@ export const ProfilePage = () => {
   let favoriteLocations: Location[] = [];
   let pendingInvites: Game[] = [];
   let teamInvites: Team[] = [];
+  let userTeams: Team[] = [];
 
   const handleToggleTeamCreationModal = () => {
     setShowTeamCreationModal(!showTeamCreationModal);
@@ -50,6 +51,9 @@ export const ProfilePage = () => {
   if (user && user.uid) {
     userGames = games.filter(game => 
       game.hostId === user.uid || game.players.includes(user.uid)
+    );
+    userTeams = dataContext.teams.filter(team => 
+      team.members.includes(user.uid)
     );
   }
 
@@ -91,6 +95,14 @@ export const ProfilePage = () => {
             <div className="invites-container">
               <h2>Your Game Invites</h2>
               <GamesList games={pendingInvites} onDeleteGame={() => {}} includePending={true} />
+            </div>
+            <div className="user-teams-container">
+              <h2>Your Teams</h2>
+              {userTeams.length > 0 ? (
+                <TeamsList teams={userTeams} />
+              ) : (
+                <p>You are not a member of any teams.</p>
+              )}
             </div>
             <div className="invites-container">
               <h2>Your Team Invites</h2>
