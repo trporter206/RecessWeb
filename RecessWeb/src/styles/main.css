@@ -46,7 +46,7 @@
 
 /* Style the list container to take up 20% of the width */
 .scrollable-list-container {
-  max-height: 400px; /* Adjust as needed */
+  max-height: 100%; /* Adjust as needed */
   overflow-y: auto; /* Enable vertical scrolling */
   margin-top: 20px;
 }

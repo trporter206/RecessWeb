@@ -2,7 +2,7 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { Game } from '../../models/Game';
 import { UserContext } from '../../services/UserContext';
-import { completeGame, deleteGame, joinGame, leaveGame, rewardBonusPoints, toggleGamePendingStatus } from '../../services/GameServices';
+import { addTeamToGame, completeGame, deleteGame, joinGame, leaveGame, rewardBonusPoints, toggleGamePendingStatus } from '../../services/GameServices';
 import { DataContext } from '../../services/DataProvider';
 import { removeGameFromPendingInvites, updateGamesJoinedForLoggedInUser, updatePointsForLoggedInUser } from '../../services/UserServices';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -10,6 +10,7 @@ import { PlayerItem } from '../User Components/PlayerItem';
 // import { User } from '../../models/User';
 import { addGameIdToLocation } from '../../services/locationService';
 import { TeamItem } from '../Team Components/TeamItem';
+import { TeamChooserModal } from '../Team Components/TeamChooserModal';
 
 interface GameInfoModalProps {
   game: Game;
@@ -22,11 +23,12 @@ export const GameInfoModal: React.FC<GameInfoModalProps> = ({ game, onClose }) =
   const profile = userContext?.profile;
   const [canAcceptTeamInvite, setCanAcceptTeamInvite] = useState(false);
   const user = userContext ? userContext.user : null;
-  const { teams } = dataContext;
+  const { teams, addTeamToGameContext } = dataContext;
   const [isUserInGame, setIsUserInGame] = useState(false);
   const { updateGamePlayers, removeGameFromLocation, removeGame, users, addGameToLocationContext, toggleGamePendingStatusContext } = dataContext;
   const [isLoading, setIsLoading] = useState(false);
   const [hostUsername, setHostUsername] = useState('');
+  const [showTeamChooser, setShowTeamChooser] = useState(false);
   let isUserPartOfAnyTeam = false;
 
   useEffect(() => {
@@ -38,6 +40,7 @@ export const GameInfoModal: React.FC<GameInfoModalProps> = ({ game, onClose }) =
     fetchHostUsername();
     if (game.isTeamGame && profile?.teams) {
       const isOnParticipatingTeam = game.teams.some(teamId => profile.teams.includes(teamId));
+      console.log('isOnParticipatingTeam:', isOnParticipatingTeam);
       setCanAcceptTeamInvite(!isOnParticipatingTeam);
       isUserPartOfAnyTeam = profile.teams.length > 0;
     }
@@ -148,6 +151,25 @@ export const GameInfoModal: React.FC<GameInfoModalProps> = ({ game, onClose }) =
     }
   };
 
+  const handleAcceptTeamInvite = async (event: React.MouseEvent) => {
+    event.stopPropagation();
+    if (!user) {
+      console.error("User not logged in");
+      return;
+    }
+    setShowTeamChooser(true);
+  }
+
+  const handleTeamChosen = async (chosenTeamId: string) => {
+    try {
+      await addTeamToGame(game.id, chosenTeamId);
+      addTeamToGameContext(chosenTeamId, game.id);
+    } catch (error) {
+      console.error('Error adding team to game:', error);
+    }
+    setShowTeamChooser(false);
+  };
+
   return (
     <div className="modal-backdrop">
     {isLoading ? <CircularProgress /> : (
@@ -168,7 +190,7 @@ export const GameInfoModal: React.FC<GameInfoModalProps> = ({ game, onClose }) =
             )}
             {/* Show "Accept Invite" button if the user can accept the team invite */}
             {user && user.uid !== game.hostId && canAcceptTeamInvite && (
-              <button>
+              <button onClick={handleAcceptTeamInvite}>
                 Accept Invite
               </button>
             )}
@@ -191,6 +213,13 @@ export const GameInfoModal: React.FC<GameInfoModalProps> = ({ game, onClose }) =
           <button onClick={handleCompleteGame}>Complete Game</button>
         )}
       </div>
+    )}
+    {showTeamChooser && (
+      <TeamChooserModal
+        show={showTeamChooser}
+        onClose={() => setShowTeamChooser(false)}
+        onTeamChosen={handleTeamChosen}
+      />
     )}
   </div>
   );

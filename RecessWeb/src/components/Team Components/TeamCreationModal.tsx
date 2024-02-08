@@ -50,7 +50,7 @@ export const TeamCreationModal: React.FC<TeamCreationModalProps> = ({ show, onCl
     try {
       //add to firebase
       const newTeamId = await createTeam(newTeam);
-      addTeamToUser(newTeamId, profile?.id || '');
+      addTeamToUser(profile?.id || '', newTeamId);
       //add to context
       addTeam({ ...newTeam, id: newTeamId });
       addTeamToPlayerContext(newTeamId, profile?.id || '');

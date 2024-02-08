@@ -66,6 +66,32 @@ export const fetchGameDetails = async (gameId: string): Promise<Game> => {
     }
 };
 
+export const addTeamToGame = async (gameId: string, teamId: string): Promise<void> => {
+  console.log('fetching...team addition');
+    try {
+        const gameRef = doc(firestore, 'Games', gameId);
+        await updateDoc(gameRef, {
+            teams: arrayUnion(teamId)
+        });
+    } catch (error) {
+        console.error('Error adding team to game:', error);
+        throw error;
+    }
+}
+
+export const removeTeamFromGame = async (gameId: string, teamId: string): Promise<void> => {
+  console.log('fetching...team removal');
+    try {
+        const gameRef = doc(firestore, 'Games', gameId);
+        await updateDoc(gameRef, {
+            teams: arrayRemove(teamId)
+        });
+    } catch (error) {
+        console.error('Error removing team from game:', error);
+        throw error;
+    }
+}
+
 export async function deleteGame(gameId: string, removeGameCallback: (gameId: string) => void): Promise<void> {
   console.log('fetching...game deletion');
     try {

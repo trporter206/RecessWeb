@@ -6,6 +6,7 @@ import { DataContext } from '../../services/DataProvider';
 import { removeMemberFromTeam } from '../../services/TeamServices';
 import { PlayerItem } from '../User Components/PlayerItem';
 import { User } from '../../models/User';
+import { removeTeamFromUser } from '../../services/UserServices';
 
 interface TeamInfoModalProps {
   team: Team;
@@ -14,7 +15,7 @@ interface TeamInfoModalProps {
 
 export const TeamInfoModal: React.FC<TeamInfoModalProps> = ({ team, onClose }) => {
   const userContext = useContext(UserContext);
-  const { users, removeMemberFromTeamContext } = useContext(DataContext);
+  const { users, removeMemberFromTeamContext, removeTeamFromPlayerContext } = useContext(DataContext);
   const user = userContext?.user;
   const [isLoading, setIsLoading] = useState(false);
   const isUserInTeam = user ? team.members.includes(user.uid) : false;
@@ -29,7 +30,9 @@ export const TeamInfoModal: React.FC<TeamInfoModalProps> = ({ team, onClose }) =
     setIsLoading(true);
     try {
       await removeMemberFromTeam(team.id, user.uid);
+      await removeTeamFromUser(user.uid, team.id);
       removeMemberFromTeamContext(team.id, user.uid);
+      removeTeamFromPlayerContext(user.uid, team.id);
     } catch (error) {
       console.error(error);
     } finally {
