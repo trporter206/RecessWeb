@@ -19,12 +19,15 @@ interface GameInfoModalProps {
 export const GameInfoModal: React.FC<GameInfoModalProps> = ({ game, onClose }) => {
   const userContext = useContext(UserContext);
   const dataContext = useContext(DataContext);
+  const profile = userContext?.profile;
+  const [canAcceptTeamInvite, setCanAcceptTeamInvite] = useState(false);
   const user = userContext ? userContext.user : null;
   const { teams } = dataContext;
   const [isUserInGame, setIsUserInGame] = useState(false);
   const { updateGamePlayers, removeGameFromLocation, removeGame, users, addGameToLocationContext, toggleGamePendingStatusContext } = dataContext;
   const [isLoading, setIsLoading] = useState(false);
   const [hostUsername, setHostUsername] = useState('');
+  let isUserPartOfAnyTeam = false;
 
   useEffect(() => {
     setIsUserInGame(user ? game.players.includes(user.uid) : false);
@@ -33,7 +36,12 @@ export const GameInfoModal: React.FC<GameInfoModalProps> = ({ game, onClose }) =
       setHostUsername(username || 'Unknown');
     };
     fetchHostUsername();
-  }, [game, dataContext, user]);
+    if (game.isTeamGame && profile?.teams) {
+      const isOnParticipatingTeam = game.teams.some(teamId => profile.teams.includes(teamId));
+      setCanAcceptTeamInvite(!isOnParticipatingTeam);
+      isUserPartOfAnyTeam = profile.teams.length > 0;
+    }
+  }, [game, dataContext, user, profile]);
 
   const handleCompleteGame = async () => {
     if (!user) {
@@ -142,35 +150,48 @@ export const GameInfoModal: React.FC<GameInfoModalProps> = ({ game, onClose }) =
 
   return (
     <div className="modal-backdrop">
-      {isLoading ? <CircularProgress /> : (
-        <div className="gameInfoModal-content">
-          {game.pending && <h2>Invitation from {hostUsername}</h2>}
-          {renderGameDetails()}
-          {!game.pending && (
-            <>
-              <h3>{game.isTeamGame ? 'Teams' : 'Players'}: </h3>
-              <div className="game-participantlist-container">
-                {renderParticipants()}
-              </div>
-              {user && user.uid !== game.hostId && (
-                <button onClick={handleJoinLeaveGame}>
-                  {isUserInGame ? 'Leave Game' : 'Join Game'}
-                </button>
-              )}
-              <button onClick={() => onClose()}>Close</button>
-            </>
-          )}
-          {game.pending && (
-            <>
-              <button onClick={() => handleInviteResponse(true)}>Accept</button>
-              <button onClick={() => handleInviteResponse(false)}>Decline</button>
-            </>
-          )}
-          {hasOneHourPassed() && user && user.uid === game.hostId && (
-            <button onClick={handleCompleteGame}>Complete Game</button>
-          )}
-        </div>
-      )}
-    </div>
+    {isLoading ? <CircularProgress /> : (
+      <div className="gameInfoModal-content">
+        {game.pending && <h2>Invitation from {hostUsername}</h2>}
+        {renderGameDetails()}
+        {!game.pending && (
+          <>
+            <h3>{game.isTeamGame ? 'Teams' : 'Players'}:</h3>
+            <div className="game-participantlist-container">
+              {renderParticipants()}
+            </div>
+            {/* Conditionally render buttons based on game type and user's team status */}
+            {user && user.uid !== game.hostId && game.isTeamGame && isUserPartOfAnyTeam && !canAcceptTeamInvite && (
+              <button onClick={handleJoinLeaveGame}>
+                {isUserInGame ? 'Leave Game' : 'Join Game'}
+              </button>
+            )}
+            {/* Show "Accept Invite" button if the user can accept the team invite */}
+            {user && user.uid !== game.hostId && canAcceptTeamInvite && (
+              <button>
+                Accept Invite
+              </button>
+            )}
+            {/* Do not show "Join Game" button if it's a team game and user is not part of any team */}
+            {!game.isTeamGame && user && user.uid !== game.hostId && (
+              <button onClick={handleJoinLeaveGame}>
+                {isUserInGame ? 'Leave Game' : 'Join Game'}
+              </button>
+            )}
+            <button onClick={() => onClose()}>Close</button>
+          </>
+        )}
+        {game.pending && (
+          <>
+            <button onClick={() => handleInviteResponse(true)}>Accept</button>
+            <button onClick={() => handleInviteResponse(false)}>Decline</button>
+          </>
+        )}
+        {hasOneHourPassed() && user && user.uid === game.hostId && (
+          <button onClick={handleCompleteGame}>Complete Game</button>
+        )}
+      </div>
+    )}
+  </div>
   );
 };

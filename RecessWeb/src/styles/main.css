@@ -1,11 +1,17 @@
-
+#root {
+    display: flex;
+  justify-content: center; /* This will center .main-container */
+  align-items: stretch; /* This will stretch the child to fill the container */
+  width: 100%;
+}
 
 .main-container {
   display: flex;
   flex-direction: column;
   align-items: center; /* Aligns children (items) horizontally in the center */
   justify-content: center; /* Aligns children (items) vertically in the center */
-  width: 100%; /* Full width of the viewport */
+  width: 100vw; /* Full width of the viewport */
+  max-width: 100%;
   height: 100%; /* Full height of the viewport */
 }
 
@@ -30,7 +36,12 @@
 .map-container {
   flex-grow: 1; /* Grow to fill available space */
   height: 80vh; /* Adjusted height, previously set inline */
-  width: 80vw; /* Adjusted width, previously set inline */
+  width: 100%; /* Adjusted width, previously set inline */
+}
+
+.list-container {
+    width: 30%;
+    padding: 10px; /* Adjusted width, previously set inline */
 }
 
 /* Style the list container to take up 20% of the width */
