@@ -2,17 +2,20 @@ import React, { createContext, useState, useEffect } from 'react';
 import { fetchLocations } from './locationService';
 import { fetchGames } from './GameServices';
 import { fetchUsers } from './UserServices';
+import { fetchTeams } from './TeamServices';
 import { Location } from '../models/Location';
 import { Game, GameComment } from '../models/Game';
 import { User } from '../models/User';
 import { Team } from '../models/Team';
-import { fetchTeams } from './TeamServices';
+import { Club } from '../models/Club';
+import { fetchClubs } from './ClubServices';
 
 interface DataProviderType {
   locations: Location[];
   games: Game[];
   users: User[];
   teams: Team[];
+  clubs: Club[];
   setLocations: React.Dispatch<React.SetStateAction<Location[]>>;
   addGameToLocationContext: (gameId: string, locationId: string) => void;
   removeGameFromLocation: (gameId: string, locationId: string) => void;
@@ -34,6 +37,12 @@ interface DataProviderType {
   removeTeamFromGameContext: (teamId: string, gameId: string) => void;
   addCommentToGameContext: (gameId: string, comment: GameComment) => void;
   removeCommentFromGameContext: (gameId: string, commentId: string) => void;
+  addClubContext: (club: Club) => void;
+  removeClubContext: (clubId: string) => void;
+  addGameToClubContext: (gameId: string, clubId: string) => void;
+  removeGameFromClubContext: (gameId: string, clubId: string) => void;
+  addMemberToClubContext: (clubId: string, userId: string) => void;
+  removeMemberFromClubContext: (clubId: string, userId: string) => void;
 }
 
 export const DataContext = createContext<DataProviderType>({
@@ -41,6 +50,7 @@ export const DataContext = createContext<DataProviderType>({
   games: [],
   users: [],
   teams: [],
+  clubs: [],
   setLocations: () => {},
   addGameToLocationContext: () => {},
   removeGameFromLocation: () => {},
@@ -62,6 +72,12 @@ export const DataContext = createContext<DataProviderType>({
   removeTeamFromGameContext: () => {},
   addCommentToGameContext: () => {},
   removeCommentFromGameContext: () => {},
+  addClubContext: () => {},
+  removeClubContext: () => {},
+  addGameToClubContext: () => {},
+  removeGameFromClubContext: () => {},
+  addMemberToClubContext: () => {},
+  removeMemberFromClubContext: () => {},
 });
 
 export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -69,22 +85,69 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [games, setGames] = useState<Game[]>([]);
   const [users, setUsers] = useState<User[]>([]);
   const [teams, setTeams] = useState<Team[]>([]);
+  const [clubs, setClubs] = useState<Club[]>([]);
 
   useEffect(() => {
     const fetchData = async () => {
       const fetchedUsers = await fetchUsers();
       const fetchedTeams = await fetchTeams();
       const fetchedGames = await fetchGames();
+      const fetechedClubs = await fetchClubs();
       const fetchedLocations = await fetchLocations();
 
       setLocations(fetchedLocations);
       setGames(fetchedGames);
       setUsers(fetchedUsers);
       setTeams(fetchedTeams);
+      setClubs(fetechedClubs);
     };
 
     fetchData();
   }, []);
+
+  const addMemberToClubContext = (clubId: string, userId: string) => {
+    setClubs(prevClubs => prevClubs.map(club => {
+      if (club.id === clubId) {
+        return { ...club, members: [...club.members, userId] };
+      }
+      return club;
+    }));
+  };
+
+  const removeMemberFromClubContext = (clubId: string, userId: string) => {
+    setClubs(prevClubs => prevClubs.map(club => {
+      if (club.id === clubId) {
+        return { ...club, members: club.members.filter(memberId => memberId !== userId) };
+      }
+      return club;
+    }));
+  };
+
+  const addGameToClubContext = (gameId: string, clubId: string) => {
+    setClubs(prevClubs => prevClubs.map(club => {
+      if (club.id === clubId) {
+        return { ...club, games: [...club.games, gameId] };
+      }
+      return club;
+    }));
+  };
+
+  const removeGameFromClubContext = (gameId: string, clubId: string) => {
+    setClubs(prevClubs => prevClubs.map(club => {
+      if (club.id === clubId) {
+        return { ...club, games: club.games.filter(game => game !== gameId) };
+      }
+      return club;
+    }));
+  };
+
+  const addClubContext = (club: Club) => {
+    setClubs(prevClubs => [...prevClubs, club]);
+  };
+
+  const removeClubContext = (clubId: string) => {
+    setClubs(prevClubs => prevClubs.filter(club => club.id !== clubId));
+  };
 
   const addCommentToGameContext = (gameId: string, comment: GameComment) => {
     setGames(prevGames => prevGames.map(game => {
@@ -287,6 +350,7 @@ const removeCommentFromGameContext = (gameId: string, commentId: string) => {
     games,
     users,
     teams,
+    clubs,
     setLocations,
     addGameToLocationContext,
     removeGameFromLocation,
@@ -308,6 +372,12 @@ const removeCommentFromGameContext = (gameId: string, commentId: string) => {
     removeTeamFromGameContext,
     addCommentToGameContext,
     removeCommentFromGameContext,
+    addClubContext,
+    removeClubContext,
+    addGameToClubContext,
+    removeGameFromClubContext,
+    addMemberToClubContext,
+    removeMemberFromClubContext,
   };
 
   return (

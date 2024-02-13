@@ -67,7 +67,7 @@ export const fetchGameDetails = async (gameId: string): Promise<Game> => {
     }
 };
 
-export const addCommentToGame = async (gameId: string, gameComment: GameComment, userId: string): Promise<void> => {
+export const addCommentToGame = async (gameId: string, gameComment: GameComment): Promise<void> => {
   console.log('Adding comment to game...');
   try {
     const gameRef = doc(firestore, 'Games', gameId);
