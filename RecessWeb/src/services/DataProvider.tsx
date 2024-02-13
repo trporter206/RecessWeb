@@ -92,14 +92,14 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const fetchedUsers = await fetchUsers();
       const fetchedTeams = await fetchTeams();
       const fetchedGames = await fetchGames();
-      const fetechedClubs = await fetchClubs();
+      const fetchedClubs = await fetchClubs();
       const fetchedLocations = await fetchLocations();
 
       setLocations(fetchedLocations);
       setGames(fetchedGames);
       setUsers(fetchedUsers);
       setTeams(fetchedTeams);
-      setClubs(fetechedClubs);
+      setClubs(fetchedClubs);
     };
 
     fetchData();

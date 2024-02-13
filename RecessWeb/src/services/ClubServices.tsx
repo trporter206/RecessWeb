@@ -1,60 +1,61 @@
-import { initializeApp } from "firebase-admin";
+import { initializeApp } from "firebase/app";
 import { Club } from "../models/Club";
-import { arrayRemove, arrayUnion } from "firebase/firestore";
+import { addDoc, arrayRemove, arrayUnion, collection, doc, getDoc, getDocs, getFirestore, deleteDoc, updateDoc } from "firebase/firestore";
+import { firebaseConfig, firestore } from "../firebaseConfig";
 
-const app = initializeApp();
-const db = app.firestore();
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
 export async function fetchClubs(): Promise<Club[]> {
-  console.log('fetching...clubs');
-  try {
-    const snapshot = await db.collection('Clubs').get();
-    const clubs = snapshot.docs.map((doc) => {
-      const data = doc.data();
-      const club: Club = {
-        id: doc.id,
-        name: data.name,
-        organizer: data.organizer,
-        description: data.description,
-        sport: data.sport,
-        members: data.members || [],
-        games: data.games || [],
-        isPublic: data.isPublic,
-      };
-      return club;
-    });
-    return clubs;
-  } catch (error) {
-    console.error('Error fetching clubs:', error);
-    throw error;
+    console.log('fetching...clubs');
+      try {
+          const snapshot = await getDocs(collection(db, 'Clubs'));
+          const clubs = snapshot.docs.map((doc) => {
+              const data = doc.data();
+              const club: Club = {
+                    id: doc.id,
+                    name: data.name,
+                    organizer: data.organizer,
+                    description: data.description,
+                    sport: data.sport,
+                    members: data.members || [],
+                    games: data.games || [],
+                    isPublic: data.isPublic,
+              };
+              return club;
+          });
+          return clubs;
+      } catch (error) {
+          console.error('Error fetching clubs:', error);
+          throw error;
+      }
   }
-}
 
-export const fetchClubDetails = async (clubId: string): Promise<Club> => {
-  console.log('fetching...club details');
-  try {
-    const clubRef = db.collection('Clubs').doc(clubId);
-    const clubSnapshot = await clubRef.get();
-
-    if (!clubSnapshot.exists) {
-      throw new Error('Club not found');
+export async function fetchClubDetails(clubId: string): Promise<Club> {
+    console.log('fetching...club details');
+        try {
+            const clubRef = doc(firestore, 'Clubs', clubId);
+            const clubSnapshot = await getDoc(clubRef);
+    
+            if (!clubSnapshot.exists) {
+                throw new Error('Club not found');
+            }
+    
+            const clubData = clubSnapshot.data();
+            return {
+                id: clubSnapshot.id,
+                ...clubData
+            } as Club;
+        } catch (error) {
+            console.error('Error fetching club details:', error);
+            throw error;
+        }
     }
-
-    const clubData = clubSnapshot.data();
-    return {
-      id: clubSnapshot.id,
-      ...clubData
-    } as Club;
-  } catch (error) {
-    console.error('Error fetching club details:', error);
-    throw error;
-  }
-};
 
 export const createClub = async (club: Club): Promise<string> => {
   console.log('creating...club');
   try {
-    const clubRef = await db.collection('Clubs').add(club);
+    const clubRef = await addDoc(collection(db, 'Clubs'), club);
     return clubRef.id;
   } catch (error) {
     console.error('Error creating club:', error);
@@ -65,7 +66,7 @@ export const createClub = async (club: Club): Promise<string> => {
 export async function deleteClub(clubId: string): Promise<void> {
   console.log('deleting...club');
   try {
-    await db.collection('Clubs').doc(clubId).delete();
+    await deleteDoc(doc(db, 'Clubs', clubId));
   } catch (error) {
     console.error('Error deleting club:', error);
     throw error;
@@ -75,9 +76,9 @@ export async function deleteClub(clubId: string): Promise<void> {
 export async function addMemberToClub(clubId: string, userId: string): Promise<void> {
   console.log('adding...member to club');
   try {
-    const clubRef = db.collection('Clubs').doc(clubId);
-    await clubRef.update({
-      members: arrayUnion(userId)
+    const clubRef = await doc(db, 'Clubs', clubId);
+    await updateDoc(clubRef, {
+        members: arrayUnion(userId)
     });
   } catch (error) {
     console.error('Error adding member to club:', error);
@@ -88,9 +89,9 @@ export async function addMemberToClub(clubId: string, userId: string): Promise<v
 export async function removeMemberFromClub(clubId: string, userId: string): Promise<void> {
   console.log('removing...member from club');
   try {
-    const clubRef = db.collection('Clubs').doc(clubId);
-    await clubRef.update({
-      members: arrayRemove(userId)
+    const clubRef = doc(db, 'Clubs', clubId);
+    await updateDoc(clubRef, {
+        members: arrayRemove(userId)
     });
   } catch (error) {
     console.error('Error removing member from club:', error);
@@ -101,9 +102,9 @@ export async function removeMemberFromClub(clubId: string, userId: string): Prom
 export async function addGameToClub(clubId: string, gameId: string): Promise<void> {
   console.log('adding...game to club');
   try {
-    const clubRef = db.collection('Clubs').doc(clubId);
-    await clubRef.update({
-      games: arrayUnion(gameId)
+    const clubRef = await doc(db, 'Clubs', clubId);
+    await updateDoc(clubRef, {
+        games: arrayUnion(gameId)
     });
   } catch (error) {
     console.error('Error adding game to club:', error);
@@ -114,9 +115,9 @@ export async function addGameToClub(clubId: string, gameId: string): Promise<voi
 export async function removeGameFromClub(clubId: string, gameId: string): Promise<void> {
   console.log('removing...game from club');
   try {
-    const clubRef = db.collection('Clubs').doc(clubId);
-    await clubRef.update({
-      games: arrayRemove(gameId)
+    const clubRef = await doc(db, 'Clubs', clubId);
+    await updateDoc(clubRef, {
+        games: arrayRemove(gameId)
     });
   } catch (error) {
     console.error('Error removing game from club:', error);

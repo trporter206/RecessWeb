@@ -13,12 +13,14 @@ import { TeamCreationModal } from '../components/Team Components/TeamCreationMod
 import { TeamsList } from '../components/Team Components/TeamsList';
 import { TeamInviteItem } from '../components/Team Components/TeamInviteItem';
 import { acceptTeamInvite, addTeamToUser, declineTeamInvite } from '../services/UserServices';
+import { ClubCreationModal } from '../components/Club Components/ClubCreationModal';
 
 export const ProfilePage = () => {
   const userContext = useContext(UserContext);
   const dataContext = useContext(DataContext);
   const { addTeamToPlayerContext, removeTeamInviteContext, addMemberToTeamContext } = dataContext;
   const [showProfileCreationModal, setShowProfileCreationModal] = useState(false);
+  const [showClubCreationModal, setShowClubCreationModal] = useState(false);
   const [showTeamCreationModal, setShowTeamCreationModal] = useState(false);
   const user = userContext?.user;
   const profile = userContext?.profile;
@@ -62,6 +64,10 @@ export const ProfilePage = () => {
       console.error("Error declining team invite:", error);
     }
   };
+
+  const handleToggleClubCreationModal = () => {
+    setShowClubCreationModal(!showClubCreationModal);
+  }
 
   const handleToggleTeamCreationModal = () => {
     setShowTeamCreationModal(!showTeamCreationModal);
@@ -117,6 +123,7 @@ export const ProfilePage = () => {
             <h3>Network size: {network.length}</h3>
           </div>
           <button onClick={handleToggleTeamCreationModal}>Create Team</button>
+          <button onClick={handleToggleClubCreationModal}>Create Club</button>
           <div className='user-lists-container'>
             <div className="user-games-container">
               <h2>Your Current Games</h2>
@@ -166,6 +173,9 @@ export const ProfilePage = () => {
       )}
       {showTeamCreationModal && (
         <TeamCreationModal show={showTeamCreationModal} onClose={handleToggleTeamCreationModal}/>
+      )}
+      {showClubCreationModal && (
+        <ClubCreationModal show={showClubCreationModal} onClose={handleToggleClubCreationModal}/>
       )}
     </div>
   );

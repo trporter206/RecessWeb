@@ -145,7 +145,7 @@ export const GameInfoModal: React.FC<GameInfoModalProps> = ({ game, onClose }) =
 
     try {
         // You still call addCommentToGame to actually add the comment to Firestore
-        await addCommentToGame(game.id, newComment, user.uid);
+        await addCommentToGame(game.id, newComment);
         // Assuming addCommentToGameContext is a context function to update your local state
         addCommentToGameContext(game.id, newComment);
         setCommentText('');
