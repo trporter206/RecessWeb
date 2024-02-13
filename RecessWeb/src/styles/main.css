@@ -270,9 +270,32 @@
     white-space: nowrap; /* Prevent wrapping to a new line */
 }
 
-.communityList-container {
-    
-}
+.tabs-container {
+    display: flex;
+    border-bottom: 2px solid #ccc;
+    position: relative;
+  }
+  
+  .tab-button {
+    padding: 10px 20px;
+    cursor: pointer;
+    background-color: transparent;
+    border: none;
+    outline: none;
+  }
+  
+  .tab-button:focus,
+  .tab-button:hover {
+    background-color: #f0f0f0;
+  }
+  
+  .slider {
+    position: absolute;
+    height: 4px;
+    background-color: #007bff;
+    bottom: -2px; /* Align with the bottom border */
+    transition: left 0.3s ease-in-out;
+  }
 
 .player-circle {
     align-self: center;
