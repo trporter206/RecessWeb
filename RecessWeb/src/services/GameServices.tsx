@@ -1,10 +1,12 @@
 import { initializeApp } from 'firebase/app';
 import { getFirestore, collection, getDocs, addDoc, doc, deleteDoc, updateDoc, arrayUnion, arrayRemove, getDoc } from 'firebase/firestore';
-import { Game } from '../models/Game';
+import { Game, GameComment } from '../models/Game';
 import { firebaseConfig, firestore } from '../firebaseConfig';
 import { addUserToNetwork, updateGamesHostedForLoggedInUser, updatePointsForLoggedInUser } from './UserServices';
 import { updateTotalGamesForLocation } from './locationService';
 import { updatePointsForUser } from './UserServices';
+import { v4 as uuidv4 } from 'uuid';
+
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
@@ -67,31 +69,45 @@ export const fetchGameDetails = async (gameId: string): Promise<Game> => {
     }
 };
 
-export const addCommentToGame = async (gameId: string, comment: string, userId: string): Promise<void> => {
-  console.log('fetching...comment addition');
-    try {
-        const gameRef = doc(firestore, 'Games', gameId);
-        await updateDoc(gameRef, {
-            comments: arrayUnion({ userId, text: comment, timestamp: new Date() })
-        });
-    } catch (error) {
-        console.error('Error adding comment to game:', error);
-        throw error;
-    }
-}
+export const addCommentToGame = async (gameId: string, gameComment: GameComment, userId: string): Promise<void> => {
+  console.log('Adding comment to game...');
+  try {
+    const gameRef = doc(firestore, 'Games', gameId);
 
-export const removeCommentFromGame = async (gameId: string, comment: string, userId: string): Promise<void> => {
-  console.log('fetching...comment removal');
-    try {
-        const gameRef = doc(firestore, 'Games', gameId);
-        await updateDoc(gameRef, {
-            comments: arrayRemove({ userId, text: comment, timestamp: new Date() })
-        });
-    } catch (error) {
-        console.error('Error removing comment from game:', error);
-        throw error;
+    await updateDoc(gameRef, {
+      comments: arrayUnion(gameComment) // Add the comment with its ID
+    });
+    
+    console.log('Comment added successfully.');
+  } catch (error) {
+    console.error('Error adding comment to game:', error);
+    throw error;
+  }
+};
+
+
+export const removeCommentFromGame = async (gameId: string, commentId: string): Promise<void> => {
+  console.log('Removing comment from game...');
+  try {
+    const gameRef = doc(firestore, 'Games', gameId);
+    const gameSnapshot = await getDoc(gameRef);
+    if (!gameSnapshot.exists()) {
+      throw new Error('Game not found');
     }
-}
+    const gameData = gameSnapshot.data() as { comments: GameComment[] }; 
+    const updatedComments = gameData.comments.filter(comment => comment.id !== commentId);
+
+    await updateDoc(gameRef, {
+      comments: updatedComments // Update with the filtered comments array
+    });
+
+    console.log('Comment removed successfully.');
+  } catch (error) {
+    console.error('Error removing comment from game:', error);
+    throw error;
+  }
+};
+
 
 export const addTeamToGame = async (gameId: string, teamId: string): Promise<void> => {
   console.log('fetching...team addition');

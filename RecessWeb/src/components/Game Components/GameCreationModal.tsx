@@ -81,7 +81,8 @@ export const GameCreationModal: React.FC<GameCreationModalProps> = ({ show, onCl
       minimumPoints: isTeamGame ? 0 : minimumPoints, // Hide minimum points for team games
       description,
       pending: !!invitee,
-      isTeamGame, // Include the isTeamGame flag
+      isTeamGame,
+      comments: [] // Include the isTeamGame flag
     };
 
     setIsLoading(true);

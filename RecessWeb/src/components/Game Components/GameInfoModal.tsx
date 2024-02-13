@@ -8,8 +8,9 @@ import { addCommentToGame,
         deleteGame, 
         joinGame, 
         leaveGame, 
+        removeCommentFromGame, 
         rewardBonusPoints, 
-        toggleGamePendingStatus } from '../../services/GameServices';
+        toggleGamePendingStatus} from '../../services/GameServices';
 import { DataContext } from '../../services/DataProvider';
 import { removeGameFromPendingInvites, updateGamesJoinedForLoggedInUser, updatePointsForLoggedInUser } from '../../services/UserServices';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -18,6 +19,9 @@ import { PlayerItem } from '../User Components/PlayerItem';
 import { addGameIdToLocation } from '../../services/locationService';
 import { TeamItem } from '../Team Components/TeamItem';
 import { TeamChooserModal } from '../Team Components/TeamChooserModal';
+import GameCommentBox from './GameCommentBox';
+import { v4 as uuidv4 } from 'uuid';
+import { Timestamp } from 'firebase/firestore';
 
 interface GameInfoModalProps {
   game: Game;
@@ -38,7 +42,8 @@ export const GameInfoModal: React.FC<GameInfoModalProps> = ({ game, onClose }) =
     users, 
     addGameToLocationContext, 
     toggleGamePendingStatusContext,
-    addCommentToGameContext } = dataContext;
+    addCommentToGameContext,
+    removeCommentFromGameContext } = dataContext;
   const [isLoading, setIsLoading] = useState(false);
   const [hostUsername, setHostUsername] = useState('');
   const [showTeamChooser, setShowTeamChooser] = useState(false);
@@ -76,7 +81,6 @@ export const GameInfoModal: React.FC<GameInfoModalProps> = ({ game, onClose }) =
   };
 
   const renderComments = () => {
-    // Check if there are any comments
     if (game.comments.length > 0) {
       return (
         <div>
@@ -84,42 +88,72 @@ export const GameInfoModal: React.FC<GameInfoModalProps> = ({ game, onClose }) =
           <ul>
             {game.comments.map((comment, index) => (
               <li key={index}>
-                <p><strong>User ID:</strong> {comment.userId}</p>
-                <p>{comment.text}</p>
-                <p><small>{new Date(comment.timestamp).toLocaleString()}</small></p>
+                <GameCommentBox 
+                  key={comment.id} // Use the comment ID as the key instead of index
+                  comment={comment}
+                  currentUserId={user?.uid || ''}
+                  username={dataContext.getUsernameById(comment.userId) || 'Unknown'} // Ensure this async call is handled correctly
+                  onDelete={(comment) => handleDeleteComment(comment.id)}
+                />
               </li>
             ))}
           </ul>
         </div>
       );
     } else {
-      // Display a message if there are no comments
       return <p>No comments.</p>;
     }
   };
+
+  const handleDeleteComment = async (commentId: string) => {
+    // No need for event.stopPropagation(); as it's not an event handler anymore
+    if (!user) {
+      console.error("User not logged in");
+      return;
+    }
+    try {
+      await removeCommentFromGame(game.id, commentId);
+      removeCommentFromGameContext(game.id, commentId);
+    } catch (error) {
+      console.error('Failed to delete comment:', error);
+    }
+  };
+  
 
   const handleCommentChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     event.stopPropagation(); 
     setCommentText(event.target.value);
   };
 
-  const handleAddComment = (event: React.FormEvent) => {
-    event.preventDefault(); // Prevent form submission from reloading the page
-    event.stopPropagation(); // Prevent event from bubbling up
-  
+  const handleAddComment = async (event: React.FormEvent) => {
+    event.preventDefault();
+    event.stopPropagation();
+
     if (!user) {
-      console.error("User not logged in");
-      return;
+        console.error("User not logged in");
+        return;
     }
-    
+
+    const commentTimestamp = Timestamp.now();
+
+    const newComment = {
+      id: uuidv4(),
+      userId: user.uid,
+      text: commentText,
+      timestamp: commentTimestamp, // Convert to Timestamp
+    };
+
     try {
-      addCommentToGame(game.id, commentText, user.uid);
-      addCommentToGameContext(game.id, { userId: user.uid, text: commentText, timestamp: new Date() });
-      setCommentText('');
+        // You still call addCommentToGame to actually add the comment to Firestore
+        await addCommentToGame(game.id, newComment, user.uid);
+        // Assuming addCommentToGameContext is a context function to update your local state
+        addCommentToGameContext(game.id, newComment);
+        setCommentText('');
     } catch (error) {
-      console.error('Error adding comment:', error);
+        console.error('Error adding comment:', error);
     }
   };
+
 
   const handleCompleteGame = async () => {
     if (!user) {

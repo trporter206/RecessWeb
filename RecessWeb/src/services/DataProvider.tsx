@@ -33,7 +33,7 @@ interface DataProviderType {
   addTeamToGameContext: (teamId: string, gameId: string) => void;
   removeTeamFromGameContext: (teamId: string, gameId: string) => void;
   addCommentToGameContext: (gameId: string, comment: GameComment) => void;
-  removeCommentFromGameContext: (gameId: string, comment: GameComment) => void;
+  removeCommentFromGameContext: (gameId: string, commentId: string) => void;
 }
 
 export const DataContext = createContext<DataProviderType>({
@@ -96,14 +96,16 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }));
 }
 
-  const removeCommentFromGameContext = (gameId: string, comment: GameComment) => {
-    setGames(prevGames => prevGames.map(game => {
-      if (game.id === gameId) {
-        return { ...game, comments: game.comments.filter(gameComment => gameComment !== comment) };
-      }
-      return game;
-    }));
-  }
+const removeCommentFromGameContext = (gameId: string, commentId: string) => {
+  setGames(prevGames => prevGames.map(game => {
+    if (game.id === gameId) {
+      // Filter out the comment by its ID
+      const newComments = game.comments.filter(comment => comment.id !== commentId);
+      return { ...game, comments: newComments };
+    }
+    return game;
+  }));
+}
 
   const addTeamToGameContext = (teamId: string, gameId: string) => {
     setGames(prevGames => prevGames.map(game => {

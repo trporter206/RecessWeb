@@ -1,3 +1,5 @@
+import firebase from 'firebase/compat/app';
+
 export interface Game {
     id: string;
     locationId: string;
@@ -21,5 +23,6 @@ export interface Game {
 export interface GameComment {
   userId: string;
   text: string;
-  timestamp: Date;
+  timestamp: firebase.firestore.Timestamp;
+  id: string;
 }

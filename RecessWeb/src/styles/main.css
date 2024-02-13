@@ -367,3 +367,18 @@
     flex-direction: row;
     align-items: center;
 }
+
+.game-comment-box {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    padding: 20px;
+    background-color: antiquewhite;
+    border-radius: 50px;
+}
+
+.comment-notes {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+}
