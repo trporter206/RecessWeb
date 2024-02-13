@@ -15,11 +15,11 @@ export const PlayersPage = () => {
         {showTeams ? 'Show Players' : 'Show Teams'}
       </button>
       {showTeams ? 
-        <div className='list-container'>
+        <div className='communityList-container'>
           <TeamsList teams={data.teams} />
         </div>
       : 
-      <div className='list-container'>
+      <div className='playerlist-container'>
         <PlayersList users={data.users} />
       </div>
       }

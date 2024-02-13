@@ -5,8 +5,6 @@ import { firebaseConfig, firestore } from '../firebaseConfig';
 import { addUserToNetwork, updateGamesHostedForLoggedInUser, updatePointsForLoggedInUser } from './UserServices';
 import { updateTotalGamesForLocation } from './locationService';
 import { updatePointsForUser } from './UserServices';
-import { v4 as uuidv4 } from 'uuid';
-
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
