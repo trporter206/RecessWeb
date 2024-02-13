@@ -3,7 +3,7 @@ import { fetchLocations } from './locationService';
 import { fetchGames } from './GameServices';
 import { fetchUsers } from './UserServices';
 import { Location } from '../models/Location';
-import { Game } from '../models/Game';
+import { Game, GameComment } from '../models/Game';
 import { User } from '../models/User';
 import { Team } from '../models/Team';
 import { fetchTeams } from './TeamServices';
@@ -32,7 +32,8 @@ interface DataProviderType {
   removeTeamFromPlayerContext: (teamId: string, userId: string) => void;
   addTeamToGameContext: (teamId: string, gameId: string) => void;
   removeTeamFromGameContext: (teamId: string, gameId: string) => void;
-
+  addCommentToGameContext: (gameId: string, comment: GameComment) => void;
+  removeCommentFromGameContext: (gameId: string, comment: GameComment) => void;
 }
 
 export const DataContext = createContext<DataProviderType>({
@@ -59,6 +60,8 @@ export const DataContext = createContext<DataProviderType>({
   removeTeamFromPlayerContext: () => {},
   addTeamToGameContext: () => {},
   removeTeamFromGameContext: () => {},
+  addCommentToGameContext: () => {},
+  removeCommentFromGameContext: () => {},
 });
 
 export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -82,6 +85,25 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     fetchData();
   }, []);
+
+  const addCommentToGameContext = (gameId: string, comment: GameComment) => {
+    setGames(prevGames => prevGames.map(game => {
+      if (game.id === gameId) {
+        const updatedComments = [...game.comments, comment];
+        return { ...game, comments: updatedComments };
+      }
+      return game;
+  }));
+}
+
+  const removeCommentFromGameContext = (gameId: string, comment: GameComment) => {
+    setGames(prevGames => prevGames.map(game => {
+      if (game.id === gameId) {
+        return { ...game, comments: game.comments.filter(gameComment => gameComment !== comment) };
+      }
+      return game;
+    }));
+  }
 
   const addTeamToGameContext = (teamId: string, gameId: string) => {
     setGames(prevGames => prevGames.map(game => {
@@ -281,7 +303,9 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     addTeamToPlayerContext,
     removeTeamFromPlayerContext,
     addTeamToGameContext,
-    removeTeamFromGameContext
+    removeTeamFromGameContext,
+    addCommentToGameContext,
+    removeCommentFromGameContext,
   };
 
   return (

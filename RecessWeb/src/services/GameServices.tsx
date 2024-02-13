@@ -34,7 +34,8 @@ export async function fetchGames(): Promise<Game[]> {
                 minimumPoints: data.minimumPoints,
                 description: data.description,
                 pending: data.pending,
-                isTeamGame: data.isTeamGame
+                isTeamGame: data.isTeamGame,
+                comments: data.comments || [],
             };
             return game;
         });
@@ -65,6 +66,32 @@ export const fetchGameDetails = async (gameId: string): Promise<Game> => {
         throw error;
     }
 };
+
+export const addCommentToGame = async (gameId: string, comment: string, userId: string): Promise<void> => {
+  console.log('fetching...comment addition');
+    try {
+        const gameRef = doc(firestore, 'Games', gameId);
+        await updateDoc(gameRef, {
+            comments: arrayUnion({ userId, text: comment, timestamp: new Date() })
+        });
+    } catch (error) {
+        console.error('Error adding comment to game:', error);
+        throw error;
+    }
+}
+
+export const removeCommentFromGame = async (gameId: string, comment: string, userId: string): Promise<void> => {
+  console.log('fetching...comment removal');
+    try {
+        const gameRef = doc(firestore, 'Games', gameId);
+        await updateDoc(gameRef, {
+            comments: arrayRemove({ userId, text: comment, timestamp: new Date() })
+        });
+    } catch (error) {
+        console.error('Error removing comment from game:', error);
+        throw error;
+    }
+}
 
 export const addTeamToGame = async (gameId: string, teamId: string): Promise<void> => {
   console.log('fetching...team addition');

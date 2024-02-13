@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { GamesList } from '../Game Components/GamesList';
 import { DataContext } from '../../services/DataProvider';
 import { addToFavoriteLocations, removeFromFavoriteLocations } from '../../services/UserServices';
-import { Favorite, FavoriteBorder } from '@mui/icons-material';
+import { Favorite, FavoriteBorder, SportsTennis, LightbulbOutlined, EmojiEventsOutlined  } from '@mui/icons-material';
 
 interface LocationInfoModalProps {
   location: Location;
@@ -65,13 +65,27 @@ export const LocationInfoModal: React.FC<LocationInfoModalProps> = ({ location, 
     <div className="modal-backdrop">
       <div className="locationInfoModal-content">
         <h3>{name}</h3>
-          {isFavorite ? 
+        <div className='location-stats'>
+        {isFavorite ? 
           <Favorite onClick={handleToggleFavorite} style={{color: 'green'}}>
             </Favorite>
           : 
           <FavoriteBorder onClick={handleToggleFavorite} style={{color: 'green'}}>
             </FavoriteBorder>
           }
+          <div className='location-stats-item'>
+            <EmojiEventsOutlined/>
+            <h3>{location.totalGames}</h3>
+          </div>
+          <div className='location-stats-item'>
+            <SportsTennis/>
+            <h3>{location.courtCount}</h3>
+          </div>
+          <div className='location-stats-item'>
+            <LightbulbOutlined/>
+            <h3>{location.lights ? "Yes" : "No"}</h3>
+          </div>
+        </div>
         <p>{description}</p>
         <GamesList games={gamesAtLocation} onDeleteGame={() => {}} includePending={false}/>
         <button onClick={handleOpenGameCreation}>Create Game at this Location</button>

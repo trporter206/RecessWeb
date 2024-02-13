@@ -151,6 +151,7 @@
     padding: 20px;
     border-radius: 5px;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    max-width: 50vw;
 }
 
 .teamModal-content {
@@ -352,4 +353,17 @@
     padding: 20px;
     border-radius: 5px;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.location-stats {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-evenly;
+}
+
+.location-stats-item {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
 }

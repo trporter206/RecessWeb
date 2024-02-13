@@ -2,7 +2,14 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { Game } from '../../models/Game';
 import { UserContext } from '../../services/UserContext';
-import { addTeamToGame, completeGame, deleteGame, joinGame, leaveGame, rewardBonusPoints, toggleGamePendingStatus } from '../../services/GameServices';
+import { addCommentToGame, 
+        addTeamToGame, 
+        completeGame, 
+        deleteGame, 
+        joinGame, 
+        leaveGame, 
+        rewardBonusPoints, 
+        toggleGamePendingStatus } from '../../services/GameServices';
 import { DataContext } from '../../services/DataProvider';
 import { removeGameFromPendingInvites, updateGamesJoinedForLoggedInUser, updatePointsForLoggedInUser } from '../../services/UserServices';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -25,10 +32,17 @@ export const GameInfoModal: React.FC<GameInfoModalProps> = ({ game, onClose }) =
   const user = userContext ? userContext.user : null;
   const { teams, addTeamToGameContext } = dataContext;
   const [isUserInGame, setIsUserInGame] = useState(false);
-  const { updateGamePlayers, removeGameFromLocation, removeGame, users, addGameToLocationContext, toggleGamePendingStatusContext } = dataContext;
+  const { updateGamePlayers, 
+    removeGameFromLocation, 
+    removeGame, 
+    users, 
+    addGameToLocationContext, 
+    toggleGamePendingStatusContext,
+    addCommentToGameContext } = dataContext;
   const [isLoading, setIsLoading] = useState(false);
   const [hostUsername, setHostUsername] = useState('');
   const [showTeamChooser, setShowTeamChooser] = useState(false);
+  const [commentText, setCommentText] = useState('');
   let isUserPartOfAnyTeam = false;
 
   useEffect(() => {
@@ -45,6 +59,67 @@ export const GameInfoModal: React.FC<GameInfoModalProps> = ({ game, onClose }) =
       isUserPartOfAnyTeam = profile.teams.length > 0;
     }
   }, [game, dataContext, user, profile]);
+
+  const renderCommentInput = () => {
+    return (
+      <form onSubmit={handleAddComment} onClick={(e) => e.stopPropagation()}>
+        <input
+          type="text"
+          value={commentText}
+          onChange={handleCommentChange}
+          placeholder="Add a comment..."
+          required
+        />
+        <button type="submit">Submit</button>
+      </form>
+    );
+  };
+
+  const renderComments = () => {
+    // Check if there are any comments
+    if (game.comments.length > 0) {
+      return (
+        <div>
+          <h3>Comments:</h3>
+          <ul>
+            {game.comments.map((comment, index) => (
+              <li key={index}>
+                <p><strong>User ID:</strong> {comment.userId}</p>
+                <p>{comment.text}</p>
+                <p><small>{new Date(comment.timestamp).toLocaleString()}</small></p>
+              </li>
+            ))}
+          </ul>
+        </div>
+      );
+    } else {
+      // Display a message if there are no comments
+      return <p>No comments.</p>;
+    }
+  };
+
+  const handleCommentChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    event.stopPropagation(); 
+    setCommentText(event.target.value);
+  };
+
+  const handleAddComment = (event: React.FormEvent) => {
+    event.preventDefault(); // Prevent form submission from reloading the page
+    event.stopPropagation(); // Prevent event from bubbling up
+  
+    if (!user) {
+      console.error("User not logged in");
+      return;
+    }
+    
+    try {
+      addCommentToGame(game.id, commentText, user.uid);
+      addCommentToGameContext(game.id, { userId: user.uid, text: commentText, timestamp: new Date() });
+      setCommentText('');
+    } catch (error) {
+      console.error('Error adding comment:', error);
+    }
+  };
 
   const handleCompleteGame = async () => {
     if (!user) {
@@ -63,11 +138,13 @@ export const GameInfoModal: React.FC<GameInfoModalProps> = ({ game, onClose }) =
     }
   };
 
-  const handleJoinLeaveGame = async () => {
+  const handleJoinLeaveGame = async (event: React.MouseEvent) => {
+    event.stopPropagation();
     if (!user) {
       console.error("User not logged in");
       return;
     }
+
     setIsLoading(true);
     try {
       if (isUserInGame) {
@@ -83,15 +160,22 @@ export const GameInfoModal: React.FC<GameInfoModalProps> = ({ game, onClose }) =
     } finally {
       setIsLoading(false);
     }
-  };
+};
+
 
   const hasOneHourPassed = () => {
     const currentTime = new Date();
-    // Combine date and startTime into a single Date object
-    const gameStartDateTime = new Date(`${game.date}T${game.startTime}`);
+    // Clone the game.date object to avoid mutating the original date
+    const gameStartDateTime = new Date(game.date.getTime());
+    // Extract hours and minutes from game.startTime
+    const [hours, minutes] = game.startTime.split(':').map(Number);
+    // Set hours and minutes to the gameStartDateTime
+    gameStartDateTime.setHours(hours, minutes, 0, 0); // Reset seconds and milliseconds to 0
     const oneHour = 60 * 60 * 1000; // milliseconds in one hour
-    return currentTime.getTime() - gameStartDateTime.getTime() >= oneHour;
+    const hasHourPassed = currentTime.getTime() - gameStartDateTime.getTime() >= oneHour;
+    return hasHourPassed;
   };
+  
   
 
   const handleInviteResponse = async (accept: boolean) => {
@@ -211,6 +295,12 @@ export const GameInfoModal: React.FC<GameInfoModalProps> = ({ game, onClose }) =
         )}
         {hasOneHourPassed() && user && user.uid === game.hostId && (
           <button onClick={handleCompleteGame}>Complete Game</button>
+        )}
+        {isUserInGame && (
+          <>
+            {renderComments()}
+            {renderCommentInput()}
+          </>
         )}
       </div>
     )}

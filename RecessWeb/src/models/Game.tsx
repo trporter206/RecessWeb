@@ -15,4 +15,11 @@ export interface Game {
     description: string;
     pending: boolean;
     isTeamGame: boolean;
-  }
+    comments: GameComment[];
+}
+
+export interface GameComment {
+  userId: string;
+  text: string;
+  timestamp: Date;
+}
