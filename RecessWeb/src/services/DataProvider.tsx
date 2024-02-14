@@ -45,6 +45,7 @@ interface DataProviderType {
   removeMemberFromClubContext: (clubId: string, userId: string) => void;
   updateGameContext: (gameId: string, updatedGame: Game) => void;
   updateTeamContext: (teamId: string, updatedTeam: Team) => void;
+  updateClubContext: (clubId: string, updatedClub: Club) => void;
 }
 
 export const DataContext = createContext<DataProviderType>({
@@ -82,6 +83,7 @@ export const DataContext = createContext<DataProviderType>({
   removeMemberFromClubContext: () => {},
   updateGameContext: () => {},
   updateTeamContext: () => {},
+  updateClubContext: () => {},
 });
 
 export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -108,6 +110,15 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     fetchData();
   }, []);
+
+  const updateClubContext = (clubId: string, updatedClub: Club) => {
+    setClubs(prevClubs => prevClubs.map(club => {
+      if (club.id === clubId) {
+        return updatedClub;
+      }
+      return club;
+    }));
+  }
 
   const updateTeamContext = (teamId: string, updatedTeam: Team) => {
     setTeams(prevTeams => prevTeams.map(team => {
@@ -402,6 +413,7 @@ const removeCommentFromGameContext = (gameId: string, commentId: string) => {
     removeMemberFromClubContext,
     updateGameContext,
     updateTeamContext,
+    updateClubContext,
   };
 
   return (

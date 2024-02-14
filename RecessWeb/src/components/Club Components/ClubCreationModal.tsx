@@ -1,24 +1,28 @@
 import { useContext, useState } from "react";
 import { UserContext } from "../../services/UserContext";
-import { createClub } from "../../services/ClubServices";
+import { createClub, updateClub } from "../../services/ClubServices";
 import { DataContext } from "../../services/DataProvider";
 import { CircularProgress } from "@mui/material";
 import { v4 as uuid } from 'uuid';
+import { Club } from "../../models/Club";
 
 interface ClubCreatiopnModalProps {
     show: boolean;
     onClose: () => void;
+    editMode?: boolean;
+    editedClub?: Club;
 }
 
-export const ClubCreationModal: React.FC<ClubCreatiopnModalProps> = ({ show, onClose }) => {
-    const [clubName, setClubName] = useState('');
-    const [clubDescription, setClubDescription] = useState('');
-    const [clubSport, setClubSport] = useState('');
-    const [isPublic, setIsPublic] = useState(false);
+export const ClubCreationModal: React.FC<ClubCreatiopnModalProps> = ({ show, onClose, editMode, editedClub }) => {
+    const [clubName, setClubName] = useState(editedClub ? editedClub.name : '');
+    const [clubDescription, setClubDescription] = useState(editedClub ? editedClub.description : '');
+    const [clubSport, setClubSport] = useState(editedClub ? editedClub.sport : '');
+    const [isPublic, setIsPublic] = useState(editedClub ? editedClub.isPublic : false);
     const [isLoading, setIsLoading] = useState<boolean>(false);
-    const { addClubContext } = useContext(DataContext);
+    const { addClubContext, updateClubContext } = useContext(DataContext);
     const userContext = useContext(UserContext);
     const user = userContext ? userContext.user : null;
+    const isEditMode = Boolean(editMode);
     // const profile = userContext ? userContext.profile : null;
 
     const handleClose = (event: React.MouseEvent) => {
@@ -33,6 +37,29 @@ export const ClubCreationModal: React.FC<ClubCreatiopnModalProps> = ({ show, onC
     const handleSave = async () => {
         if (!clubName || !clubDescription || !clubSport || !user) {
             // Handle validation error
+            return;
+        }
+
+        if (isEditMode && editedClub) {
+            const updatedClub = {
+                ...editedClub,
+                name: clubName,
+                description: clubDescription,
+                sport: clubSport,
+                isPublic: isPublic
+            };
+
+            setIsLoading(true);
+            try {
+                await updateClub(editedClub.id, updatedClub);
+                updateClubContext(editedClub.id, updatedClub);
+                console.log('Club updated:', updatedClub);
+            } catch (error) {
+                console.error('Error updating club:', error);
+            } finally {
+                setIsLoading(false);
+                onClose();
+            }
             return;
         }
 
@@ -74,7 +101,7 @@ export const ClubCreationModal: React.FC<ClubCreatiopnModalProps> = ({ show, onC
                 ) : (
                     <>
                         <div className='modal-header'>
-                            <h3>Create a Club</h3>
+                            <h3>{isEditMode ? 'Edit Club' : 'Create Club'}</h3>
                             <button className='close-button' onClick={onClose}>X</button>
                         </div>
                         <div className='modal-content'>
@@ -95,7 +122,7 @@ export const ClubCreationModal: React.FC<ClubCreatiopnModalProps> = ({ show, onC
                                 <input type='checkbox' id='isPublic' checked={isPublic} onChange={(e) => setIsPublic(e.target.checked)} />
                             </div>
                             <div className='form-group'>
-                                <button onClick={handleSave} disabled={isLoading}>Save</button>
+                                <button onClick={handleSave} disabled={isLoading}>{isEditMode ? 'Save Changes' : 'Create Club'}</button>
                             </div>
                         </div>
                     </>

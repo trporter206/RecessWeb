@@ -50,7 +50,18 @@ export async function fetchClubDetails(clubId: string): Promise<Club> {
             console.error('Error fetching club details:', error);
             throw error;
         }
+}
+
+export async function updateClub(clubId: string, club: Club): Promise<void> {
+    console.log('updating...club');
+    try {
+      const clubRef = doc(db, 'Clubs', clubId);
+      await setDoc(clubRef, club);
+    } catch (error) {
+      console.error('Error updating club:', error);
+      throw error;
     }
+}
 
 export const createClub = async (club: Club): Promise<string> => {
         console.log('creating...club');

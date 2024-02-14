@@ -3,6 +3,7 @@ import { Club } from "../../models/Club";
 import { UserContext } from "../../services/UserContext";
 import { deleteClub } from "../../services/ClubServices";
 import { DataContext } from "../../services/DataProvider";
+import { ClubCreationModal } from "./ClubCreationModal";
 
 interface ClubInfoModalProps {
     club: Club;
@@ -10,12 +11,20 @@ interface ClubInfoModalProps {
 
 export const ClubInfoModal: React.FC<ClubInfoModalProps> = ({ club }) => {
     const [showModal, setShowModal] = useState(false);
+    const [showEditModal, setShowEditModal] = useState(false);
     const { user } = useContext(UserContext);
     const  { removeClubContext } = useContext(DataContext);
 
     const handleToggleModal = () => {
         setShowModal(!showModal);
     };
+
+    const handleToggleEditModal = (event?: React.MouseEvent) => {
+        if (event) {
+            event.stopPropagation();
+        }
+        setShowEditModal(!showEditModal);
+    }
 
     const handleDelete = (event: React.MouseEvent<HTMLButtonElement>) => {
         console.log('Delete club:', club.id);
@@ -45,9 +54,20 @@ export const ClubInfoModal: React.FC<ClubInfoModalProps> = ({ club }) => {
                 <p>{club.members.length}</p>
                 <button onClick={handleToggleModal}>Close</button>
                 {user?.uid === club.organizer && (
-                    <button onClick={handleDelete}>Delete</button>
+                    <>
+                        <button onClick={handleToggleEditModal}>Edit</button>
+                        <button onClick={handleDelete}>Delete</button>
+                    </>
                 )}
             </div>
+            {showEditModal && (
+                <ClubCreationModal 
+                    show={showEditModal}
+                    onClose={handleToggleEditModal}
+                    editMode={true}
+                    editedClub={club}
+                />
+            )}
         </div>
     );
 }
