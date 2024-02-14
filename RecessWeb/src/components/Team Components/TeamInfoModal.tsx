@@ -7,6 +7,7 @@ import { removeMemberFromTeam } from '../../services/TeamServices';
 import { PlayerItem } from '../User Components/PlayerItem';
 import { User } from '../../models/User';
 import { removeTeamFromUser } from '../../services/UserServices';
+import { TeamCreationModal } from './TeamCreationModal';
 
 interface TeamInfoModalProps {
   team: Team;
@@ -18,8 +19,16 @@ export const TeamInfoModal: React.FC<TeamInfoModalProps> = ({ team, onClose }) =
   const { users, removeMemberFromTeamContext, removeTeamFromPlayerContext } = useContext(DataContext);
   const user = userContext?.user;
   const [isLoading, setIsLoading] = useState(false);
+  const [showEditTeamModal, setShowEditTeamModal] = useState(false);
   const isUserInTeam = user ? team.members.includes(user.uid) : false;
-  const isUserTeamCreator = user ? team.creator === user.uid : false; // Check if the user is the team creator
+  const isUserTeamCreator = user ? team.creator === user.uid : false;
+
+  const handleToggleEditModal = (event?: React.MouseEvent) => {
+    if (event) {
+      event.stopPropagation();
+    }
+    setShowEditTeamModal(!showEditTeamModal);
+  }
 
   const handleLeaveTeam = async (event: React.MouseEvent) => {
     event.stopPropagation();
@@ -66,8 +75,18 @@ export const TeamInfoModal: React.FC<TeamInfoModalProps> = ({ team, onClose }) =
           {user && isUserInTeam && !isUserTeamCreator && ( // Only show the "Leave Team" button if the user is in the team and not the team creator
             <button onClick={handleLeaveTeam}>Leave Team</button>
           )}
+          {isUserTeamCreator && (
+            <button onClick={handleToggleEditModal}>Edit</button>
+          )}
           <button onClick={() => onClose()}>Close</button>
         </div>
+      )}
+      {showEditTeamModal && (
+        <TeamCreationModal
+          show={showEditTeamModal}
+          onClose={handleToggleEditModal}
+          editedTeam={team}
+          editMode={true} />
       )}
     </div>
   );

@@ -36,6 +36,18 @@ export async function fetchTeams(): Promise<Team[]> {
     }
 }
 
+export async function updateTeam(teamId: string, team: Partial<Team>): Promise<void> {
+    console.log('Updating team...');
+    try {
+        const teamRef = doc(db, 'Teams', teamId);
+        await updateDoc(teamRef, team);
+        console.log(`Team ${teamId} updated successfully.`);
+    } catch (error) {
+        console.error('Error updating team:', error);
+        throw error;
+    }
+}
+
 export async function verifyTeam(teamId: string): Promise<DocumentData> {
     console.log('Verifying team...');
 
