@@ -1,5 +1,5 @@
 import { initializeApp } from 'firebase/app';
-import { getFirestore, collection, getDocs, doc, getDoc, updateDoc, arrayUnion, arrayRemove } from 'firebase/firestore';
+import { getFirestore, collection, getDocs, doc, getDoc, updateDoc, arrayUnion, arrayRemove, setDoc } from 'firebase/firestore';
 import { User } from '../models/User';
 import { firebaseConfig, firestore } from '../firebaseConfig';
 import { getAuth } from 'firebase/auth';
@@ -23,7 +23,6 @@ export async function fetchUsers(): Promise<User[]> {
                 ratings: data.ratings,
                 network: data.network,
                 id: data.id,
-                password: '',
                 favoriteLocations: data.favoriteLocations,
                 pendingInvites: data.pendingInvites,
                 firstName: data.firstName,
@@ -41,6 +40,17 @@ export async function fetchUsers(): Promise<User[]> {
         console.error('Error fetching locations:', error);
         throw error;
     }
+}
+
+export async function updateUser(userId: string, user: User): Promise<void> {
+  console.log('updating...user');
+  try {
+    const userRef = doc(db, 'Users', userId);
+    await setDoc(userRef, user);
+  } catch (error) {
+    console.error('Error updating user:', error);
+    throw error;
+  }
 }
 
 export async function acceptTeamInvite(teamId: string, userId: string) {

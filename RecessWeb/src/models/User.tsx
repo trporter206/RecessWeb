@@ -7,7 +7,6 @@ export interface User {
   gender: string;
   age: number;
   email: string;
-  password: string;
   points: number;
   rating: number;
   gamesHosted: number;

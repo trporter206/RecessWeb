@@ -22,6 +22,7 @@ export const ProfilePage = () => {
   const [showProfileCreationModal, setShowProfileCreationModal] = useState(false);
   const [showClubCreationModal, setShowClubCreationModal] = useState(false);
   const [showTeamCreationModal, setShowTeamCreationModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
   const user = userContext?.user;
   const profile = userContext?.profile;
   const games = dataContext?.games || []; 
@@ -33,6 +34,13 @@ export const ProfilePage = () => {
   let pendingInvites: Game[] = [];
   let teamInvites: Team[] = [];
   let userTeams: Team[] = [];
+
+  const handleToggleEditModal = (event?: React.MouseEvent) => {
+    if (event) {
+      event.stopPropagation();
+    }
+    setShowEditModal(prevState => !prevState);
+  }
 
   const handleAcceptInvite = async (teamId: string, event: React.MouseEvent) => {
     event.stopPropagation();
@@ -122,6 +130,7 @@ export const ProfilePage = () => {
             <h3>Games Joined: {gamesJoined}</h3>
             <h3>Network size: {network.length}</h3>
           </div>
+          <button onClick={handleToggleEditModal}>Edit Profile</button>
           <button onClick={handleToggleTeamCreationModal}>Create Team</button>
           <button onClick={handleToggleClubCreationModal}>Create Club</button>
           <div className='user-lists-container'>
@@ -169,6 +178,7 @@ export const ProfilePage = () => {
         <ProfileCreationModal 
           show={showProfileCreationModal} 
           onClose={() => setShowProfileCreationModal(false)} 
+          editMode={false}
         />
       )}
       {showTeamCreationModal && (
@@ -176,6 +186,13 @@ export const ProfilePage = () => {
       )}
       {showClubCreationModal && (
         <ClubCreationModal show={showClubCreationModal} onClose={handleToggleClubCreationModal}/>
+      )}
+      {showEditModal && (
+        <ProfileCreationModal 
+          show={showEditModal}
+          onClose={() => setShowEditModal(false)}
+          editMode={true}
+        />
       )}
     </div>
   );

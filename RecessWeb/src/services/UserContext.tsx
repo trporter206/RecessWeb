@@ -18,6 +18,11 @@ interface UserProfile {
   pendingInvites: string[];
   teams: string[];
   pendingTeamInvites: string[];
+  firstName: string;
+  lastName: string;
+  pickleballSkill: number;
+  gender: string;
+  age: number;
   // Add other fields as necessary
 }
 
