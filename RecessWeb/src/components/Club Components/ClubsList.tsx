@@ -7,7 +7,7 @@ interface ClubsListProps {
 
 export const ClubsList: React.FC<ClubsListProps> = ({ clubs }) => {
     return (
-        <div>
+        <div className="playerlist-container">
             {clubs.map(club => (
                 <ClubItem 
                     key={club.id}

@@ -6,10 +6,11 @@
 }
 
 .main-container {
+  /* position: relative; */
   display: flex;
   flex-direction: column;
   align-items: center; /* Aligns children (items) horizontally in the center */
-  justify-content: center; /* Aligns children (items) vertically in the center */
+  justify-content: flex-start; /* Aligns children (items) vertically in the center */
   width: 100vw; /* Full width of the viewport */
   max-width: 100%;
   height: 100%; /* Full height of the viewport */
@@ -105,14 +106,6 @@
     display: flex;
     align-items: center;
     gap: 10px; /* Adjust the gap as needed */
-}
-
-.team-item {
-    background-color: grey;
-    border-radius: 10px;
-    padding: 5px;
-    margin: 10px 0;
-    color: white;
 }
 
 .modal-backdrop {
@@ -272,30 +265,37 @@
 
 .tabs-container {
     display: flex;
+    justify-content: center;
+    position: relative;
     border-bottom: 2px solid #ccc;
     position: relative;
-  }
-  
-  .tab-button {
-    padding: 10px 20px;
+    margin-bottom: 30px; /* Increase the bottom margin for more separation */
+    padding-bottom: 10px; /* Add some padding at the bottom */
+}
+
+.tab-button {
+    padding: 15px 30px; /* Increase padding to make buttons larger */
     cursor: pointer;
     background-color: transparent;
     border: none;
     outline: none;
-  }
-  
-  .tab-button:focus,
-  .tab-button:hover {
+    font-size: 3rem; /* Increase font size for better visibility */
+    margin-top: 20px; /* Position higher on the page */
+}
+
+.tab-button:focus,
+.tab-button:hover {
     background-color: #f0f0f0;
-  }
-  
-  .slider {
+}
+
+.slider {
     position: absolute;
     height: 4px;
     background-color: #007bff;
-    bottom: -2px; /* Align with the bottom border */
-    transition: left 0.3s ease-in-out;
-  }
+    bottom: 0px; /* Adjust if necessary to fit better with the increased button size */
+    transition: left 0.3s ease-in-out, width 0.3s ease-in-out; /* Added width transition for a smoother effect */
+    z-index: 1; /* Ensure it's above the tab buttons */
+}
 
 .player-circle {
     align-self: center;
@@ -408,4 +408,34 @@
     display: flex;
     flex-direction: row;
     justify-content: space-evenly;
+}
+
+.club-item {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: orange; /* Example background color, adjust as needed */
+    border-radius: 10px;
+    padding: 20px; /* Adjust padding to increase size */
+    margin: 10px; /* Adjust margin for spacing between items */
+    color: white;
+    cursor: pointer;
+    text-align: center;
+    width: 200px; /* Adjust width as needed */
+    height: 300px;
+}
+
+.team-item {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: teal; /* Example background color, adjust as needed */
+    border-radius: 10px;
+    padding: 20px; /* Adjust padding to increase size */
+    margin: 10px; /* Adjust margin for spacing between items */
+    color: white;
+    cursor: pointer;
+    text-align: center;
+    width: 200px; /* Adjust width as needed */
+    height: 300px;
 }

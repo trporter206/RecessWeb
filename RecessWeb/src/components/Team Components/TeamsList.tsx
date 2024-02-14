@@ -9,7 +9,7 @@ type TeamsListProps = {
 
 export const TeamsList: React.FC<TeamsListProps> = ({ teams }) => {
     return (
-        <div className="teamslist-container">
+        <div className="playerlist-container">
             {teams.map(team => (
                 <TeamItem team={team} />
             ))}

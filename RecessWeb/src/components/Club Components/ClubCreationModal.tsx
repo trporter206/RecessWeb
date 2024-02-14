@@ -3,6 +3,7 @@ import { UserContext } from "../../services/UserContext";
 import { createClub } from "../../services/ClubServices";
 import { DataContext } from "../../services/DataProvider";
 import { CircularProgress } from "@mui/material";
+import { v4 as uuid } from 'uuid';
 
 interface ClubCreatiopnModalProps {
     show: boolean;
@@ -36,7 +37,7 @@ export const ClubCreationModal: React.FC<ClubCreatiopnModalProps> = ({ show, onC
         }
 
         const newClub = {
-            id: '',
+            id: uuid(),
             name: clubName,
             organizer: user.uid,
             description: clubDescription,

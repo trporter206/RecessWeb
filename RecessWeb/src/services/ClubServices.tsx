@@ -1,6 +1,6 @@
 import { initializeApp } from "firebase/app";
 import { Club } from "../models/Club";
-import { addDoc, arrayRemove, arrayUnion, collection, doc, getDoc, getDocs, getFirestore, deleteDoc, updateDoc } from "firebase/firestore";
+import { addDoc, arrayRemove, arrayUnion, collection, doc, getDoc, getDocs, getFirestore, deleteDoc, updateDoc, setDoc } from "firebase/firestore";
 import { firebaseConfig, firestore } from "../firebaseConfig";
 
 const app = initializeApp(firebaseConfig);
@@ -53,14 +53,15 @@ export async function fetchClubDetails(clubId: string): Promise<Club> {
     }
 
 export const createClub = async (club: Club): Promise<string> => {
-  console.log('creating...club');
-  try {
-    const clubRef = await addDoc(collection(db, 'Clubs'), club);
-    return clubRef.id;
-  } catch (error) {
-    console.error('Error creating club:', error);
-    throw error;
-  }
+        console.log('creating...club');
+        try {
+          const clubRef = doc(db, 'Clubs', club.id);
+          await setDoc(clubRef, club);
+          return clubRef.id;
+        } catch (error) {
+          console.error('Error creating club:', error);
+          throw error;
+        }
 };
 
 export async function deleteClub(clubId: string): Promise<void> {

@@ -15,10 +15,12 @@ export const ClubItem: React.FC<ClubItemProps> = ({club}) => {
       };
 
     return (
-        <div className='game-item' onClick={handleToggleModal}>
-            <h3>{club.name}</h3>
-            <p>{club.sport}</p>
-            <p>{club.members.length}</p>
+        <div className='club-item' onClick={handleToggleModal}>
+            <div className='club-content'>
+                <h3>{club.name}</h3>
+                <p>{club.sport}</p>
+                <p>{club.members.length}</p>
+            </div>
             {showModal && (
                 <ClubInfoModal
                 club={club}
