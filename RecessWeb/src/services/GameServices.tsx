@@ -67,6 +67,17 @@ export const fetchGameDetails = async (gameId: string): Promise<Game> => {
     }
 };
 
+export const updateGame = async (gameId: string, gameData: Partial<Game>): Promise<void> => {
+  console.log('fetching...game update');
+    try {
+        const gameRef = doc(firestore, 'Games', gameId);
+        await updateDoc(gameRef, gameData);
+    } catch (error) {
+        console.error('Error updating game:', error);
+        throw error;
+    }
+}
+
 export const addCommentToGame = async (gameId: string, gameComment: GameComment): Promise<void> => {
   console.log('Adding comment to game...');
   try {

@@ -79,27 +79,11 @@
     justify-content: space-around;
 }
 
-.location-item {
-    background-color:rgba(128, 187, 5, 1);
-    border-radius: 10px;
-    padding: 5px;
-    margin: 10px 0;
-    color: white;
-}
-
 .location-content {
     display: flex;
     justify-content: space-between;
     align-items: center;
     width: 100%;
-}
-
-.game-item {
-    background-color: rgba(238, 108, 77, 1);
-    border-radius: 10px;
-    padding: 5px;
-    margin: 10px 0;
-    color: white;
 }
 
 .game-info {
@@ -421,7 +405,7 @@
     color: white;
     cursor: pointer;
     text-align: center;
-    width: 200px; /* Adjust width as needed */
+    width: 400px; /* Adjust width as needed */
     height: 300px;
 }
 
@@ -436,6 +420,65 @@
     color: white;
     cursor: pointer;
     text-align: center;
-    width: 200px; /* Adjust width as needed */
+    width: 300px; /* Adjust width as needed */
     height: 300px;
 }
+
+.game-item {
+    display: flex;
+    flex-direction: column; /* Stack children vertically */
+    align-items: center; /* Center children horizontally */
+    justify-content: space-between; /* Even spacing between items */
+    background-color: red; /* Example background color, adjust as needed */
+    border-radius: 10px;
+    padding: 20px; /* Adjust padding to ensure everything fits inside */
+    margin: 10px; /* Adjust margin for spacing between items */
+    color: white;
+    cursor: pointer;
+    text-align: center;
+    width: 400px; /* Adjust width as needed */
+    height: auto; /* Adjust height to be auto to contain all children */
+    border: 1px solid #ccc; /* Optional border */
+    overflow: hidden; /* Ensure nothing spills out */
+  }
+
+  .game-item button {
+    padding: 5px 10px; /* Smaller padding */
+    background-color: #ff0000; /* Red background for delete button */
+    color: white; /* White text */
+    border: none; /* No border */
+    cursor: pointer; /* Cursor pointer */
+    margin-top: 10px; /* Extra space at the top */
+    align-self: flex-end; /* Align to the end of the flex container */
+  }
+
+.location-item {
+    background-color:rgba(128, 187, 5, 1);
+    border-radius: 10px;
+    padding: 5px;
+    margin: 10px 0;
+    color: white;
+}
+
+.location-item {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: rgba(128, 187, 5, 1); /* Example background color, adjust as needed */
+    border-radius: 10px;
+    padding: 20px; /* Adjust padding to increase size */
+    margin: 10px; /* Adjust margin for spacing between items */
+    color: white;
+    cursor: pointer;
+    text-align: center;
+    width: 400px; /* Adjust width as needed */
+    height: 100px;
+}
+
+.game-stats {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-evenly;
+}
+

@@ -22,6 +22,7 @@ import { TeamChooserModal } from '../Team Components/TeamChooserModal';
 import GameCommentBox from './GameCommentBox';
 import { v4 as uuidv4 } from 'uuid';
 import { Timestamp } from 'firebase/firestore';
+import { GameCreationModal } from './GameCreationModal';
 
 interface GameInfoModalProps {
   game: Game;
@@ -47,8 +48,10 @@ export const GameInfoModal: React.FC<GameInfoModalProps> = ({ game, onClose }) =
   const [isLoading, setIsLoading] = useState(false);
   const [hostUsername, setHostUsername] = useState('');
   const [showTeamChooser, setShowTeamChooser] = useState(false);
+  const [showEditGameModal, setShowEditGameModal] = useState(false);
   const [commentText, setCommentText] = useState('');
   let isUserPartOfAnyTeam = false;
+  const userIsHost = user?.uid === game.hostId;
 
   useEffect(() => {
     setIsUserInGame(user ? game.players.includes(user.uid) : false);
@@ -64,6 +67,13 @@ export const GameInfoModal: React.FC<GameInfoModalProps> = ({ game, onClose }) =
       isUserPartOfAnyTeam = profile.teams.length > 0;
     }
   }, [game, dataContext, user, profile]);
+
+  const handleToggleEditModal = (event?: React.MouseEvent) => {
+    if (event) {
+      event.stopPropagation();
+    }
+    setShowEditGameModal(!showEditGameModal);
+  }
 
   const renderCommentInput = () => {
     return (
@@ -330,6 +340,9 @@ export const GameInfoModal: React.FC<GameInfoModalProps> = ({ game, onClose }) =
         {hasOneHourPassed() && user && user.uid === game.hostId && (
           <button onClick={handleCompleteGame}>Complete Game</button>
         )}
+        {userIsHost && (
+          <button onClick={handleToggleEditModal}>Edit</button>
+        )}
         {isUserInGame && (
           <>
             {renderComments()}
@@ -343,6 +356,14 @@ export const GameInfoModal: React.FC<GameInfoModalProps> = ({ game, onClose }) =
         show={showTeamChooser}
         onClose={() => setShowTeamChooser(false)}
         onTeamChosen={handleTeamChosen}
+      />
+    )}
+    {showEditGameModal && (
+      <GameCreationModal
+        show={showEditGameModal}
+        onClose={() => handleToggleEditModal()}
+        editedGame={game}
+        editMode={true}
       />
     )}
   </div>

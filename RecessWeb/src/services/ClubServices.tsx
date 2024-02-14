@@ -1,6 +1,6 @@
 import { initializeApp } from "firebase/app";
 import { Club } from "../models/Club";
-import { addDoc, arrayRemove, arrayUnion, collection, doc, getDoc, getDocs, getFirestore, deleteDoc, updateDoc, setDoc } from "firebase/firestore";
+import { arrayRemove, arrayUnion, collection, doc, getDoc, getDocs, getFirestore, deleteDoc, updateDoc, setDoc } from "firebase/firestore";
 import { firebaseConfig, firestore } from "../firebaseConfig";
 
 const app = initializeApp(firebaseConfig);

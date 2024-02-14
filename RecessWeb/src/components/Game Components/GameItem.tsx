@@ -11,7 +11,7 @@ interface GameItemProps {
 }
 
 export const GameItem: React.FC<GameItemProps> = ({ game, onDelete }) => {
-  const { id, locationId, players, date, hostId, minimumPoints, isTeamGame } = game;
+  const { id, locationId, players, date, hostId, minimumPoints, isTeamGame, title } = game;
   const removeGameFromLocation = useContext(DataContext).removeGameFromLocation;
   const userContext = useContext(UserContext);
   const [hostUsername, setHostUsername] = useState('');
@@ -59,17 +59,17 @@ export const GameItem: React.FC<GameItemProps> = ({ game, onDelete }) => {
 
   return (
     <div className='game-item' onClick={handleToggleModal}>
-      <h3>{locationName}</h3>
+      <h2>{title}</h2>
       <p className="game-host">Host: {hostUsername}</p>
       <p className="game-date">{displayDate}</p>
       {isTeamGame && (
         <p className="game-host">Open Team Invite</p>
       )}
       {!isTeamGame && (
-        <>
+        <div className='game-stats'>
           <p className="game-host">Minimum: {minimumPoints}</p>
-          <p className="game-players">{players.length} players</p>
-        </>
+          <p className="game-players"> {players.length} players</p>
+        </div>
       )}
       {userContext?.user?.uid === hostId && (
         <button onClick={handleDelete}>Delete</button>
