@@ -12,8 +12,10 @@ import { LocationsList } from '../components/Location Components/LocationsList';
 import { TeamCreationModal } from '../components/Team Components/TeamCreationModal';
 import { TeamsList } from '../components/Team Components/TeamsList';
 import { TeamInviteItem } from '../components/Team Components/TeamInviteItem';
-import { acceptTeamInvite, addTeamToUser, declineTeamInvite } from '../services/UserServices';
+import { addGameToUser, acceptTeamInvite, addTeamToUser, declineTeamInvite, removeGameFromPendingInvites } from '../services/UserServices';
 import { ClubCreationModal } from '../components/Club Components/ClubCreationModal';
+import { GameInviteItem } from '../components/Game Components/GameInviteItem';
+import { joinGame } from '../services/GameServices';
 
 export const ProfilePage = () => {
   const userContext = useContext(UserContext);
@@ -26,7 +28,7 @@ export const ProfilePage = () => {
   const user = userContext?.user;
   const profile = userContext?.profile;
   const games = dataContext?.games || []; 
-  const { username, points, gamesHosted, gamesJoined, network, id, pendingTeamInvites } = profile || 
+  const { username, points, gamesHosted, gamesJoined, network, pendingTeamInvites, currentGames, teams } = profile || 
   { username: '', points: 0, totalGames: 0, gamesHosted: 0, gamesJoined: 0, network: [] };
 
   let userGames: Game[] = [];
@@ -42,8 +44,27 @@ export const ProfilePage = () => {
     setShowEditModal(prevState => !prevState);
   }
 
-  const handleAcceptInvite = async (teamId: string, event: React.MouseEvent) => {
-    event.stopPropagation();
+  const handleAcceptGameInvite = async (gameId: string) => {
+    console.log("Accepting invite to game:", gameId);
+    try {
+      await joinGame(gameId, profile?.id || '');
+      await addGameToUser(gameId, profile?.id || '');
+      await removeGameFromPendingInvites(profile?.id || '', gameId);
+    } catch (error) {
+      console.error("Error accepting game invite:", error);
+    }
+  };
+
+  const handleDeclineGameInvite = async (gameId: string) => {
+    console.log("Declining invite from game:", gameId);
+    try {
+      await removeGameFromPendingInvites(profile?.id || '', gameId);
+    } catch (error) {
+      console.error("Error declining game invite:", error);
+    }
+  };
+
+  const handleAcceptInvite = async (teamId: string) => {
     console.log("Accepting invite to team:", teamId);
     try {
       //update firebase. add member to team and remove invite from player
@@ -56,12 +77,9 @@ export const ProfilePage = () => {
     } catch (error) {
       console.error("Error accepting team invite:", error);
     }
-    // Example: await dataContext.addMemberToTeamContext(teamId, user.id);
-    // Example: await dataContext.removeTeamInviteContext(teamId, user.id);
   };
 
-  const handleDeclineInvite = async (teamId: string, event: React.MouseEvent) => {
-    event.stopPropagation();
+  const handleDeclineInvite = async (teamId: string) => {
     console.log("Declining invite from team:", teamId);
     try {
       //firebase
@@ -97,12 +115,8 @@ export const ProfilePage = () => {
   }
 
   if (user && user.uid) {
-    userGames = games.filter(game => 
-      game.hostId === user.uid || game.players.includes(user.uid)
-    );
-    userTeams = dataContext.teams.filter(team => 
-      team.members.includes(user.uid)
-    );
+    userGames = games.filter(game => currentGames?.includes(game.id));
+    userTeams = dataContext.teams.filter(team => teams?.includes(team.id));
   }
 
   if (profile) {
@@ -111,9 +125,9 @@ export const ProfilePage = () => {
     favoriteLocations = dataContext.locations.filter(location => 
       favoriteLocationsIds.includes(location.id)
     );
-
+      //collect pending game invites
     pendingInvites = games.filter(game => 
-      game.pending && game.players.includes(id || '')
+      profile.pendingInvites.includes(game.id)
     );
   }
 
@@ -144,7 +158,18 @@ export const ProfilePage = () => {
             </div>
             <div className="invites-container">
               <h2>Your Game Invites</h2>
-              <GamesList games={pendingInvites} onDeleteGame={() => {}} includePending={true} />
+              {pendingInvites.length > 0 ? (
+                pendingInvites.map((game) => (
+                  <GameInviteItem
+                    key={game.id}
+                    game={game}
+                    handleAcceptInvite={handleAcceptGameInvite} // Ensure the lambda takes two arguments
+                    handleDeclineInvite={handleDeclineGameInvite} // Ensure the lambda takes two arguments
+                  />
+                ))
+              ) : (
+                <p>No game invitations.</p>
+              )}
             </div>
             <div className="user-teams-container">
               <h2>Your Teams</h2>

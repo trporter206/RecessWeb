@@ -12,10 +12,9 @@ import { addCommentToGame,
         rewardBonusPoints, 
         toggleGamePendingStatus} from '../../services/GameServices';
 import { DataContext } from '../../services/DataProvider';
-import { removeGameFromPendingInvites, updateGamesJoinedForLoggedInUser, updatePointsForLoggedInUser } from '../../services/UserServices';
+import { addGameToUser, removeGameFromPendingInvites, removeGameFromUser, updateGamesJoinedForLoggedInUser, updatePointsForLoggedInUser } from '../../services/UserServices';
 import CircularProgress from '@mui/material/CircularProgress';
 import { PlayerItem } from '../User Components/PlayerItem';
-// import { User } from '../../models/User';
 import { addGameIdToLocation } from '../../services/locationService';
 import { TeamItem } from '../Team Components/TeamItem';
 import { TeamChooserModal } from '../Team Components/TeamChooserModal';
@@ -37,14 +36,15 @@ export const GameInfoModal: React.FC<GameInfoModalProps> = ({ game, onClose }) =
   const user = userContext ? userContext.user : null;
   const { teams, addTeamToGameContext } = dataContext;
   const [isUserInGame, setIsUserInGame] = useState(false);
-  const { updateGamePlayers, 
-    removeGameFromLocation, 
+  const { removeGameFromLocation, 
     removeGame, 
     users, 
     addGameToLocationContext, 
     toggleGamePendingStatusContext,
     addCommentToGameContext,
-    removeCommentFromGameContext } = dataContext;
+    removeCommentFromGameContext,
+    addPlayerToGameContext,
+    removePlayerFromGameContext } = dataContext;
   const [isLoading, setIsLoading] = useState(false);
   const [hostUsername, setHostUsername] = useState('');
   const [showTeamChooser, setShowTeamChooser] = useState(false);
@@ -208,11 +208,15 @@ export const GameInfoModal: React.FC<GameInfoModalProps> = ({ game, onClose }) =
     setIsLoading(true);
     try {
       if (isUserInGame) {
-        await leaveGame(id, user.uid, updateGamePlayers);
+        await leaveGame(id, user.uid);
+        await removeGameFromUser(id, user.uid);
+        removePlayerFromGameContext(id, user.uid);
         updatePointsForLoggedInUser(-5); // Assume these functions handle Firebase and context updates
         updateGamesJoinedForLoggedInUser(false);
       } else {
-        await joinGame(id, user.uid, updateGamePlayers);
+        await joinGame(id, user.uid);
+        await addGameToUser(id, user.uid);
+        addPlayerToGameContext(id, user.uid);
         updatePointsForLoggedInUser(5);
         updateGamesJoinedForLoggedInUser(true);
       }

@@ -47,6 +47,9 @@ interface DataProviderType {
   updateTeamContext: (teamId: string, updatedTeam: Team) => void;
   updateClubContext: (clubId: string, updatedClub: Club) => void;
   updateUserContext: (userId: string, updatedUser: User) => void;
+  addPlayerToGameContext: (gameId: string, userId: string) => void;
+  removePlayerFromGameContext: (gameId: string, userId: string) => void;
+  addGameInviteToPlayerContext: (gameId: string, userId: string) => void;
 }
 
 export const DataContext = createContext<DataProviderType>({
@@ -86,6 +89,9 @@ export const DataContext = createContext<DataProviderType>({
   updateTeamContext: () => {},
   updateClubContext: () => {},
   updateUserContext: () => {},
+  addPlayerToGameContext: () => {},
+  removePlayerFromGameContext: () => {},
+  addGameInviteToPlayerContext: () => {},
 });
 
 export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -112,6 +118,33 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     fetchData();
   }, []);
+
+  const addGameInviteToPlayerContext = (gameId: string, userId: string) => {
+    setUsers(prevUsers => prevUsers.map(user => {
+      if (user.id === userId) {
+        return { ...user, pendingInvites: [...user.pendingInvites, gameId] };
+      }
+      return user;
+    }));
+  }
+
+  const addPlayerToGameContext = (gameId: string, userId: string) => {
+    setGames(prevGames => prevGames.map(game => {
+      if (game.id === gameId) {
+        return { ...game, players: [...game.players, userId] };
+      }
+      return game;
+    }));
+  }
+
+  const removePlayerFromGameContext = (gameId: string, userId: string) => {
+    setGames(prevGames => prevGames.map(game => {
+      if (game.id === gameId) {
+        return { ...game, players: game.players.filter(playerId => playerId !== userId) };
+      }
+      return game;
+    }));
+  }
 
   const updateUserContext = (userId: string, updatedUser: User) => {
     setUsers(prevUsers => prevUsers.map(user => {
@@ -396,36 +429,39 @@ const removeCommentFromGameContext = (gameId: string, commentId: string) => {
     teams,
     clubs,
     setLocations,
+    addGame,
+    addTeam,
+    addClubContext,
     addGameToLocationContext,
+    addMemberToTeamContext,
+    addTeamInviteContext,
+    addTeamToPlayerContext,
+    addTeamToGameContext,
+    addCommentToGameContext,
+    addGameToClubContext,
+    addMemberToClubContext,
+    addPlayerToGameContext,
+    addGameInviteToPlayerContext,
     removeGameFromLocation,
     removeGame,
-    addGame,
+    removeMemberFromTeamContext,
+    removeTeamInviteContext,
+    removeTeamFromPlayerContext,
+    removeTeamFromGameContext,
+    removeCommentFromGameContext,
+    removeClubContext,
+    removeGameFromClubContext,
+    removeMemberFromClubContext,
+    removePlayerFromGameContext,
     updateGamePlayers,
     updateUserRatings,
-    getAverageRating,
-    getUsernameById,
-    toggleGamePendingStatusContext,
-    addTeam,
-    addMemberToTeamContext,
-    removeMemberFromTeamContext,
-    addTeamInviteContext,
-    removeTeamInviteContext,
-    addTeamToPlayerContext,
-    removeTeamFromPlayerContext,
-    addTeamToGameContext,
-    removeTeamFromGameContext,
-    addCommentToGameContext,
-    removeCommentFromGameContext,
-    addClubContext,
-    removeClubContext,
-    addGameToClubContext,
-    removeGameFromClubContext,
-    addMemberToClubContext,
-    removeMemberFromClubContext,
     updateGameContext,
     updateTeamContext,
     updateClubContext,
     updateUserContext,
+    getAverageRating,
+    getUsernameById,
+    toggleGamePendingStatusContext,
   };
 
   return (

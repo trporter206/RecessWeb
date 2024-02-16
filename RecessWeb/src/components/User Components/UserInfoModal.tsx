@@ -5,8 +5,8 @@ import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 import ThumbDownIcon from '@mui/icons-material/ThumbDown';
 import { DataContext } from '../../services/DataProvider';
 import Button from '@mui/material/Button'; // Assuming you're using Material-UI for UI components
-import { GameCreationModal } from '../Game Components/GameCreationModal';
 import { TeamInvitationModal } from '../Team Components/TeamInvitationModal';
+import InviteOptionsModal from '../Other Components/InviteOptionsModal';
 
 interface UserInfoModalProps {
   user: User;
@@ -20,7 +20,7 @@ export const UserInfoModal: React.FC<UserInfoModalProps> = ({ user }) => {
   const isInNetwork = profile?.network?.includes(id);
   const currentUserRating = user.ratings?.[profile?.id ?? ""] ?? null;
   const isNotCurrentUser = profile && profile.id !== id;
-  const [showGameCreation, setShowGameCreation] = useState(false);
+  const [showInviteModal, setShowInviteModal] = useState(false);
   const [showTeamInvitation, setShowTeamInvitation] = useState(false);
 
 
@@ -41,7 +41,7 @@ export const UserInfoModal: React.FC<UserInfoModalProps> = ({ user }) => {
 
   const handleInvitePlayer = (e: React.FormEvent) => {
     e.stopPropagation();
-    setShowGameCreation(true);
+    setShowInviteModal(true);
   }
 
   const handleInviteToTeam = (e: React.FormEvent) => {
@@ -50,7 +50,7 @@ export const UserInfoModal: React.FC<UserInfoModalProps> = ({ user }) => {
   }
 
   const handleCloseGameCreation = () => {
-    setShowGameCreation(false);
+    setShowInviteModal(false);
   };
 
   const handleCloseTeamInvitation = () => {
@@ -89,9 +89,9 @@ export const UserInfoModal: React.FC<UserInfoModalProps> = ({ user }) => {
             </Button>
           </div>
         )}
-        {showGameCreation && (
-          <GameCreationModal
-            show={showGameCreation}
+        {showInviteModal && (
+          <InviteOptionsModal
+            show={showInviteModal}
             onClose={handleCloseGameCreation}
             invitee={user}
           />

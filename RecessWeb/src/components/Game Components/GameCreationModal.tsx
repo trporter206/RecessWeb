@@ -19,7 +19,7 @@ interface GameCreationModalProps {
 }
 
 export const GameCreationModal: React.FC<GameCreationModalProps> = ({ show, onClose, locationId, invitee, editMode, editedGame }) => {
-  const { locations, addGameToLocationContext, addGame, teams, updateGameContext } = useContext(DataContext);
+  const { locations, addGameToLocationContext, addGame, teams, updateGameContext, addGameInviteToPlayerContext } = useContext(DataContext);
   const [selectedLocation, setSelectedLocation] = useState<string>(editedGame?.locationId || '');
   const [date, setDate] = useState<string>(editedGame ? editedGame.date.toISOString().split('T')[0] : new Date().toISOString().split('T')[0]);
   const [startTime, setStartTime] = useState<string>(editedGame ? editedGame.startTime : '12:00');
@@ -130,6 +130,7 @@ export const GameCreationModal: React.FC<GameCreationModalProps> = ({ show, onCl
         addGame(createdGame);
         if (invitee) {
           await addGameToPendingInvites(invitee.id, newGameId);
+          addGameInviteToPlayerContext(newGameId, invitee.id);
         } else {
           console.log('not a pending game');
           addGameToLocationContext(newGameId, selectedLocation);

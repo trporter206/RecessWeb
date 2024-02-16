@@ -60,6 +60,7 @@ export const GameItem: React.FC<GameItemProps> = ({ game, onDelete }) => {
   return (
     <div className='game-item' onClick={handleToggleModal}>
       <h2>{title}</h2>
+      <p className="game-location">{locationName}</p>
       <p className="game-host">Host: {hostUsername}</p>
       <p className="game-date">{displayDate}</p>
       {isTeamGame && (

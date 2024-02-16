@@ -32,7 +32,8 @@ export async function fetchUsers(): Promise<User[]> {
                 gender: data.gender,
                 teams: data.teams,
                 pendingTeamInvites: data.pendingTeamInvites,
-                ownedLocations: data.ownedLocations
+                ownedLocations: data.ownedLocations,
+                currentGames: data.currentGames
             };
             return user;
         });
@@ -53,6 +54,57 @@ export async function updateUser(userId: string, user: User): Promise<void> {
     throw error;
   }
 }
+
+export async function addGameToUser(gameId: string, userId: string) {
+  console.log('fetching...accept game invite');
+  const userRef = doc(db, 'Users', userId);
+  try {
+    const userSnapshot = await getDoc(userRef);
+    if (!userSnapshot.exists()) {
+      throw new Error('User not found');
+    }
+    const userData = userSnapshot.data();
+    const currentGames = userData.currentGames ? [...userData.currentGames] : [];
+    // Check if game ID is not already in the user's current games
+    if (!currentGames.includes(gameId)) {
+      // Add the new game ID to the array
+      currentGames.push(gameId);
+      // Update the user document with the new array
+      await updateDoc(userRef, { currentGames });
+    }
+    
+    console.log(`Game invite accepted. Game ID ${gameId} added to user ${userId}'s currentGames.`);
+  } catch (error) {
+    console.error('Error accepting game invite:', error);
+    throw error;
+  }
+}
+
+export async function removeGameFromUser(gameId: string, userId: string) {
+  console.log('fetching...remove game from user');
+  const userRef = doc(db, 'Users', userId);
+  try {
+    const userSnapshot = await getDoc(userRef);
+    if (!userSnapshot.exists()) {
+      throw new Error('User not found');
+    }
+    const userData = userSnapshot.data();
+    const currentGames = userData.currentGames ? [...userData.currentGames] : [];
+    // Check if game ID is in the user's current games
+    if (currentGames.includes(gameId)) {
+      // Remove the game ID from the array
+      const updatedGames = currentGames.filter((id) => id !== gameId);
+      // Update the user document with the new array
+      await updateDoc(userRef, { currentGames: updatedGames });
+    }
+    
+    console.log(`Game removed from user's currentGames.`);
+  } catch (error) {
+    console.error('Error removing game from user:', error);
+    throw error;
+  }
+}
+
 
 export async function acceptTeamInvite(teamId: string, userId: string) {
   // Add user to the team's members

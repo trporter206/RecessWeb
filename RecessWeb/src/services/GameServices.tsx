@@ -249,30 +249,26 @@ export async function completeGame(gameId: string): Promise<void> {
   }
 }
 
-type UpdateGameCallback = (gameId: string, userId: string, isJoining: boolean) => void;
-
-export const joinGame = async (gameId: string, userId: string, updateGameCallback: UpdateGameCallback) => {
+export const joinGame = async (gameId: string, userId: string) => {
   console.log('fetching...joining game');
     try {
       const gameRef = doc(firestore, 'Games', gameId);
       await updateDoc(gameRef, {
         players: arrayUnion(userId)
       });
-      updateGameCallback(gameId, userId, true);
     } catch (error) {
       console.error('Error joining game:', error);
       throw error;
     }
 };
   
-export const leaveGame = async (gameId: string, userId: string, updateGameCallback: UpdateGameCallback) => {
+export const leaveGame = async (gameId: string, userId: string) => {
   console.log('fetching...leaving game');
     try {
       const gameRef = doc(firestore, 'Games', gameId);
       await updateDoc(gameRef, {
         players: arrayRemove(userId)
       });
-      updateGameCallback(gameId, userId, false);
     } catch (error) {
       console.error('Error leaving game:', error);
       throw error;

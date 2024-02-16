@@ -24,6 +24,7 @@ interface UserProfile {
   gender: string;
   age: number;
   ownedLocations: string[];
+  currentGames: string[];
   // Add other fields as necessary
 }
 
