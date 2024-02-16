@@ -66,6 +66,7 @@ export const LocationInfoModal: React.FC<LocationInfoModalProps> = ({ location, 
     <div className="modal-backdrop">
       <div className="locationInfoModal-content">
         <h3>{name}</h3>
+        <p>Type: {location.type}</p>
         <div className='location-stats'>
         {isFavorite ? 
           <Favorite onClick={handleToggleFavorite} style={{color: 'green'}}>

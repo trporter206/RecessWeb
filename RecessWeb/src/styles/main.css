@@ -482,3 +482,36 @@
     justify-content: space-evenly;
 }
 
+.filter-bar-container {
+    display: flex;
+    overflow-x: auto; /* Enable horizontal scrolling */
+    white-space: nowrap;
+    width: 100vw;
+    justify-content: space-evenly; 
+    padding-top: 70px;
+  }
+  
+  .filter-category {
+    margin: 10px;
+    flex: 0 0 auto; /* Prevent flex items from growing or shrinking */
+  }
+  
+  .filter-options {
+    display: flex;
+    flex-direction: row;
+    gap: 5px;
+  }
+  
+  .filter-option-button {
+    padding: 5px 10px;
+    margin: 0;
+    border: 1px solid #ccc;
+    background: #f0f0f0;
+    cursor: pointer;
+    flex: 0 0 auto; /* Prevent flex items from growing or shrinking */
+  }
+  
+  .filter-option-button:hover {
+    background: #e0e0e0;
+  }
+  
