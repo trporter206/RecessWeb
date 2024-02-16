@@ -9,37 +9,22 @@ import { Game } from '../models/Game';
 import { FilterBar } from '../components/Other Components/FilterBar';
 
 export const LandingPage = () => {
-  const { locations } = useContext(DataContext); // Use games from DataContext
+  const { locations } = useContext(DataContext);
   const [selectedLocation, setSelectedLocation] = useState<Location | null>(null);
   const [displayedLocations, setDisplayedLocations] = useState(locations);
 
-
   useEffect(() => {
-    setDisplayedLocations(locations); // Update displayed games whenever the games data changes
+    setDisplayedLocations(locations);
   }, [locations]);
 
   const handleMarkerClick = (item: Location | Game) => {
-    let locationToShow;
-  
-    if ('name' in item) {
-      // If item is a Location, use it directly
-      locationToShow = item;
-    } else {
-      // If item is a Game, find the corresponding Location
-      locationToShow = locations.find(loc => loc.id === item.locationId);
-    }
-  
-    if (locationToShow) {
-      setSelectedLocation(locationToShow);
-    }
+    let locationToShow = 'name' in item ? item : locations.find(loc => loc.id === item.locationId);
+    setSelectedLocation(locationToShow || null);
   };
 
-  const handleCloseModal = () => {
-    setSelectedLocation(null);
-  };
+  const handleCloseModal = () => setSelectedLocation(null);
 
   const handleFilterChange = (category: string, option: string) => {
-    // Example filter logic, adjust based on your needs
     let filteredLocations = locations;
 
     if (category === "" && option === "") {
@@ -66,13 +51,22 @@ export const LandingPage = () => {
         filteredLocations = locations.filter(location => location.isOwned === (option === "Yes"));
       }
     }
+    // applyFiltersAndSearch(category, option);
+    setDisplayedLocations(filteredLocations);
+  };
 
+  const handleSearch = (searchQuery: string) => {
+    const filteredLocations = searchQuery
+      ? locations.filter(location =>
+          location.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          location.description.toLowerCase().includes(searchQuery.toLowerCase()))
+      : locations;
     setDisplayedLocations(filteredLocations);
   };
 
   return (
     <div className="main-container">
-      <FilterBar onFilterChange={handleFilterChange}/>
+      <FilterBar onFilterChange={handleFilterChange} onSearch={handleSearch}/>
       <div className="map-and-list-container">
         <div className="map-container">
           <MapComponent items={displayedLocations} onMarkerClick={handleMarkerClick} />
@@ -87,4 +81,3 @@ export const LandingPage = () => {
   </div>
   );
 };
-

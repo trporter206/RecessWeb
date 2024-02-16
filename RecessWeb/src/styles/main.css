@@ -486,7 +486,9 @@
     display: flex;
     overflow-x: auto; /* Enable horizontal scrolling */
     white-space: nowrap;
-    width: 100vw;
+    width: 100%;
+    align-items: center;
+    gap: 10px; 
     justify-content: space-evenly; 
     padding-top: 70px;
   }
@@ -514,4 +516,20 @@
   .filter-option-button:hover {
     background: #e0e0e0;
   }
+
+  .filter-reset-button-container {
+    margin: 10px;
+    flex: 0 0 auto; 
+  }
   
+
+.search-bar-container {
+    flex-grow: 1; 
+  }
+  
+  .search-input {
+    width: 80%; 
+    padding: 5px 10px; 
+    border: 1px solid #ccc; 
+    border-radius: 5px; 
+  }
