@@ -52,15 +52,31 @@ export const GameInfoModal: React.FC<GameInfoModalProps> = ({ game, onClose }) =
   const [commentText, setCommentText] = useState('');
   let isUserPartOfAnyTeam = false;
   const userIsHost = user?.uid === game.hostId;
+  const { players, 
+    hostId, 
+    isTeamGame, 
+    comments, 
+    id, 
+    locationId, 
+    date, 
+    startTime, 
+    endTime,
+    maxPlayers,
+    skillMaximum,
+    skillMinimum,
+    description,
+    title,
+    pending,
+    minimumPoints } = game;
 
   useEffect(() => {
-    setIsUserInGame(user ? game.players.includes(user.uid) : false);
+    setIsUserInGame(user ? players.includes(user.uid) : false);
     const fetchHostUsername = async () => {
-      const username = await dataContext.getUsernameById(game.hostId); // Assuming getUsernameById exists in dataContext
+      const username = await dataContext.getUsernameById(hostId); // Assuming getUsernameById exists in dataContext
       setHostUsername(username || 'Unknown');
     };
     fetchHostUsername();
-    if (game.isTeamGame && profile?.teams) {
+    if (isTeamGame && profile?.teams) {
       const isOnParticipatingTeam = game.teams.some(teamId => profile.teams.includes(teamId));
       console.log('isOnParticipatingTeam:', isOnParticipatingTeam);
       setCanAcceptTeamInvite(!isOnParticipatingTeam);
@@ -91,12 +107,12 @@ export const GameInfoModal: React.FC<GameInfoModalProps> = ({ game, onClose }) =
   };
 
   const renderComments = () => {
-    if (game.comments.length > 0) {
+    if (comments.length > 0) {
       return (
         <div>
           <h3>Comments:</h3>
           <ul>
-            {game.comments.map((comment, index) => (
+            {comments.map((comment, index) => (
               <li key={index}>
                 <GameCommentBox 
                   key={comment.id} // Use the comment ID as the key instead of index
@@ -122,8 +138,8 @@ export const GameInfoModal: React.FC<GameInfoModalProps> = ({ game, onClose }) =
       return;
     }
     try {
-      await removeCommentFromGame(game.id, commentId);
-      removeCommentFromGameContext(game.id, commentId);
+      await removeCommentFromGame(id, commentId);
+      removeCommentFromGameContext(id, commentId);
     } catch (error) {
       console.error('Failed to delete comment:', error);
     }
@@ -155,9 +171,9 @@ export const GameInfoModal: React.FC<GameInfoModalProps> = ({ game, onClose }) =
 
     try {
         // You still call addCommentToGame to actually add the comment to Firestore
-        await addCommentToGame(game.id, newComment);
+        await addCommentToGame(id, newComment);
         // Assuming addCommentToGameContext is a context function to update your local state
-        addCommentToGameContext(game.id, newComment);
+        addCommentToGameContext(id, newComment);
         setCommentText('');
     } catch (error) {
         console.error('Error adding comment:', error);
@@ -172,10 +188,10 @@ export const GameInfoModal: React.FC<GameInfoModalProps> = ({ game, onClose }) =
     }
     setIsLoading(true);
     try {
-      await rewardBonusPoints(game.id);
-      await completeGame(game.id);
-      removeGameFromLocation(game.id, game.locationId);
-      removeGame(game.id);
+      await rewardBonusPoints(id);
+      await completeGame(id);
+      removeGameFromLocation(id, locationId);
+      removeGame(id);
     } finally {
       setIsLoading(false);
       onClose();
@@ -192,11 +208,11 @@ export const GameInfoModal: React.FC<GameInfoModalProps> = ({ game, onClose }) =
     setIsLoading(true);
     try {
       if (isUserInGame) {
-        await leaveGame(game.id, user.uid, updateGamePlayers);
+        await leaveGame(id, user.uid, updateGamePlayers);
         updatePointsForLoggedInUser(-5); // Assume these functions handle Firebase and context updates
         updateGamesJoinedForLoggedInUser(false);
       } else {
-        await joinGame(game.id, user.uid, updateGamePlayers);
+        await joinGame(id, user.uid, updateGamePlayers);
         updatePointsForLoggedInUser(5);
         updateGamesJoinedForLoggedInUser(true);
       }
@@ -209,10 +225,10 @@ export const GameInfoModal: React.FC<GameInfoModalProps> = ({ game, onClose }) =
 
   const hasOneHourPassed = () => {
     const currentTime = new Date();
-    // Clone the game.date object to avoid mutating the original date
-    const gameStartDateTime = new Date(game.date.getTime());
-    // Extract hours and minutes from game.startTime
-    const [hours, minutes] = game.startTime.split(':').map(Number);
+    // Clone the date object to avoid mutating the original date
+    const gameStartDateTime = new Date(date.getTime());
+    // Extract hours and minutes from startTime
+    const [hours, minutes] = startTime.split(':').map(Number);
     // Set hours and minutes to the gameStartDateTime
     gameStartDateTime.setHours(hours, minutes, 0, 0); // Reset seconds and milliseconds to 0
     const oneHour = 60 * 60 * 1000; // milliseconds in one hour
@@ -230,14 +246,14 @@ export const GameInfoModal: React.FC<GameInfoModalProps> = ({ game, onClose }) =
     setIsLoading(true);
     try {
       if (accept) {
-        await toggleGamePendingStatus(game.id);
-        toggleGamePendingStatusContext(game.id);
-        addGameToLocationContext(game.id, game.locationId);
-        await addGameIdToLocation(game.locationId, game.id);
+        await toggleGamePendingStatus(id);
+        toggleGamePendingStatusContext(id);
+        addGameToLocationContext(id, locationId);
+        await addGameIdToLocation(locationId, id);
       } else {
-        await deleteGame(game.id, removeGame);
+        await deleteGame(id, removeGame);
       }
-      await removeGameFromPendingInvites(user.uid, game.id);
+      await removeGameFromPendingInvites(user.uid, id);
     } finally {
       setIsLoading(false);
       onClose();
@@ -246,33 +262,33 @@ export const GameInfoModal: React.FC<GameInfoModalProps> = ({ game, onClose }) =
 
   const renderGameDetails = () => (
     <>
-      <h1>{game.title || 'Game Details'}</h1>
-      <p><strong>Location:</strong> {dataContext.locations.find(loc => loc.id === game.locationId)?.name || 'Unknown Location'}</p>
-      <p><strong>Date:</strong> {new Date(game.date).toLocaleDateString()}</p>
-      <p><strong>Time:</strong> {`${game.startTime} - ${game.endTime}`}</p>
-      {game.isTeamGame ? (
+      <h1>{title || 'Game Details'}</h1>
+      <p><strong>Location:</strong> {dataContext.locations.find(loc => loc.id === locationId)?.name || 'Unknown Location'}</p>
+      <p><strong>Date:</strong> {new Date(date).toLocaleDateString()}</p>
+      <p><strong>Time:</strong> {`${startTime} - ${endTime}`}</p>
+      {isTeamGame ? (
         <>
-          <p><strong>Teams:</strong> {game.teams.length}</p>
+          <p><strong>Teams:</strong> {teams.length}</p>
         </>
       ) : (
         <>
-          <p><strong>Max Players:</strong> {game.maxPlayers}</p>
-          <p><strong>Minimum Points:</strong> {game.minimumPoints || 'None'}</p>
+          <p><strong>Max Players:</strong> {maxPlayers}</p>
+          <p><strong>Minimum Points:</strong> {minimumPoints || 'None'}</p>
         </>
       )}
-      <p><strong>Skill Level:</strong> {game.skillMinimum ? `${game.skillMinimum} - ${game.skillMaximum}` : 'Not specified'}</p>
-      <p><strong>Description:</strong> {game.description || 'No description provided'}</p>
+      <p><strong>Skill Level:</strong> {skillMinimum ? `${skillMinimum} - ${skillMaximum}` : 'Not specified'}</p>
+      <p><strong>Description:</strong> {description || 'No description provided'}</p>
     </>
   );
 
   const renderParticipants = () => {
-    if (game.isTeamGame) {
+    if (isTeamGame) {
       return game.teams.map(teamId => {
         const team = teams.find(t => t.id === teamId);
         return team && <TeamItem key={team.id} team={team} />;
       });
     } else {
-      return game.players.map(playerId => {
+      return players.map(playerId => {
         const player = users.find(user => user.id === playerId);
         return player && <PlayerItem key={player.id} user={player} />;
       });
@@ -290,8 +306,8 @@ export const GameInfoModal: React.FC<GameInfoModalProps> = ({ game, onClose }) =
 
   const handleTeamChosen = async (chosenTeamId: string) => {
     try {
-      await addTeamToGame(game.id, chosenTeamId);
-      addTeamToGameContext(chosenTeamId, game.id);
+      await addTeamToGame(id, chosenTeamId);
+      addTeamToGameContext(chosenTeamId, id);
     } catch (error) {
       console.error('Error adding team to game:', error);
     }
@@ -302,28 +318,28 @@ export const GameInfoModal: React.FC<GameInfoModalProps> = ({ game, onClose }) =
     <div className="modal-backdrop">
     {isLoading ? <CircularProgress /> : (
       <div className="gameInfoModal-content">
-        {game.pending && <h2>Invitation from {hostUsername}</h2>}
+        {pending && <h2>Invitation from {hostUsername}</h2>}
         {renderGameDetails()}
-        {!game.pending && (
+        {!pending && (
           <>
-            <h3>{game.isTeamGame ? 'Teams' : 'Players'}:</h3>
+            <h3>{isTeamGame ? 'Teams' : 'Players'}:</h3>
             <div className="game-participantlist-container">
               {renderParticipants()}
             </div>
             {/* Conditionally render buttons based on game type and user's team status */}
-            {user && user.uid !== game.hostId && game.isTeamGame && isUserPartOfAnyTeam && !canAcceptTeamInvite && (
+            {user && user.uid !== hostId && isTeamGame && isUserPartOfAnyTeam && !canAcceptTeamInvite && (
               <button onClick={handleJoinLeaveGame}>
                 {isUserInGame ? 'Leave Game' : 'Join Game'}
               </button>
             )}
             {/* Show "Accept Invite" button if the user can accept the team invite */}
-            {user && user.uid !== game.hostId && canAcceptTeamInvite && (
+            {user && user.uid !== hostId && canAcceptTeamInvite && (
               <button onClick={handleAcceptTeamInvite}>
                 Accept Invite
               </button>
             )}
             {/* Do not show "Join Game" button if it's a team game and user is not part of any team */}
-            {!game.isTeamGame && user && user.uid !== game.hostId && (
+            {!isTeamGame && user && user.uid !== hostId && (
               <button onClick={handleJoinLeaveGame}>
                 {isUserInGame ? 'Leave Game' : 'Join Game'}
               </button>
@@ -331,13 +347,13 @@ export const GameInfoModal: React.FC<GameInfoModalProps> = ({ game, onClose }) =
             <button onClick={() => onClose()}>Close</button>
           </>
         )}
-        {game.pending && (
+        {pending && (
           <>
             <button onClick={() => handleInviteResponse(true)}>Accept</button>
             <button onClick={() => handleInviteResponse(false)}>Decline</button>
           </>
         )}
-        {hasOneHourPassed() && user && user.uid === game.hostId && (
+        {hasOneHourPassed() && user && user.uid === hostId && (
           <button onClick={handleCompleteGame}>Complete Game</button>
         )}
         {userIsHost && (

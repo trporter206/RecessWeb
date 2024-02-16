@@ -89,7 +89,7 @@ export const LocationInfoModal: React.FC<LocationInfoModalProps> = ({ location, 
         </div>
         <p>{description}</p>
         <GamesList games={gamesAtLocation} onDeleteGame={() => {}} includePending={false}/>
-        {userIsOwner ? (
+        {(!isOwned || userIsOwner) ? (
           <button onClick={handleOpenGameCreation}>Create Game at this Location</button>
         ) : (
           <p>only this location's owners can start a game</p>

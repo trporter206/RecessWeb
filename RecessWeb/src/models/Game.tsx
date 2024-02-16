@@ -18,6 +18,7 @@ export interface Game {
     pending: boolean;
     isTeamGame: boolean;
     comments: GameComment[];
+    inviteOnly: boolean;
 }
 
 export interface GameComment {

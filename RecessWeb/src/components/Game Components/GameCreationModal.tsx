@@ -31,6 +31,7 @@ export const GameCreationModal: React.FC<GameCreationModalProps> = ({ show, onCl
   const [title, setTitle] = useState<string>(editedGame ? editedGame.title : '');
   const [description, setDescription] = useState<string>(editedGame ? editedGame.description : '');
   const [minimumPoints, setMinimumPoints] = useState<number>(editedGame ? editedGame.minimumPoints : 0);
+  const [inviteOnly, setInviteOnly] = useState<boolean>(false);
   const [isTeamGame, setIsTeamGame] = useState<boolean>(false); // New state for "Teams Only"
   const userContext = useContext(UserContext);
   const user = userContext ? userContext.user : null;
@@ -85,7 +86,8 @@ export const GameCreationModal: React.FC<GameCreationModalProps> = ({ show, onCl
         description: description,
         pending: editedGame.pending,
         isTeamGame: isTeamGame,
-        comments: editedGame.comments // Include the isTeamGame flag
+        comments: editedGame.comments,
+        inviteOnly: inviteOnly // Include the isTeamGame flag
       };
 
       setIsLoading(true);
@@ -117,7 +119,8 @@ export const GameCreationModal: React.FC<GameCreationModalProps> = ({ show, onCl
         description,
         pending: !!invitee,
         isTeamGame,
-        comments: [] // Include the isTeamGame flag
+        comments: [],
+        inviteOnly: inviteOnly // Include the isTeamGame flag
       };
 
       setIsLoading(true);
@@ -179,6 +182,10 @@ export const GameCreationModal: React.FC<GameCreationModalProps> = ({ show, onCl
                 <label>End Time: </label>
                 <input type="time" value={endTime} onChange={e => setEndTime(e.target.value)} required />
               </div>
+            </div>
+            <div className="form-group">
+              <label>Invite Only</label>
+              <input type="checkbox" checked={inviteOnly} onChange={(e) => setInviteOnly(e.target.checked)} />
             </div>
             <div className="form-group teams-max-row"> {/* Added class for styling */}
               {isUserOnTeam && (
