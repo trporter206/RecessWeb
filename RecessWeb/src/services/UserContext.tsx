@@ -23,6 +23,7 @@ interface UserProfile {
   pickleballSkill: number;
   gender: string;
   age: number;
+  ownedLocations: string[];
   // Add other fields as necessary
 }
 

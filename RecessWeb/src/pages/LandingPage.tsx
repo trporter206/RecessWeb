@@ -100,7 +100,7 @@ export const LandingPage = () => {
           <button onClick={handleToggleDisplay}>
             {showGames ? 'Show Locations' : 'Show Games'}
           </button>
-        <div className="sorting-dropdown">
+          <div className="sorting-dropdown">
           {showGames ? (
             <GameSorter 
               gameSortMethod={gameSortMethod} 

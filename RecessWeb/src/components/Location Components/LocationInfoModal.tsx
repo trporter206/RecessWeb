@@ -14,7 +14,7 @@ interface LocationInfoModalProps {
 }
 
 export const LocationInfoModal: React.FC<LocationInfoModalProps> = ({ location, onClose }) => {
-  const { name, description } = location;
+  const { name, description, isOwned, owners } = location;
   const userContext = useContext(UserContext);
   const user = userContext?.user;
   const profile = userContext ? userContext.profile : null;
@@ -22,6 +22,7 @@ export const LocationInfoModal: React.FC<LocationInfoModalProps> = ({ location, 
   const { games } = useContext(DataContext);
   const [showGameCreation, setShowGameCreation] = useState(false);
   const [isFavorite, setIsFavorite] = useState(false);
+  const userIsOwner = user && isOwned && owners.includes(user.uid);
 
   useEffect(() => {
     const checkIfFavorite = () => {
@@ -88,7 +89,11 @@ export const LocationInfoModal: React.FC<LocationInfoModalProps> = ({ location, 
         </div>
         <p>{description}</p>
         <GamesList games={gamesAtLocation} onDeleteGame={() => {}} includePending={false}/>
-        <button onClick={handleOpenGameCreation}>Create Game at this Location</button>
+        {userIsOwner ? (
+          <button onClick={handleOpenGameCreation}>Create Game at this Location</button>
+        ) : (
+          <p>only this location's owners can start a game</p>
+        )}
         <button onClick={onClose}>Close</button>
         {showGameCreation && (
           <GameCreationModal

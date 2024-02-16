@@ -17,4 +17,5 @@ export interface User {
   pendingInvites: string[];
   pendingTeamInvites: string[];
   teams: string[];
+  ownedLocations: string[];
 }

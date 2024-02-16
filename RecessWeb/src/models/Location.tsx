@@ -7,6 +7,8 @@ export interface Location {
   courtCount: number;
   lights: boolean;
   games: string[];
+  isOwned: boolean;
+  owners: string[];
   totalGames: number;
   coordinates: {
     latitude: number;

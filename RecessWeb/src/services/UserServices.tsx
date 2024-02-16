@@ -31,7 +31,8 @@ export async function fetchUsers(): Promise<User[]> {
                 age: data.age,
                 gender: data.gender,
                 teams: data.teams,
-                pendingTeamInvites: data.pendingTeamInvites
+                pendingTeamInvites: data.pendingTeamInvites,
+                ownedLocations: data.ownedLocations
             };
             return user;
         });

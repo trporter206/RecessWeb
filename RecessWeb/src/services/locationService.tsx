@@ -22,7 +22,9 @@ export async function fetchLocations(): Promise<Location[]> {
                 type: data.type,
                 courtCount: data.courtCount,
                 lights: data.lights,
-                coordinates: {latitude: data.coordinates.latitude, longitude: data.coordinates.longitude}
+                coordinates: {latitude: data.coordinates.latitude, longitude: data.coordinates.longitude},
+                owners: data.owners,
+                isOwned: data.isOwned
             };
             return location;
         });
