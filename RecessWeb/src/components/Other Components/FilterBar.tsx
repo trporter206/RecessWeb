@@ -31,7 +31,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({ onFilterChange, onSearch }
   };
 
   const handleResetFilters = () => {
-    onFilterChange('', ''); // Call the callback with empty strings to indicate a reset
+    onFilterChange('', ''); 
     setSearchQuery(''); // Also reset the search query
     onSearch(''); // Reset search results
   };
