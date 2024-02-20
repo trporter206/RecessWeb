@@ -262,9 +262,24 @@ export async function addGameToPendingInvites(userId: string, gameId: string): P
   }
 }
 
+interface UserData {
+  id: string;
+  username: string;
+  points: number;
+  gamesHosted: number;
+  gamesJoined: number;
+  ratings: { [userId: string]: 1 | 0 };
+  network: string[];
+  favoriteLocations: string[];
+  pendingInvites: string[];
+  firstName: string;
+  lastName: string;
+  pickleballSkill: string;
+  age: number
+}
 
-export async function fetchUsernameById(userIds: string | string[]): Promise<string[]> {
-  console.log('fetching...user ID');
+export async function fetchUserDataById(userIds: string | string[]): Promise<(UserData | null)[]> { // Updated return type
+  console.log('fetching...user data');
   try {
     // Ensure userIds is always an array
     const userIdsArray = Array.isArray(userIds) ? userIds : [userIds];
@@ -272,17 +287,16 @@ export async function fetchUsernameById(userIds: string | string[]): Promise<str
     const userRefs = userIdsArray.map((userId) => doc(db, 'Users', userId));
     const userSnaps = await Promise.all(userRefs.map(getDoc));
 
-    const usernames = userSnaps.map((userSnap) => {
+    const usersData = userSnaps.map((userSnap) => {
       if (userSnap.exists()) {
-        const userData = userSnap.data();
-        return userData.username; // Assuming 'username' is the field name in your user document
+        return userSnap.data() as UserData; // Return the full user data
       } else {
         console.error(`No user found with ID ${userSnap.id}`);
-        return ''; // Return empty string or handle as needed
+        return null; // Handle non-existent users as needed
       }
     });
 
-    return usernames;
+    return usersData; 
   } catch (error) {
     console.error('Error fetching users by IDs:', error);
     throw error;

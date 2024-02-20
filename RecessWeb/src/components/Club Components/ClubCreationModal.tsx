@@ -72,33 +72,33 @@ export const ClubCreationModal: React.FC<ClubCreatiopnModalProps> = ({ show, onC
                 onClose();
             }
             return;
-        }
-
-        const newClub = {
-            id: uuid(),
-            name: clubName,
-            organizer: user.uid,
-            description: clubDescription,
-            sport: clubSport,
-            members: [user.uid],
-            games: [],
-            isPublic: isPublic,
-            freeToJoin: isFreeToJoin,
-            clubLocations: clubLocations
-        };
-
-        setIsLoading(true);
-        try {
-            const newClubId = await createClub(newClub);
-            const createdClub = { ...newClub, id: newClubId };
-            addClubContext(createdClub);
-            console.log('Club created:', createdClub);
-            onClose();
-        } catch (error) {
-            console.error('Error creating club:', error);
-        } finally {
-            setIsLoading(false);
-            onClose();
+        } else {
+            const newClub = {
+                id: uuid(),
+                name: clubName,
+                organizer: user.uid,
+                description: clubDescription,
+                sport: clubSport,
+                members: [user.uid],
+                games: [],
+                isPublic: isPublic,
+                freeToJoin: isFreeToJoin,
+                clubLocations: clubLocations
+            };
+    
+            setIsLoading(true);
+            try {
+                const newClubId = await createClub(newClub);
+                const createdClub = { ...newClub, id: newClubId };
+                addClubContext(createdClub);
+                console.log('Club created:', createdClub);
+                onClose();
+            } catch (error) {
+                console.error('Error creating club:', error);
+            } finally {
+                setIsLoading(false);
+                onClose();
+            }
         }
     }
 
