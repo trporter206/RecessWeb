@@ -22,7 +22,6 @@ interface GameCommentBoxProps {
         <p>{comment.text}</p>
         <div className='comment-notes'>
           <p><strong>{username}</strong></p>
-          <p><small>{new Date(comment.timestamp).toLocaleString()}</small></p>
           {isUserComment && (
             <button onClick={handleDeleteClick}>Delete</button> // Call onDelete with the comment to delete
           )}
