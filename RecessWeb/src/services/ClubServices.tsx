@@ -21,6 +21,8 @@ export async function fetchClubs(): Promise<Club[]> {
                     members: data.members || [],
                     games: data.games || [],
                     isPublic: data.isPublic,
+                    freeToJoin: data.freeToJoin,
+                    clubLocations: data.clubLocations || []
               };
               return club;
           });

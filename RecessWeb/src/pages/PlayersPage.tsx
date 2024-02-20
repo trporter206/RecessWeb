@@ -2,7 +2,7 @@ import { useContext, useState, useEffect, useRef } from 'react';
 import { DataContext } from '../services/DataProvider';
 import '../styles/main.css';
 import { PlayersList } from '../components/User Components/PlayersList';
-import { TeamsList } from '../components/Team Components/TeamsList';
+// import { TeamsList } from '../components/Team Components/TeamsList';
 import { ClubsList } from '../components/Club Components/ClubsList';
 
 export const PlayersPage = () => {
@@ -24,9 +24,9 @@ export const PlayersPage = () => {
       case 'players':
         setTextBlurb('Find players in your neighborhood to play with.');
         break;
-      case 'teams':
-        setTextBlurb('Look for a team to join and compete with others for a chance at real world prizes.');
-        break;
+      // case 'teams':
+      //   setTextBlurb('Look for a team to join and compete with others for a chance at real world prizes.');
+      //   break;
       case 'clubs':
         setTextBlurb('Join a club to meet new people and play games together.');
         break;
@@ -39,13 +39,11 @@ export const PlayersPage = () => {
     <div className="main-container">
       <div className="tabs-container">
         <button className="tab-button" data-view="players" onClick={() => setView('players')}>Players</button>
-        <button className="tab-button" data-view="teams" onClick={() => setView('teams')}>Teams</button>
         <button className="tab-button" data-view="clubs" onClick={() => setView('clubs')}>Clubs</button>
         <div className="slider" ref={sliderRef}></div>
       </div>
       <p className="text-blurb">{textBlurb}</p> 
       {view === 'players' && <PlayersList users={data.users} />}
-      {view === 'teams' && <TeamsList teams={data.teams} />}
       {view === 'clubs' && <ClubsList clubs={data.clubs} />}
     </div>
   );

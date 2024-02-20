@@ -3,6 +3,8 @@ import { UserContext } from "../../services/UserContext";
 import { createClub, updateClub } from "../../services/ClubServices";
 import { DataContext } from "../../services/DataProvider";
 import { CircularProgress } from "@mui/material";
+import { Select, MenuItem } from '@mui/material';
+import { SelectChangeEvent } from '@mui/material/Select';
 import { v4 as uuid } from 'uuid';
 import { Club } from "../../models/Club";
 
@@ -19,11 +21,18 @@ export const ClubCreationModal: React.FC<ClubCreatiopnModalProps> = ({ show, onC
     const [clubSport, setClubSport] = useState(editedClub ? editedClub.sport : '');
     const [isPublic, setIsPublic] = useState(editedClub ? editedClub.isPublic : false);
     const [isLoading, setIsLoading] = useState<boolean>(false);
-    const { addClubContext, updateClubContext } = useContext(DataContext);
+    const [isFreeToJoin, setIsFreeToJoin] = useState<boolean>(editedClub ? editedClub.freeToJoin : true);
+    const [clubLocations, setClubLocations] = useState<string[]>(editedClub ? editedClub.clubLocations : []);
+    const { addClubContext, updateClubContext, locations } = useContext(DataContext);
     const userContext = useContext(UserContext);
     const user = userContext ? userContext.user : null;
     const isEditMode = Boolean(editMode);
     // const profile = userContext ? userContext.profile : null;
+
+    const handleLocationChange = (event: SelectChangeEvent<string[]>) => { 
+        setClubLocations(Array.isArray(event.target.value) ? event.target.value : [event.target.value]);  
+    };
+    
 
     const handleClose = (event: React.MouseEvent) => {
         event.stopPropagation();
@@ -46,7 +55,9 @@ export const ClubCreationModal: React.FC<ClubCreatiopnModalProps> = ({ show, onC
                 name: clubName,
                 description: clubDescription,
                 sport: clubSport,
-                isPublic: isPublic
+                isPublic: isPublic,
+                freeToJoin: isFreeToJoin,
+                clubLocations: clubLocations
             };
 
             setIsLoading(true);
@@ -71,7 +82,9 @@ export const ClubCreationModal: React.FC<ClubCreatiopnModalProps> = ({ show, onC
             sport: clubSport,
             members: [user.uid],
             games: [],
-            isPublic: isPublic
+            isPublic: isPublic,
+            freeToJoin: isFreeToJoin,
+            clubLocations: clubLocations
         };
 
         setIsLoading(true);
@@ -102,7 +115,6 @@ export const ClubCreationModal: React.FC<ClubCreatiopnModalProps> = ({ show, onC
                     <>
                         <div className='modal-header'>
                             <h3>{isEditMode ? 'Edit Club' : 'Create Club'}</h3>
-                            <button className='close-button' onClick={onClose}>X</button>
                         </div>
                         <div className='modal-content'>
                             <div className='form-group'>
@@ -122,7 +134,27 @@ export const ClubCreationModal: React.FC<ClubCreatiopnModalProps> = ({ show, onC
                                 <input type='checkbox' id='isPublic' checked={isPublic} onChange={(e) => setIsPublic(e.target.checked)} />
                             </div>
                             <div className='form-group'>
+                                <label htmlFor='isFreeToJoin'>Free to Join</label>
+                                <input type='checkbox' id='isFreeToJoin' checked={isFreeToJoin} onChange={(e) => setIsFreeToJoin(e.target.checked)} />
+                            </div>
+                            <div className='form-group'>
+                                <label htmlFor='clubLocations'>Locations</label>
+                                <Select
+                                    multiple
+                                    value={clubLocations}
+                                    onChange={handleLocationChange} // Correct type here
+                                    renderValue={selected => selected.join(', ')}
+                                >
+                                    {locations.map((location) => (
+                                        <MenuItem key={location.id} value={location.id}>
+                                            {location.name}
+                                        </MenuItem>
+                                    ))}
+                                </Select>
+                            </div>
+                            <div className='form-group'>
                                 <button onClick={handleSave} disabled={isLoading}>{isEditMode ? 'Save Changes' : 'Create Club'}</button>
+                                <button className='close-button' onClick={onClose}>Cancel</button>
                             </div>
                         </div>
                     </>

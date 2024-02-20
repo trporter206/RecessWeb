@@ -7,4 +7,6 @@ export interface Club {
     members: string[];
     games: string[];
     isPublic: boolean;
+    freeToJoin: boolean;
+    clubLocations: string[];
 }

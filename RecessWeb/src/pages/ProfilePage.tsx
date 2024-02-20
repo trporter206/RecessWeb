@@ -6,13 +6,13 @@ import { UserContext } from '../services/UserContext';
 import { DataContext } from '../services/DataProvider';
 import { GamesList } from '../components/Game Components/GamesList';
 import { Game } from '../models/Game'; // Import the Game type
-import { Team } from '../models/Team'; // Import the Team type
+// import { Team } from '../models/Team'; // Import the Team type
 import { Location } from '../models/Location'; // Import the Location type
 import { LocationsList } from '../components/Location Components/LocationsList';
-import { TeamCreationModal } from '../components/Team Components/TeamCreationModal';
-import { TeamsList } from '../components/Team Components/TeamsList';
-import { TeamInviteItem } from '../components/Team Components/TeamInviteItem';
-import { addGameToUser, acceptTeamInvite, addTeamToUser, declineTeamInvite, removeGameFromPendingInvites } from '../services/UserServices';
+// import { TeamCreationModal } from '../components/Team Components/TeamCreationModal';
+// import { TeamsList } from '../components/Team Components/TeamsList';
+// import { TeamInviteItem } from '../components/Team Components/TeamInviteItem';
+import { addGameToUser, removeGameFromPendingInvites } from '../services/UserServices';
 import { ClubCreationModal } from '../components/Club Components/ClubCreationModal';
 import { GameInviteItem } from '../components/Game Components/GameInviteItem';
 import { joinGame } from '../services/GameServices';
@@ -20,22 +20,22 @@ import { joinGame } from '../services/GameServices';
 export const ProfilePage = () => {
   const userContext = useContext(UserContext);
   const dataContext = useContext(DataContext);
-  const { addTeamToPlayerContext, removeTeamInviteContext, addMemberToTeamContext } = dataContext;
+  // const { addTeamToPlayerContext, removeTeamInviteContext, addMemberToTeamContext } = dataContext;
   const [showProfileCreationModal, setShowProfileCreationModal] = useState(false);
   const [showClubCreationModal, setShowClubCreationModal] = useState(false);
-  const [showTeamCreationModal, setShowTeamCreationModal] = useState(false);
+  // const [showTeamCreationModal, setShowTeamCreationModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const user = userContext?.user;
   const profile = userContext?.profile;
   const games = dataContext?.games || []; 
-  const { username, points, gamesHosted, gamesJoined, network, pendingTeamInvites, currentGames, teams } = profile || 
+  const { username, points, gamesHosted, gamesJoined, network, currentGames } = profile || 
   { username: '', points: 0, totalGames: 0, gamesHosted: 0, gamesJoined: 0, network: [] };
 
   let userGames: Game[] = [];
   let favoriteLocations: Location[] = [];
   let pendingInvites: Game[] = [];
-  let teamInvites: Team[] = [];
-  let userTeams: Team[] = [];
+  // let teamInvites: Team[] = [];
+  // let userTeams: Team[] = [];
 
   const handleToggleEditModal = (event?: React.MouseEvent) => {
     if (event) {
@@ -64,40 +64,40 @@ export const ProfilePage = () => {
     }
   };
 
-  const handleAcceptInvite = async (teamId: string) => {
-    console.log("Accepting invite to team:", teamId);
-    try {
-      //update firebase. add member to team and remove invite from player
-      await acceptTeamInvite(teamId, profile?.id || '');
-      await addTeamToUser(profile?.id || '', teamId);
-      //update context
-      addTeamToPlayerContext(teamId, profile?.id || '');
-      removeTeamInviteContext(teamId, profile?.id || '');
-      addMemberToTeamContext(teamId, profile?.id || '');
-    } catch (error) {
-      console.error("Error accepting team invite:", error);
-    }
-  };
+  // const handleAcceptInvite = async (teamId: string) => {
+  //   console.log("Accepting invite to team:", teamId);
+  //   try {
+  //     //update firebase. add member to team and remove invite from player
+  //     await acceptTeamInvite(teamId, profile?.id || '');
+  //     await addTeamToUser(profile?.id || '', teamId);
+  //     //update context
+  //     addTeamToPlayerContext(teamId, profile?.id || '');
+  //     removeTeamInviteContext(teamId, profile?.id || '');
+  //     addMemberToTeamContext(teamId, profile?.id || '');
+  //   } catch (error) {
+  //     console.error("Error accepting team invite:", error);
+  //   }
+  // };
 
-  const handleDeclineInvite = async (teamId: string) => {
-    console.log("Declining invite from team:", teamId);
-    try {
-      //firebase
-      await declineTeamInvite(teamId, profile?.id || '');
-      //context
-      removeTeamInviteContext(teamId, profile?.id || '');
-    } catch (error) {
-      console.error("Error declining team invite:", error);
-    }
-  };
+  // const handleDeclineInvite = async (teamId: string) => {
+  //   console.log("Declining invite from team:", teamId);
+  //   try {
+  //     //firebase
+  //     await declineTeamInvite(teamId, profile?.id || '');
+  //     //context
+  //     removeTeamInviteContext(teamId, profile?.id || '');
+  //   } catch (error) {
+  //     console.error("Error declining team invite:", error);
+  //   }
+  // };
 
   const handleToggleClubCreationModal = () => {
     setShowClubCreationModal(!showClubCreationModal);
   }
 
-  const handleToggleTeamCreationModal = () => {
-    setShowTeamCreationModal(!showTeamCreationModal);
-  }
+  // const handleToggleTeamCreationModal = () => {
+  //   setShowTeamCreationModal(!showTeamCreationModal);
+  // }
 
   const handleLogout = async () => {
     console.log('fetching...logout');
@@ -108,15 +108,15 @@ export const ProfilePage = () => {
     }
   };
 
-  if (pendingTeamInvites) {
-    teamInvites = dataContext.teams.filter(team =>
-      pendingTeamInvites.includes(team.id)
-    );
-  }
+  // if (pendingTeamInvites) {
+  //   teamInvites = dataContext.teams.filter(team =>
+  //     pendingTeamInvites.includes(team.id)
+  //   );
+  // }
 
   if (user && user.uid) {
     userGames = games.filter(game => currentGames?.includes(game.id));
-    userTeams = dataContext.teams.filter(team => teams?.includes(team.id));
+    // userTeams = dataContext.teams.filter(team => teams?.includes(team.id));
   }
 
   if (profile) {
@@ -145,7 +145,7 @@ export const ProfilePage = () => {
             <h3>Network size: {network.length}</h3>
           </div>
           <button onClick={handleToggleEditModal}>Edit Profile</button>
-          <button onClick={handleToggleTeamCreationModal}>Create Team</button>
+          {/* <button onClick={handleToggleTeamCreationModal}>Create Team</button> */}
           <button onClick={handleToggleClubCreationModal}>Create Club</button>
           <div className='user-lists-container'>
             <div className="user-games-container">
@@ -171,15 +171,15 @@ export const ProfilePage = () => {
                 <p>No game invitations.</p>
               )}
             </div>
-            <div className="user-teams-container">
+            {/* <div className="user-teams-container">
               <h2>Your Teams</h2>
               {userTeams.length > 0 ? (
                 <TeamsList teams={userTeams} />
               ) : (
                 <p>You are not a member of any teams.</p>
               )}
-            </div>
-            <div className="invites-container">
+            </div> */}
+            {/* <div className="invites-container">
               <h2>Your Team Invites</h2>
               {teamInvites.length > 0 ? (
                 teamInvites.map((team) => (
@@ -193,7 +193,7 @@ export const ProfilePage = () => {
               ) : (
                 <p>No team invitations.</p>
               )}
-            </div>
+            </div> */}
           </div>
         </div>
       ) : (
@@ -206,9 +206,9 @@ export const ProfilePage = () => {
           editMode={false}
         />
       )}
-      {showTeamCreationModal && (
+      {/* {showTeamCreationModal && (
         <TeamCreationModal show={showTeamCreationModal} onClose={handleToggleTeamCreationModal}/>
-      )}
+      )} */}
       {showClubCreationModal && (
         <ClubCreationModal show={showClubCreationModal} onClose={handleToggleClubCreationModal}/>
       )}
