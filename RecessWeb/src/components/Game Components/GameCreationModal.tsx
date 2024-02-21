@@ -18,12 +18,21 @@ interface GameCreationModalProps {
   editedGame?: Game;
 }
 
+const sportsList = [
+  "Basketball",
+  "Soccer",
+  "Tennis",
+  "Volleyball",
+  "Baseball"
+];
+
 export const GameCreationModal: React.FC<GameCreationModalProps> = ({ show, onClose, locationId, invitee, editMode, editedGame }) => {
   const { locations, addGameToLocationContext, addGame, teams, updateGameContext, addGameInviteToPlayerContext } = useContext(DataContext);
   const [selectedLocation, setSelectedLocation] = useState<string>(editedGame?.locationId || '');
   const [date, setDate] = useState<string>(editedGame ? editedGame.date.toISOString().split('T')[0] : new Date().toISOString().split('T')[0]);
   const [startTime, setStartTime] = useState<string>(editedGame ? editedGame.startTime : '12:00');
   const [endTime, setEndTime] = useState<string>(editedGame ? editedGame.endTime : '13:00');
+  const [selectedSport, setSelectedSport] = useState<string>(editedGame ? editedGame.sport : sportsList[0]);
   // const [maxTeams, setMaxTeams] = useState<number>(editedGame && editedGame.isTeamGame ? 2 : 0); // For team games
   const [maxPlayers, setMaxPlayers] = useState<number>(editedGame && !editedGame.isTeamGame ? editedGame.maxPlayers : 0); // For non-team games
   const [skillMinimum, setSkillMinimum] = useState<number>(editedGame ? editedGame.skillMinimum : 1);
@@ -80,7 +89,8 @@ export const GameCreationModal: React.FC<GameCreationModalProps> = ({ show, onCl
         pending: editedGame.pending,
         isTeamGame: false,
         comments: editedGame.comments,
-        inviteOnly: inviteOnly // Include the isTeamGame flag
+        inviteOnly: inviteOnly,
+        sport: selectedSport // Include the isTeamGame flag
       };
 
       setIsLoading(true);
@@ -113,7 +123,8 @@ export const GameCreationModal: React.FC<GameCreationModalProps> = ({ show, onCl
         pending: !!invitee,
         isTeamGame: false,
         comments: [],
-        inviteOnly: inviteOnly // Include the isTeamGame flag
+        inviteOnly: inviteOnly,
+        sport: selectedSport // Include the isTeamGame flag
       };
 
       setIsLoading(true);
@@ -182,22 +193,16 @@ export const GameCreationModal: React.FC<GameCreationModalProps> = ({ show, onCl
               <input type="checkbox" checked={inviteOnly} onChange={(e) => setInviteOnly(e.target.checked)} />
             </div>
             <div className="form-group">
-                  <label>Max Players: </label>
-                  <input type="number" value={maxPlayers} onChange={e => setMaxPlayers(Number(e.target.value))} min="1" max={10} required />
-                </div>
-                <div className="form-group">
-                  <label>Minimum Points (Optional): </label>
-                  <input type="number" value={minimumPoints} onChange={e => setMinimumPoints(Number(e.target.value))} min="0" />
-                </div>
-            <div className="form-group skill-min-max-row"> {/* Added class for styling */}
-              <div className="skill-min-field">
-                <label>Skill Minimum (Optional): </label>
-                <input type="number" value={skillMinimum} onChange={e => setSkillMinimum(Number(e.target.value))} min="1" max="5" />
-              </div>
-              <div className="skill-max-field">
-                <label>Skill Maximum (Optional): </label>
-                <input type="number" value={skillMaximum} onChange={e => setSkillMaximum(Number(e.target.value))} min="1" max="5" />
-              </div>
+              <label>Max Players: </label>
+              <input type="number" value={maxPlayers} onChange={e => setMaxPlayers(Number(e.target.value))} min="1" max={10} required />
+            </div>
+            <div className="form-group">
+              <label>Sport: </label>
+              <select value={selectedSport} onChange={e => setSelectedSport(e.target.value)}>
+                {sportsList.map((sport, index) => (
+                  <option key={index} value={sport}>{sport}</option>
+                ))}
+              </select>
             </div>
             <div className="form-group">
               <label>Title (Optional): </label>

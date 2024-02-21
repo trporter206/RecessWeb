@@ -19,6 +19,7 @@ export interface Game {
     isTeamGame: boolean;
     comments: GameComment[];
     inviteOnly: boolean;
+    sport: string;
 }
 
 export interface GameComment {
