@@ -43,8 +43,10 @@ export const PlayersPage = () => {
         <div className="slider" ref={sliderRef}></div>
       </div>
       <p className="text-blurb">{textBlurb}</p> 
-      {view === 'players' && <PlayersList users={data.users} />}
-      {view === 'clubs' && <ClubsList clubs={data.clubs} />}
+      <div className='playerPage-list-container'>
+        {view === 'players' && <PlayersList users={data.users} />}
+        {view === 'clubs' && <ClubsList clubs={data.clubs} />}
+      </div>
     </div>
   );
 };

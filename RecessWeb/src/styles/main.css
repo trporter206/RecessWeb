@@ -254,7 +254,8 @@
     border-bottom: 2px solid #ccc;
     position: relative;
     margin-bottom: 30px; /* Increase the bottom margin for more separation */
-    padding-bottom: 10px; /* Add some padding at the bottom */
+    padding-bottom: 10px;
+    padding-top: 5rem; /* Add some padding at the bottom */
 }
 
 .tab-button {
@@ -506,22 +507,34 @@
   
   .filter-option-button {
     padding: 5px 10px;
-    margin: 0;
+    margin: 0 5px 5px 0; /* Add some margin for spacing */
     border: 1px solid #ccc;
     background: #f0f0f0;
     cursor: pointer;
-    flex: 0 0 auto; /* Prevent flex items from growing or shrinking */
+    transition: background 0.3s ease; /* Smooth transition for background color */
   }
   
   .filter-option-button:hover {
     background: #e0e0e0;
   }
 
-  .filter-reset-button-container {
-    margin: 10px;
-    flex: 0 0 auto; 
+  .filter-option-button:hover, .filter-option-button.selected {
+    background: #007bff; /* Change background color on hover and when selected */
+    color: white; /* Change text color to white for better contrast */
+  }
+
+  .filter-reset-button {
+    margin-top: 10px; /* Space above the reset button */
+    padding: 5px 10px;
+    background: #dc3545; /* A different background color for the reset button */
+    color: white;
+    border: none;
+    cursor: pointer;
   }
   
+  .filter-reset-button:hover {
+    background: #c82333; /* Darker shade on hover */
+  }
 
 .search-bar-container {
     flex-grow: 1; 
@@ -533,3 +546,14 @@
     border: 1px solid #ccc; 
     border-radius: 5px; 
   }
+
+  .playerlist-container {
+    display: flex;
+    flex-direction: row; /* Keep items in a row */
+    flex-wrap: wrap; /* Allow items to wrap to the next line */
+    justify-content: flex-start; /* Align items to the start of the container */
+    gap: 10px; /* Gap between items */
+    padding: 10px; /* Padding around the container */
+    overflow-y: auto; /* Enable vertical scrolling if needed */
+    max-height: 70vh; /* Adjust the max-height as needed */
+}

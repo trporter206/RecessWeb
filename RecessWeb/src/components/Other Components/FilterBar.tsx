@@ -1,7 +1,7 @@
-import { useState } from "react";
+import React, { useState } from "react";
 
 interface FilterBarProps {
-  onFilterChange: (category: string, option: string) => void;
+  onFiltersChange: (filters: { [key: string]: string }) => void;
   onSearch: (searchQuery: string) => void;
 }
 
@@ -10,30 +10,44 @@ interface Filters {
 }
 
 const filters: Filters = {
-  "Type": ["Indoor", "Outdoor", "Indoor/Outdoor"],
-  "Courts": ["1", "2", "3", "3+"],
+  Type: ["Indoor", "Outdoor", "Indoor/Outdoor"],
+  Courts: ["1", "2", "3", "3+"],
   "Has Lights": ["Yes", "No"],
   "Games Scheduled": ["Yes", "No"],
-  "Owned": ["Yes", "No"],
+  Owned: ["Yes", "No"],
 };
 
-export const FilterBar: React.FC<FilterBarProps> = ({ onFilterChange, onSearch }) => {
-  const [searchQuery, setSearchQuery] = useState('');
+export const FilterBar: React.FC<FilterBarProps> = ({ onFiltersChange, onSearch }) => {
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedFilters, setSelectedFilters] = useState<{ [key: string]: string }>({});
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value;
     setSearchQuery(value);
     onSearch(value); // Call the search callback
   };
-  
+
   const handleFilterClick = (category: string, option: string) => {
-    onFilterChange(category, option); // Call the callback with the selected filter
+    // If the filter is already active, remove it from the state
+    if (selectedFilters[category] === option) {
+      const newFilters = { ...selectedFilters };
+      delete newFilters[category]; // Remove the category from the newFilters object
+      setSelectedFilters(newFilters);
+      onFiltersChange(newFilters); // Pass the updated filters to the parent component
+    } else {
+      // Otherwise, set or replace the current filter
+      const newFilters = { ...selectedFilters, [category]: option };
+      setSelectedFilters(newFilters);
+      onFiltersChange(newFilters); // Pass the updated filters to the parent component
+    }
   };
+  
 
   const handleResetFilters = () => {
-    onFilterChange('', ''); 
-    setSearchQuery(''); // Also reset the search query
-    onSearch(''); // Reset search results
+    setSelectedFilters({});
+    setSearchQuery("");
+    onFiltersChange({}); // Reset filters
+    onSearch(""); // Reset search
   };
 
   return (
@@ -55,7 +69,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({ onFilterChange, onSearch }
               <button
                 key={`${category}-${option}`}
                 onClick={() => handleFilterClick(category, option)}
-                className="filter-option-button"
+                className={`filter-option-button ${selectedFilters[category] === option ? "selected" : ""}`}
               >
                 {option}
               </button>
@@ -63,14 +77,9 @@ export const FilterBar: React.FC<FilterBarProps> = ({ onFilterChange, onSearch }
           </div>
         </div>
       ))}
-      <div className="filter-options">
-        <button
-          onClick={handleResetFilters}
-          className="filter-reset-button"
-        >
-          Reset Filters
-        </button>
-      </div>
+      <button onClick={handleResetFilters} className="filter-reset-button">
+        Reset Filters
+      </button>
     </div>
   );
 };
