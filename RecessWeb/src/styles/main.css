@@ -540,20 +540,35 @@
     flex-grow: 1; 
   }
   
-  .search-input {
+.search-input {
     width: 80%; 
     padding: 5px 10px; 
     border: 1px solid #ccc; 
     border-radius: 5px; 
-  }
+}
 
-  .playerlist-container {
+.playerlist-container {
     display: flex;
     flex-direction: row; /* Keep items in a row */
     flex-wrap: wrap; /* Allow items to wrap to the next line */
-    justify-content: flex-start; /* Align items to the start of the container */
+    justify-content: center; /* Align items to the start of the container */
     gap: 10px; /* Gap between items */
     padding: 10px; /* Padding around the container */
     overflow-y: auto; /* Enable vertical scrolling if needed */
     max-height: 70vh; /* Adjust the max-height as needed */
+}
+
+.games-header {
+    padding-top: 5em;
+}
+
+.games-list-container {
+  display: flex; /* Use flexbox to layout children horizontally */
+  flex-direction: row; /* Lay out children in a horizontal line */
+  gap: 10px; /* Space between games */
+  overflow-x: auto; /* Allow horizontal scrolling */
+  overflow-y: hidden; /* Hide vertical scrollbar */
+  padding: 10px; /* Padding around the container */
+  margin-top: 20px; /* Space above the container */
+  width: 100%; /* Ensure it takes up full container width */
 }

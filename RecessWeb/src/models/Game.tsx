@@ -20,6 +20,7 @@ export interface Game {
     comments: GameComment[];
     inviteOnly: boolean;
     sport: string;
+    intensity: string;
 }
 
 export interface GameComment {

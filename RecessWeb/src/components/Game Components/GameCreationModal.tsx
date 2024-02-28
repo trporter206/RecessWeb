@@ -1,6 +1,6 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { createGame, updateGame } from '../../services/GameServices';
-import { DataContext } from '../../services/DataProvider';
+import { DataContext, sportsList } from '../../services/DataProvider';
 import { Location } from '../../models/Location';
 import { UserContext } from '../../services/UserContext';
 import { addGameToPendingInvites, updateGamesHostedForLoggedInUser, updatePointsForLoggedInUser } from '../../services/UserServices';
@@ -18,12 +18,10 @@ interface GameCreationModalProps {
   editedGame?: Game;
 }
 
-const sportsList = [
-  "Basketball",
-  "Soccer",
-  "Tennis",
-  "Volleyball",
-  "Baseball"
+const intensityLevels = [
+  "Casual",
+  "Sweaty",
+  "Competitive"
 ];
 
 export const GameCreationModal: React.FC<GameCreationModalProps> = ({ show, onClose, locationId, invitee, editMode, editedGame }) => {
@@ -35,12 +33,13 @@ export const GameCreationModal: React.FC<GameCreationModalProps> = ({ show, onCl
   const [selectedSport, setSelectedSport] = useState<string>(editedGame ? editedGame.sport : sportsList[0]);
   // const [maxTeams, setMaxTeams] = useState<number>(editedGame && editedGame.isTeamGame ? 2 : 0); // For team games
   const [maxPlayers, setMaxPlayers] = useState<number>(editedGame && !editedGame.isTeamGame ? editedGame.maxPlayers : 0); // For non-team games
-  const [skillMinimum, setSkillMinimum] = useState<number>(editedGame ? editedGame.skillMinimum : 1);
-  const [skillMaximum, setSkillMaximum] = useState<number>(editedGame ? editedGame.skillMaximum : 5);
+  // const [skillMinimum, setSkillMinimum] = useState<number>(editedGame ? editedGame.skillMinimum : 1);
+  // const [skillMaximum, setSkillMaximum] = useState<number>(editedGame ? editedGame.skillMaximum : 5);
   const [title, setTitle] = useState<string>(editedGame ? editedGame.title : '');
   const [description, setDescription] = useState<string>(editedGame ? editedGame.description : '');
-  const [minimumPoints, setMinimumPoints] = useState<number>(editedGame ? editedGame.minimumPoints : 0);
+  // const [minimumPoints, setMinimumPoints] = useState<number>(editedGame ? editedGame.minimumPoints : 0);
   const [inviteOnly, setInviteOnly] = useState<boolean>(false);
+  const [intensity, setIntensity] = useState<string>(editedGame ? editedGame.intensity : "Casual");
   // const [isTeamGame, setIsTeamGame] = useState<boolean>(false); // New state for "Teams Only"
   const userContext = useContext(UserContext);
   const user = userContext ? userContext.user : null;
@@ -75,22 +74,23 @@ export const GameCreationModal: React.FC<GameCreationModalProps> = ({ show, onCl
         id: editedGame.id,
         locationId: selectedLocation,
         players: editedGame.players,
-        teams: editedGame.teams, // Add user to team if not a team game
+        teams: editedGame.teams, 
         date: new Date(date),
         startTime: startTime,
         endTime: endTime,
-        skillMinimum: skillMinimum,
-        skillMaximum: skillMaximum,
-        maxPlayers: maxPlayers, // Use maxTeams for team games
+        skillMinimum: 0,
+        skillMaximum: 0,
+        maxPlayers: maxPlayers, 
         title: title,
         hostId: editedGame.hostId,
-        minimumPoints: minimumPoints, // Hide minimum points for team games
+        minimumPoints: 0, 
         description: description,
         pending: editedGame.pending,
         isTeamGame: false,
         comments: editedGame.comments,
         inviteOnly: inviteOnly,
-        sport: selectedSport // Include the isTeamGame flag
+        sport: selectedSport,
+        intensity: intensity
       };
 
       setIsLoading(true);
@@ -105,26 +105,26 @@ export const GameCreationModal: React.FC<GameCreationModalProps> = ({ show, onCl
         onClose();
       }
     } else {
-      // Adjust payload based on whether it's a team game
       const gamePayload = {
         locationId: selectedLocation,
         players: invitee ? [invitee.id] : [],
-        teams: [], // Add user to team if not a team game
+        teams: [], 
         date: new Date(date),
         startTime,
         endTime,
-        skillMinimum,
-        skillMaximum,
-        maxPlayers: maxPlayers, // Use maxTeams for team games
+        skillMinimum: 0,
+        skillMaximum: 0,
+        maxPlayers: maxPlayers,
         title,
         hostId: user.uid,
-        minimumPoints: minimumPoints, // Hide minimum points for team games
+        minimumPoints: 0, 
         description,
         pending: !!invitee,
         isTeamGame: false,
         comments: [],
         inviteOnly: inviteOnly,
-        sport: selectedSport // Include the isTeamGame flag
+        sport: selectedSport,
+        intensity: intensity
       };
 
       setIsLoading(true);
@@ -167,24 +167,28 @@ export const GameCreationModal: React.FC<GameCreationModalProps> = ({ show, onCl
             <h2>{isEditMode ? 'Edit Game' : 'Create Game'}</h2>
             {invitee && <div className="form-group"><h3>Inviting {invitee.username}</h3></div>}
             <div className="form-group">
-              <label>Location: </label>
+              <label>Location</label>
               <select value={selectedLocation} onChange={e => setSelectedLocation(e.target.value)}>
                 {locations.map((location: Location) => (
                   <option key={location.id} value={location.id}>{location.name}</option>
                 ))}
               </select>
             </div>
-              <div className="form-group date-time-row"> {/* Added class for styling */}
+            <div className="form-group">
+              <label>Title (Optional)</label>
+              <input type="text" value={title} onChange={e => setTitle(e.target.value)} />
+            </div>
+            <div className="form-group date-time-row"> 
               <div className="date-field">
-                <label>Date: </label>
+                <label>Date</label>
                 <input type="date" value={date} onChange={e => setDate(e.target.value)} required />
               </div>
               <div className="time-field">
-                <label>Start Time: </label>
+                <label>Start Time</label>
                 <input type="time" value={startTime} onChange={e => setStartTime(e.target.value)} required />
               </div>
               <div className="time-field">
-                <label>End Time: </label>
+                <label>End Time</label>
                 <input type="time" value={endTime} onChange={e => setEndTime(e.target.value)} required />
               </div>
             </div>
@@ -193,11 +197,11 @@ export const GameCreationModal: React.FC<GameCreationModalProps> = ({ show, onCl
               <input type="checkbox" checked={inviteOnly} onChange={(e) => setInviteOnly(e.target.checked)} />
             </div>
             <div className="form-group">
-              <label>Max Players: </label>
+              <label>Max Players - 0 is no max</label>
               <input type="number" value={maxPlayers} onChange={e => setMaxPlayers(Number(e.target.value))} min="1" max={10} required />
             </div>
             <div className="form-group">
-              <label>Sport: </label>
+              <label>Sport</label>
               <select value={selectedSport} onChange={e => setSelectedSport(e.target.value)}>
                 {sportsList.map((sport, index) => (
                   <option key={index} value={sport}>{sport}</option>
@@ -205,11 +209,15 @@ export const GameCreationModal: React.FC<GameCreationModalProps> = ({ show, onCl
               </select>
             </div>
             <div className="form-group">
-              <label>Title (Optional): </label>
-              <input type="text" value={title} onChange={e => setTitle(e.target.value)} />
+              <label>Intensity</label>
+              <select value={selectedSport} onChange={e => setIntensity(e.target.value)}>
+                {intensityLevels.map((intensity, index) => (
+                  <option key={index} value={intensity}>{intensity}</option>
+                ))}
+              </select>
             </div>
             <div className="form-group">
-              <label>Game Description (Optional):</label>
+              <label>Game Description (Optional)</label>
               <textarea id="gameDescription" value={description} onChange={e => setDescription(e.target.value)} rows={3} />
             </div>
             <button onClick={handleSave}>{isEditMode ? 'Save Changes' : 'Create Game'}</button>

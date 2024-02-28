@@ -31,7 +31,9 @@ export const GamesPage = () => {
 
     return (
         <div className='main-container'>
-            <h1>Find Games</h1>
+            <div className='games-header'>  
+                <h1>Find Games</h1>
+            </div>
             {!showModal && <button onClick={handleOpenModal}>Host Pickleball Game</button>}
             {showModal && (
                 <GameCreationModal 
@@ -39,7 +41,7 @@ export const GamesPage = () => {
                     onClose={handleCloseModal} 
                 />
             )}
-            <div className='scrollable-list-container'>
+            <div className='playerPage-list-container'>
                 <GamesList games={games} onDeleteGame={handleDeleteGame} includePending={false}/>
             </div>
         </div>

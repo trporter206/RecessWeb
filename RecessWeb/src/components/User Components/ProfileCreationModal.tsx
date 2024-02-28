@@ -6,6 +6,7 @@ import { UserContext } from '../../services/UserContext';
 import { CircularProgress } from "@mui/material";
 import { updateUser } from '../../services/UserServices';
 import { DataContext } from '../../services/DataProvider';
+import { sportsList } from '../../services/DataProvider';
 
 interface ProfileCreationModalProps {
   show: boolean;
@@ -20,18 +21,19 @@ export const ProfileCreationModal: React.FC<ProfileCreationModalProps> = ({ show
   const [username, setUsername] = useState(editMode ? profile?.username : '');
   const [firstName, setFirstName] = useState(editMode ? profile?.firstName : '');
   const [lastName, setLastName] = useState(editMode ? profile?.lastName : '');
-  const [pickleballSkill, setPickleballSkill] = useState(editMode ? profile?.pickleballSkill?.toString() : '');
+  // const [pickleballSkill, setPickleballSkill] = useState(editMode ? profile?.pickleballSkill?.toString() : '');
   const [gender, setGender] = useState(editMode ? profile?.gender : '');
   const [age, setAge] = useState(editMode ? profile?.age?.toString() : '');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const isEditMode = Boolean(editMode);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [interestedSports, setInterestedSports] = useState<string[]>([]);
 
   const handleCreateProfile = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!username || !firstName || !lastName || !pickleballSkill || !gender || !age || !email || !password) {
+    if (!username || !firstName || !lastName || !gender || !age || !email || !password) {
       console.error('Invalid profile data');
       return;
     }
@@ -44,7 +46,9 @@ export const ProfileCreationModal: React.FC<ProfileCreationModalProps> = ({ show
         lastName,
         age: parseInt(age, 10),
         gender,
-        pickleballSkill: pickleballSkill ? parseInt(pickleballSkill, 10) : 0,
+        pickleballSkill: 0,
+        interestedSports
+
       };
 
       setIsLoading(true);
@@ -70,7 +74,7 @@ export const ProfileCreationModal: React.FC<ProfileCreationModalProps> = ({ show
           username,
           firstName,
           lastName,
-          pickleballSkill: pickleballSkill ? parseInt(pickleballSkill, 10) : null,
+          pickleballSkill: 0,
           gender,
           age: parseInt(age, 10),
           email,
@@ -83,13 +87,21 @@ export const ProfileCreationModal: React.FC<ProfileCreationModalProps> = ({ show
           favoriteLocations: [],
           pendingInvites: [],
           teams: [],
+          ownedLocations: [],
+          currentGames: [],
+          interestedSports
         });
         setIsLoading(false);
-        onClose(); // Close the modal upon successful profile creation
+        onClose();
       } catch (error) {
         console.error('Error creating profile:', error);
       }
     }
+  };
+
+  const handleSportsSelectionChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const selectedOptions = Array.from(event.target.selectedOptions, option => option.value);
+    setInterestedSports(selectedOptions);
   };
 
   if (!show) {
@@ -117,7 +129,7 @@ export const ProfileCreationModal: React.FC<ProfileCreationModalProps> = ({ show
             <label>Last Name:</label>
             <input type="text" value={lastName} onChange={e => setLastName(e.target.value)} placeholder="Last Name" required />
           </div>
-          <div className="form-group">
+          {/* <div className="form-group">
             <label>Pickleball Skill:</label>
             <select value={pickleballSkill} onChange={e => setPickleballSkill(e.target.value)} required>
               <option value="">Select Skill Level</option>
@@ -126,6 +138,14 @@ export const ProfileCreationModal: React.FC<ProfileCreationModalProps> = ({ show
                   <option key={skill} value={skill}>{skill}</option>
                 ))
               }
+            </select>
+          </div> */}
+          <div className="form-group">
+            <label>Interested Sports:</label>
+            <select multiple value={interestedSports} onChange={handleSportsSelectionChange} required>
+              {sportsList.map(sport => (
+                <option key={sport} value={sport}>{sport}</option>
+              ))}
             </select>
           </div>
           <div className="form-group">

@@ -7,6 +7,7 @@ import { DataProvider } from './services/DataProvider';
 import { ProfilePage } from './pages/ProfilePage';
 import { UserProvider } from './services/UserContext';
 import { PlayersPage } from './pages/PlayersPage'; // Import the PlayersPage component
+// import 'bootstrap/dist/css/bootstrap.min.css';
 
 export const App = () => {
 

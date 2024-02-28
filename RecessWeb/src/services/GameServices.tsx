@@ -37,7 +37,8 @@ export async function fetchGames(): Promise<Game[]> {
                 isTeamGame: data.isTeamGame,
                 comments: data.comments || [],
                 inviteOnly: data.inviteOnly,
-                sport: data.sport
+                sport: data.sport,
+                intensity: data.intensity
             };
             return game;
         });

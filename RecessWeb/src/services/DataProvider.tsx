@@ -10,6 +10,14 @@ import { Team } from '../models/Team';
 import { Club } from '../models/Club';
 import { fetchClubs } from './ClubServices';
 
+export const sportsList = [
+  "Basketball",
+  "Soccer",
+  "Tennis",
+  "Volleyball",
+  "Baseball"
+];
+
 interface DataProviderType {
   locations: Location[];
   games: Game[];

@@ -33,7 +33,8 @@ export async function fetchUsers(): Promise<User[]> {
                 teams: data.teams,
                 pendingTeamInvites: data.pendingTeamInvites,
                 ownedLocations: data.ownedLocations,
-                currentGames: data.currentGames
+                currentGames: data.currentGames,
+                interestedSports: data.interestedSports
             };
             return user;
         });
@@ -275,6 +276,7 @@ interface UserData {
   firstName: string;
   lastName: string;
   pickleballSkill: string;
+  interestedSports: string[];
   age: number
 }
 

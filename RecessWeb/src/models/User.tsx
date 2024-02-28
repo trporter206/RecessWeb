@@ -11,6 +11,7 @@ export interface User {
   rating: number;
   gamesHosted: number;
   gamesJoined: number;
+  interestedSports: string[];
   ratings: Record<string, number>;
   network: string[];
   favoriteLocations: string[];

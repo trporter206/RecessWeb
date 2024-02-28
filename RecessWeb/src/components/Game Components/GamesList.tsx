@@ -13,7 +13,7 @@ export const GamesList: React.FC<GamesListProps> = ({ games, onDeleteGame, inclu
   const filteredGames = games.filter(game => includePending || !game.pending);
 
   return (
-    <div>
+    <div className='playerlist-container'>
       {filteredGames.map(game => (
         <GameItem 
           key={game.id}
