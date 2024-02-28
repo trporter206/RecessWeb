@@ -56,6 +56,7 @@
   background:rgba(61, 90, 128, 1); /* Changed to light blue */
   padding: 10px;        /* Removed quotes for numeric value */
   position: fixed;
+  z-index: 100;
   top: 0;
   width: 100%;          /* Removed quotes for percentage value */
 }

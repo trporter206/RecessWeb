@@ -7,6 +7,7 @@ import { DataProvider } from './services/DataProvider';
 import { ProfilePage } from './pages/ProfilePage';
 import { UserProvider } from './services/UserContext';
 import { PlayersPage } from './pages/PlayersPage'; // Import the PlayersPage component
+import { HomePage } from './pages/HomePage';
 // import 'bootstrap/dist/css/bootstrap.min.css';
 
 export const App = () => {
@@ -22,6 +23,7 @@ export const App = () => {
             <Route path="/locations" element={<LocationsPage />} /> // Use the imported LocationsPage element
             <Route path="/profile" element={<ProfilePage />} /> // Use the imported ProfilePage component
             <Route path="/" element={<LandingPage />} />
+            <Route path="/Home" element={<HomePage />} />
             {/* Other routes */}
           </Routes>
         </Router>
