@@ -68,6 +68,10 @@ export const GameInfoModal: React.FC<GameInfoModalProps> = ({ game, onClose }) =
     title,
     pending,
     minimumPoints } = game;
+  // Convert Firebase Timestamp to Date object if necessary
+  const gameDateObject = game.date instanceof Timestamp ? game.date.toDate() : game.date;
+  const gameDate = gameDateObject.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+
 
   useEffect(() => {
     setIsUserInGame(user ? players.includes(user.uid) : false);
@@ -268,7 +272,7 @@ export const GameInfoModal: React.FC<GameInfoModalProps> = ({ game, onClose }) =
     <>
       <h1>{title || 'Game Details'}</h1>
       <p><strong>Location:</strong> {dataContext.locations.find(loc => loc.id === locationId)?.name || 'Unknown Location'}</p>
-      <p><strong>Date:</strong> {new Date(date).toLocaleDateString()}</p>
+      <p><strong>Date:</strong> {gameDate}</p>
       <p><strong>Time:</strong> {`${startTime} - ${endTime}`}</p>
       {isTeamGame ? (
         <>

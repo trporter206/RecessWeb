@@ -23,7 +23,7 @@ export async function fetchGames(): Promise<Game[]> {
                 locationId: data.locationId,
                 players: data.players || [],
                 teams: data.teams || [],
-                date:data.time?.toDate() || new Date(),
+                date:data.date.toDate(),
                 startTime: data.startTime,
                 endTime: data.endTime,
                 skillMinimum: data.skillMinimum,

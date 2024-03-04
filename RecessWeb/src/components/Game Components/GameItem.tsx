@@ -4,6 +4,7 @@ import { UserContext } from '../../services/UserContext';
 import { GameInfoModal } from './GameInfoModal';
 import { Game } from '../../models/Game';
 import { deleteGame } from '../../services/GameServices';
+import { Timestamp } from '@firebase/firestore';
 
 interface GameItemProps {
   game: Game;
@@ -19,13 +20,8 @@ export const GameItem: React.FC<GameItemProps> = ({ game, onDelete }) => {
   const [showModal, setShowModal] = useState(false);
   const { removeGame, locations, users } = useContext(DataContext);
   const { user } = useContext(UserContext);
-
-  let displayDate = '';
-  if (date instanceof Date) {
-    displayDate = date.toDateString();
-  } else {
-    console.error('Invalid date object:', date);
-  }
+  const gameDateObject = game.date instanceof Timestamp ? game.date.toDate() : date;
+  const gameDate = gameDateObject.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
 
   useEffect(() => {
     // Fetch host username
@@ -62,7 +58,7 @@ export const GameItem: React.FC<GameItemProps> = ({ game, onDelete }) => {
       <h2>{title}</h2>
       <p className="game-location">{locationName}</p>
       <p className="game-host">Host: {hostUsername}</p>
-      <p className="game-date">{displayDate}</p>
+      <p className="game-date">{gameDate}</p>
       {isTeamGame && (
         <p className="game-host">Open Team Invite</p>
       )}

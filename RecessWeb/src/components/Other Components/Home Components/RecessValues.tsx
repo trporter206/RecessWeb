@@ -31,11 +31,11 @@ const item = {
               <Box sx={item}>
                 <SportsFootballIcon sx={{ height: 80, width: 80, color: 'primary' }} /> 
                 <Typography variant="h6" sx={{ my: 5 }}>
-                  Built around our love of sports
+                  Games
                 </Typography>
                 <Typography variant="h5">
                   {
-                    'Find local parks and play areas to practice your favorite sports. Create a game and invite your friends or take a chance to meet new players.'
+                    'Quickly set up or find games in your neighborhood. If you’re not sure where you want to play, Recess always has a featured game going on around town.'
                   }
                 </Typography>
               </Box>
@@ -44,11 +44,11 @@ const item = {
               <Box sx={item}>
                 <Groups2Icon sx={{ height: 80, width: 80, color: 'primary' }} />
                 <Typography variant="h6" sx={{ my: 5 }}>
-                  Your community is out there
+                  Tournaments (soon)
                 </Typography>
                 <Typography variant="h5">
                   {
-                    'Create or join a community of players who share your passion for sports. Set rules for who can join and organize events to play together.'
+                    'We run remote tournaments that you can participate in at your own pace and schedule, with real prizes!'
                   }
                 </Typography>
               </Box>
@@ -57,10 +57,12 @@ const item = {
               <Box sx={item}>
                 <EmojiEventsIcon sx={{ height: 80, width: 80, color: 'primary' }} />
                 <Typography variant="h6" sx={{ my: 5 }}>
-                  Compete for real prizes
+                  Leagues
                 </Typography>
                 <Typography variant="h5">
-                  {'By registering, you will access specially negotiated rates. Events and communities hosted by Recess provide top players with the opportunity to win prizes. '}
+                  {
+                    'Create or join local leagues that fit your play style. Whether you want to improve skills, meet new people, or just have fun, Recess has a league for you.'
+                  }
                 </Typography>
               </Box>
             </Grid>
