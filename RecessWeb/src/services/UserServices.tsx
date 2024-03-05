@@ -31,6 +31,7 @@ export async function fetchUsers(): Promise<User[]> {
                 age: data.age,
                 gender: data.gender,
                 teams: data.teams,
+                clubs: data.clubs,
                 pendingTeamInvites: data.pendingTeamInvites,
                 ownedLocations: data.ownedLocations,
                 currentGames: data.currentGames,
@@ -43,6 +44,48 @@ export async function fetchUsers(): Promise<User[]> {
         console.error('Error fetching locations:', error);
         throw error;
     }
+}
+
+export async function removeClubFromUser(userId: string, clubId: string): Promise<void> {
+  console.log('Removing club from user...');
+  const userRef = doc(db, 'Users', userId);
+
+  try {
+    const userSnapshot = await getDoc(userRef);
+    if (!userSnapshot.exists()) {
+      throw new Error('User not found');
+    }
+
+    await updateDoc(userRef, {
+      clubs: arrayRemove(clubId)
+    });
+
+    console.log('Club removed from user successfully');
+  } catch (error) {
+    console.error('Error removing club from user:', error);
+    throw error;
+  }
+}
+
+export async function addClubToUser(userId: string, clubId: string): Promise<void> {
+  console.log('Adding club to user...');
+  const userRef = doc(db, 'Users', userId);
+
+  try {
+    const userSnapshot = await getDoc(userRef);
+    if (!userSnapshot.exists()) {
+      throw new Error('User not found');
+    }
+
+    await updateDoc(userRef, {
+      clubs: arrayUnion(clubId)
+    });
+
+    console.log('Club added to user successfully');
+  } catch (error) {
+    console.error('Error adding club to user:', error);
+    throw error;
+  }
 }
 
 export async function updateUser(userId: string, user: User): Promise<void> {

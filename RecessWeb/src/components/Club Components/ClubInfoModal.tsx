@@ -4,6 +4,7 @@ import { UserContext } from "../../services/UserContext";
 import { deleteClub } from "../../services/ClubServices";
 import { DataContext } from "../../services/DataProvider";
 import { ClubCreationModal } from "./ClubCreationModal";
+import { removeClubFromUser } from "../../services/UserServices";
 
 interface ClubInfoModalProps {
     club: Club;
@@ -37,8 +38,9 @@ export const ClubInfoModal: React.FC<ClubInfoModalProps> = ({ club }) => {
         const confirmDelete = window.confirm('Are you sure you want to delete this club?');
         if (confirmDelete) {
             try {
-                deleteClub(club.id);
+                removeClubFromUser(club.organizer, club.id);
                 removeClubContext(club.id);
+                deleteClub(club.id);
             } catch (error) {
                 console.error('Error deleting club:', error);
             }

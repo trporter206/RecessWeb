@@ -16,6 +16,8 @@ import { addGameToUser, removeGameFromPendingInvites } from '../services/UserSer
 import { ClubCreationModal } from '../components/Club Components/ClubCreationModal';
 import { GameInviteItem } from '../components/Game Components/GameInviteItem';
 import { joinGame } from '../services/GameServices';
+import { ClubItem } from '../components/Club Components/ClubItem';
+import { Club } from '../models/Club';
 
 export const ProfilePage = () => {
   const userContext = useContext(UserContext);
@@ -28,14 +30,13 @@ export const ProfilePage = () => {
   const user = userContext?.user;
   const profile = userContext?.profile;
   const games = dataContext?.games || []; 
-  const { username, points, gamesHosted, gamesJoined, network, currentGames } = profile || 
-  { username: '', points: 0, totalGames: 0, gamesHosted: 0, gamesJoined: 0, network: [] };
+  const { username, points, gamesHosted, gamesJoined, network, currentGames, clubs } = profile || 
+  { username: '', points: 0, totalGames: 0, gamesHosted: 0, gamesJoined: 0, network: [], clubs: [] };
 
   let userGames: Game[] = [];
   let favoriteLocations: Location[] = [];
   let pendingInvites: Game[] = [];
-  // let teamInvites: Team[] = [];
-  // let userTeams: Team[] = [];
+  let userClubs: Club[] = [];
 
   const handleToggleEditModal = (event?: React.MouseEvent) => {
     if (event) {
@@ -64,40 +65,9 @@ export const ProfilePage = () => {
     }
   };
 
-  // const handleAcceptInvite = async (teamId: string) => {
-  //   console.log("Accepting invite to team:", teamId);
-  //   try {
-  //     //update firebase. add member to team and remove invite from player
-  //     await acceptTeamInvite(teamId, profile?.id || '');
-  //     await addTeamToUser(profile?.id || '', teamId);
-  //     //update context
-  //     addTeamToPlayerContext(teamId, profile?.id || '');
-  //     removeTeamInviteContext(teamId, profile?.id || '');
-  //     addMemberToTeamContext(teamId, profile?.id || '');
-  //   } catch (error) {
-  //     console.error("Error accepting team invite:", error);
-  //   }
-  // };
-
-  // const handleDeclineInvite = async (teamId: string) => {
-  //   console.log("Declining invite from team:", teamId);
-  //   try {
-  //     //firebase
-  //     await declineTeamInvite(teamId, profile?.id || '');
-  //     //context
-  //     removeTeamInviteContext(teamId, profile?.id || '');
-  //   } catch (error) {
-  //     console.error("Error declining team invite:", error);
-  //   }
-  // };
-
   const handleToggleClubCreationModal = () => {
     setShowClubCreationModal(!showClubCreationModal);
   }
-
-  // const handleToggleTeamCreationModal = () => {
-  //   setShowTeamCreationModal(!showTeamCreationModal);
-  // }
 
   const handleLogout = async () => {
     console.log('fetching...logout');
@@ -107,12 +77,6 @@ export const ProfilePage = () => {
       console.error("Logout error:", error);
     }
   };
-
-  // if (pendingTeamInvites) {
-  //   teamInvites = dataContext.teams.filter(team =>
-  //     pendingTeamInvites.includes(team.id)
-  //   );
-  // }
 
   if (user && user.uid) {
     userGames = games.filter(game => currentGames?.includes(game.id));
@@ -129,6 +93,10 @@ export const ProfilePage = () => {
     pendingInvites = games.filter(game => 
       profile.pendingInvites.includes(game.id)
     );
+
+    userClubs = dataContext.clubs.filter(club => 
+      (profile?.clubs || []).includes(club.id)
+    );    
   }
 
   return (
@@ -145,7 +113,6 @@ export const ProfilePage = () => {
             <h3>Network size: {network.length}</h3>
           </div>
           <button onClick={handleToggleEditModal}>Edit Profile</button>
-          {/* <button onClick={handleToggleTeamCreationModal}>Create Team</button> */}
           <button onClick={handleToggleClubCreationModal}>Create Club</button>
           <div className='user-lists-container'>
             <div className="user-games-container">
@@ -171,29 +138,18 @@ export const ProfilePage = () => {
                 <p>No game invitations.</p>
               )}
             </div>
-            {/* <div className="user-teams-container">
-              <h2>Your Teams</h2>
-              {userTeams.length > 0 ? (
-                <TeamsList teams={userTeams} />
-              ) : (
-                <p>You are not a member of any teams.</p>
-              )}
-            </div> */}
-            {/* <div className="invites-container">
-              <h2>Your Team Invites</h2>
-              {teamInvites.length > 0 ? (
-                teamInvites.map((team) => (
-                  <TeamInviteItem
-                    key={team.id}
-                    team={team}
-                    onAccept={handleAcceptInvite} // Ensure the lambda takes two arguments
-                    onDecline={handleDeclineInvite} // Ensure the lambda takes two arguments
-                  />
+            <div className="invites-container">
+              <h2>Your Clubs</h2>
+              {userClubs.length > 0 ? (
+                userClubs.map((club) => (
+                  <ClubItem
+                    key={club.id}
+                    club={club} />
                 ))
               ) : (
-                <p>No team invitations.</p>
+                <p>No clubs.</p>
               )}
-            </div> */}
+            </div>
           </div>
         </div>
       ) : (
@@ -206,9 +162,6 @@ export const ProfilePage = () => {
           editMode={false}
         />
       )}
-      {/* {showTeamCreationModal && (
-        <TeamCreationModal show={showTeamCreationModal} onClose={handleToggleTeamCreationModal}/>
-      )} */}
       {showClubCreationModal && (
         <ClubCreationModal show={showClubCreationModal} onClose={handleToggleClubCreationModal}/>
       )}

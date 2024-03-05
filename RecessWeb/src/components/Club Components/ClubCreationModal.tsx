@@ -7,6 +7,7 @@ import { Select, MenuItem } from '@mui/material';
 import { SelectChangeEvent } from '@mui/material/Select';
 import { v4 as uuid } from 'uuid';
 import { Club } from "../../models/Club";
+import { addClubToUser } from "../../services/UserServices";
 
 interface ClubCreatiopnModalProps {
     show: boolean;
@@ -90,6 +91,7 @@ export const ClubCreationModal: React.FC<ClubCreatiopnModalProps> = ({ show, onC
             try {
                 const newClubId = await createClub(newClub);
                 const createdClub = { ...newClub, id: newClubId };
+                addClubToUser(user.uid, newClubId);
                 addClubContext(createdClub);
                 console.log('Club created:', createdClub);
                 onClose();

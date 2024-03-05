@@ -18,6 +18,7 @@ export interface User {
   pendingInvites: string[];
   pendingTeamInvites: string[];
   teams: string[];
+  clubs: string[];
   ownedLocations: string[];
   currentGames: string[];
 }
