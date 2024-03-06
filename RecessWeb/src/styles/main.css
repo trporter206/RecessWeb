@@ -6,7 +6,6 @@
 }
 
 .main-container {
-  /* position: relative; */
   padding-top: 80px;
   display: flex;
   flex-direction: column;
@@ -14,7 +13,8 @@
   justify-content: flex-start; /* Aligns children (items) vertically in the center */
   width: 100vw; /* Full width of the viewport */
   max-width: 100%;
-  height: 100vh; /* Full height of the viewport */
+  min-height: 100vh;
+  position: relative;
 }
 
 .profile-container {
@@ -29,38 +29,56 @@
 }
 
 .map-and-list-container {
-    display: flex;
-    flex-direction: row;
-    height: auto; /* Remove fixed height */
-  }
+  display: flex;
+  flex-direction: row;
+  height: 85vh; /* Subtract the padding-top of .main-container */
+  width: 100%;
+}
   
   .map-container {
     flex-grow: 1;
-    height: 100vh;
+    height: 85vh;
     width: auto;
     position: relative;
     z-index: 0; /* Add a lower z-index value */
   }
   
   .list-container {
-    padding: 1rem; /* Default padding */
+    padding: 1rem;
+    height: 85vh; /* Make the list container take up the full height */
+    overflow-y: auto; /* Enable vertical scrolling within the list container */
   }
 
 /* Style the list container to take up 20% of the width */
 .scrollable-list-container {
-  overflow-y: auto; /* Enable vertical scrolling */
-  max-height: 100vh;
+  max-height: 100%;
 }
 
 .nav-style {
-  background:rgba(61, 90, 128, 1); /* Changed to light blue */
-  padding: 10px;        /* Removed quotes for numeric value */
+  background: rgba(61, 90, 128, 1);
+  padding: 10px;
   position: fixed;
   z-index: 100;
   top: 0;
   left: 0;
   right: 0;
-  width: 100%;          /* Removed quotes for percentage value */
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.nav-header {
+  margin-right: auto;
+}
+
+.nav-toggle {
+  display: none;
+  background: none;
+  border: none;
+  color: white;
+  font-size: 24px;
+  cursor: pointer;
 }
 
 .nav-style h2 {
@@ -77,16 +95,34 @@
 }
 
 .nav-buttons {
-    display: flex;        /* Flexbox for horizontal alignment */
-    flex-direction: row;  /* Row direction for horizontal alignment */
-    justify-content: space-around;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+.nav-buttons li {
+  margin-left: 20px;
+}
+
+.nav-buttons a {
+  color: white;
+  text-decoration: none;
 }
 
 .location-content {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+.location-content h3 {
+  margin-bottom: 10px;
 }
 
 .game-info {
@@ -123,6 +159,10 @@
     flex-direction: column; /* Aligns children in a column */
     align-items: center; /* Centers children horizontally */
     justify-content: center; /* Centers content vertically */
+}
+
+.landing-container {
+  width: 100%;
 }
   
 .locationInfoModal-content {
@@ -392,6 +432,10 @@
     border-radius: 50px;
 }
 
+.game-count {
+  font-size: 14px;
+}
+
 .comment-notes {
     display: flex;
     flex-direction: row;
@@ -456,28 +500,22 @@
     align-self: flex-end; /* Align to the end of the flex container */
   }
 
-.location-item {
-    background-color:rgba(128, 187, 5, 1);
-    border-radius: 10px;
-    padding: 5px;
-    margin: 10px 0;
-    color: white;
-}
-
-.location-item {
-    display: inline-flex;
+  .location-item {
+    display: flex;
     flex-direction: column;
     align-items: center;
-    background-color: rgba(128, 187, 5, 1); /* Example background color, adjust as needed */
+    justify-content: center;
+    background-color: rgba(128, 187, 5, 1);
     border-radius: 10px;
-    padding: 20px; /* Adjust padding to increase size */
-    margin: 10px; /* Adjust margin for spacing between items */
+    padding: 20px;
     color: white;
     cursor: pointer;
     text-align: center;
-    width: 400px; /* Adjust width as needed */
-    height: 100px;
-}
+    width: 100%;
+    height: auto;
+    box-sizing: border-box;
+    margin-bottom: 1em;
+  }
 
 .game-stats {
     display: flex;
@@ -518,6 +556,15 @@
     justify-content: space-evenly;
     padding: 1em;
     overflow: visible;
+  }
+
+  .filter-bar-wrapper {
+    position: sticky;
+    top: 0;
+    z-index: 99;
+    background-color: white;
+    width: 100%;
+    /* padding-top: 1em; */
   }
   
   .filter-bar-container::-webkit-scrollbar {
@@ -588,6 +635,8 @@
   }
 
   .search-bar-container {
+    display: flex;
+    align-items: center;
     margin-bottom: 10px;
   }
   
@@ -665,6 +714,10 @@
   width: 100%; /* Ensure it takes up full container width */
 }
 
+.toggle-view-container {
+  display: none;
+}
+
 @media screen and (max-width: 900px) {
     .filter-bar-container {
       padding-top: 10px;
@@ -672,7 +725,6 @@
     }
   
     .search-bar-container {
-      margin-bottom: 20px;
       width: 100%;
     }
   
@@ -680,6 +732,7 @@
       justify-content: flex-start;
       padding-left: 10px;
       padding-right: 10px;
+      overflow-x: auto;
     }
   
     .filter-category {
@@ -691,17 +744,78 @@
     }
 
     .nav-style {
-        padding: 10px;
-        flex-direction: column;
-        height: auto;
-      }
+      flex-wrap: wrap;
+    }
+  
+    .nav-header {
+      margin-right: 0;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+    }
+  
+    .nav-toggle {
+      display: block;
+      margin-left: auto;
+    }
+  
+    .nav-buttons {
+      display: none;
+      flex-direction: column;
+      width: 100%;
+      margin-top: 10px;
+    }
+  
+    .nav-buttons.open {
+      display: flex;
+    }
+  
+    .nav-buttons li {
+      margin: 10px 0;
+    }
+
+    .toggle-view-button {
+      padding: 5px;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      color: #007bff;
+      margin-right: 10px;
+    }
     
-      .nav-buttons {
-        flex-direction: column;
-        align-items: flex-start;
-      }
-    
-      .nav-buttons li {
-        margin-bottom: 10px;
-      }
+    .toggle-view-button:hover {
+      background: #0056b3;
+    }
+
+    .toggle-view-container {
+      display: block;
+    }
+
+    .hidden-sm {
+      display: none;
+    }
+
+    .map-and-list-container {
+      flex-direction: column;
+      align-items: center;
+    }
+  
+    .map-container,
+    .list-container {
+      width: 100%;
+      margin: 0;
+      height: calc(100vh - 200px);
+    }
+
+    .list-container {
+      padding: 1em;
+    }
+  
+  }
+
+  @media screen and (min-width: 768px) and (max-width: 900px) {
+    .map-container,
+    .list-container {
+      width: 100%;
+    }
   }

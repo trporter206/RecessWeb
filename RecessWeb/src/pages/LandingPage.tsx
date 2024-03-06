@@ -13,10 +13,15 @@ export const LandingPage = () => {
   const [selectedLocation, setSelectedLocation] = useState<Location | null>(null);
   const [displayedLocations, setDisplayedLocations] = useState(locations);
   const [searchText, setSearchText] = useState('');
+  const [showMap, setShowMap] = useState(true);
 
   useEffect(() => {
     applyFiltersAndSearch();
   }, [locations, searchText]);
+
+  const handleToggleView = (showMap: boolean) => {
+    setShowMap(showMap);
+  };
 
   const handleSearch = (query: string) => {
     setSearchText(query);
@@ -24,7 +29,6 @@ export const LandingPage = () => {
 
   const applyFiltersAndSearch = (filters: { [key: string]: string } = {}) => {
     let filteredLocations = locations;
-    // Apply filters logic here based on the filters parameter
     Object.entries(filters).forEach(([category, option]) => {
       switch (category) {
         case "Type":
@@ -103,21 +107,23 @@ export const LandingPage = () => {
   };
 
   return (
-    <div>
-      <FilterBar onFiltersChange={handleFiltersChange} onSearch={handleSearch} />
+    <div className="landing-container">
+      <div className="filter-bar-wrapper">
+        <FilterBar onFiltersChange={handleFiltersChange} onSearch={handleSearch} onToggleView={handleToggleView} />
+      </div>
       <div className="map-and-list-container">
-        <div className='col-md-8 col-sm-12 map-container'>
+        <div className={`map-container ${showMap ? "" : "hidden-sm"}`}>
           <div className="map-container">
             <MapComponent items={displayedLocations} onMarkerClick={handleMarkerClick} />
           </div>
         </div>
-        <div className="list-container col-md-4 col-sm-12">
+        <div className={`list-container ${showMap ? "hidden-sm" : ""} landing-list-container`}>
           <div className="scrollable-list-container">
             <LocationsList locations={displayedLocations} />
           </div>
         </div>
       </div>
-    {selectedLocation && <LocationInfoModal location={selectedLocation} onClose={handleCloseModal} />}
-  </div>
+      {selectedLocation && <LocationInfoModal location={selectedLocation} onClose={handleCloseModal} />}
+    </div>
   );
 };

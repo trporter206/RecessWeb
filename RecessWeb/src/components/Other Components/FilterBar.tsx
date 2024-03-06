@@ -1,8 +1,10 @@
 import React, { useState } from "react";
+import { List as ListIcon, Map as MapIcon } from "@mui/icons-material";
 
 interface FilterBarProps {
   onFiltersChange: (filters: { [key: string]: string }) => void;
   onSearch: (searchQuery: string) => void;
+  onToggleView: (showMap: boolean) => void;
 }
 
 interface Filters {
@@ -17,10 +19,16 @@ const filters: Filters = {
   Owned: ["Yes", "No"],
 };
 
-export const FilterBar: React.FC<FilterBarProps> = ({ onFiltersChange, onSearch }) => {
+export const FilterBar: React.FC<FilterBarProps> = ({ onFiltersChange, onSearch, onToggleView }) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedFilters, setSelectedFilters] = useState<{ [key: string]: string }>({});
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+  const [showMap, setShowMap] = useState(true);
+
+  const handleToggleView = () => {
+    setShowMap(!showMap);
+    onToggleView(!showMap);
+  };
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value;
@@ -58,6 +66,11 @@ export const FilterBar: React.FC<FilterBarProps> = ({ onFiltersChange, onSearch 
   return (
     <div className="filter-bar-container">
       <div className="search-bar-container">
+        <div className="toggle-view-container">
+          <button onClick={handleToggleView} className="toggle-view-button">
+            {showMap ? <ListIcon /> : <MapIcon />}
+          </button>
+        </div>
         <input
           type="text"
           placeholder="Search locations..."
