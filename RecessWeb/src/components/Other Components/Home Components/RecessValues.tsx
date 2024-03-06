@@ -48,7 +48,7 @@ const item = {
                 </Typography>
                 <Typography variant="h5">
                   {
-                    'We run remote tournaments that you can participate in at your own pace and schedule, with real prizes!'
+                    'We run remote that you can participate in at your own pace and schedule, with real prizes!'
                   }
                 </Typography>
               </Box>

@@ -7,7 +7,7 @@ import PaidFeatures from '../components/Other Components/Home Components/PaidFea
 
 export const HomePage = () => {
     return (
-        <div>
+        <div className="home-page-wrapper">
             <Hero backgroundImage={PickleballImage} />
             <RecessValues />
             <FreeFeatures />

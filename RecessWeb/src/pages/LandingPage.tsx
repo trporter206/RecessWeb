@@ -28,11 +28,12 @@ export const LandingPage = () => {
   };
 
   const applyFiltersAndSearch = (filters: { [key: string]: string } = {}) => {
+    console.log(locations)
     let filteredLocations = locations;
     Object.entries(filters).forEach(([category, option]) => {
       switch (category) {
         case "Type":
-          filteredLocations = filteredLocations.filter(location => option.includes(location.type));
+          filteredLocations = filteredLocations.filter(location => location.type === option);
           break;
         case "Courts":
           if (option === "3+") {
@@ -48,11 +49,7 @@ export const LandingPage = () => {
           break;
         case "Games Scheduled":
           const gamesScheduled = option === "Yes";
-          if (gamesScheduled) {
-            filteredLocations = filteredLocations.filter(location => location.games.length > 0);
-          } else {
-            filteredLocations = filteredLocations.filter(location => location.games.length === 0);
-          }
+          filteredLocations = filteredLocations.filter(location => gamesScheduled ? location.games.length > 0 : location.games.length === 0);
           break;
         case "Owned":
           const isOwned = option === "Yes";
@@ -93,6 +90,10 @@ export const LandingPage = () => {
         );
       } else if (category === "Has Lights") {
         filteredLocations = filteredLocations.filter((location) => location.lights === (option === "Yes"));
+      } else if (category === "Owned") {
+        filteredLocations = filteredLocations.filter((location) => location.isOwned === (option === "Yes"));
+      } else if (category === "Games Scheduled") {
+        filteredLocations = filteredLocations.filter((location) => location.games.length > 0 === (option === "Yes"));
       } // Add other filters as needed
     });
   

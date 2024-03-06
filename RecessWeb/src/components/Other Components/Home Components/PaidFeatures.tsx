@@ -8,15 +8,15 @@ const PaidFeatures: React.FC = () => {
       <div className="row g-4 py-5 row-cols-1 row-cols-lg-3">
         <div className="feature col">
           <h3 className="fs-2 text-body-emphasis">Create Unique Leagues</h3>
-          <p>Coaches are filled with knowledge and experience that anyone can benefit from. We provide tools that coaches can use to create communities that align with their missions and experience.</p>
+          <p>Have a group you like to play with? Or want to start your won league? We provide tools that organizers can use to create communities that align with their mission and experience.</p>
         </div>
         <div className="feature col">
           <h3 className="fs-2 text-body-emphasis">Join Tournaments</h3>
-          <p>We believe that the role coaches play are so important that deserve to be paid for their hard work. Recess gives coaches the ability to host paid commmunities and events so that they can create the best possible experience.</p>
+          <p>We want to provide players with an incentive to paly hard and fair. If you're feeling ready, participate in "flexible" tournaments and you could win prizes!</p>
         </div>
         <div className="feature col">
           <h3 className="fs-2 text-body-emphasis">Premium Locations</h3>
-          <p>Recess is built to make finding and playing sports easy and intuitive. Hosting your community here opens you up to an audience looking purely to play sport</p>
+          <p>Have your own court or field that you'd like to rent out or provide to the community? Reach out to us and you can become an official location host and even earn income.</p>
         </div>
       </div>
     </div>

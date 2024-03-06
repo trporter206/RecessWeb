@@ -12,7 +12,6 @@ function Hero({ backgroundImage }: HeroProps) {
       backgroundPosition: 'center',
       height: '600px',
       width: '100vw',
-      marginTop: '80px',
     }}>
       <Grid 
         container 
