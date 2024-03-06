@@ -533,6 +533,7 @@
     scrollbar-color: rgba(0, 0, 0, 0.2) rgba(0, 0, 0, 0.1);
     padding-bottom: 10px;
     overflow: visible;
+    max-width: 100%;
   }
 
   .filter-container::-webkit-scrollbar {
@@ -732,10 +733,24 @@
       padding-left: 10px;
       padding-right: 10px;
       overflow-x: auto;
+      /* overflow: visible; */
+      max-width: 100%;
+    }
+
+    .filter-category {
+      position: static;
     }
   
-    .filter-category {
-      margin: 0 5px;
+    .filter-dropdown {
+      position: absolute;
+      top: calc(100% + 5px);
+      left: 0;
+      z-index: 1000;
+      background-color: white;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      padding: 8px;
+      width: 100%;
     }
   
     .filter-reset-button {

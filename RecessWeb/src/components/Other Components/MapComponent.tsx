@@ -14,6 +14,7 @@ export const MapComponent: React.FC<MapComponentProps> = ({ items, onMarkerClick
 
   useEffect(() => {
     let map: google.maps.Map | null = null;
+    const bounds = new google.maps.LatLngBounds();
 
     const placeMarker = async (item: Location | Game) => {
       let coordinates;
@@ -25,7 +26,7 @@ export const MapComponent: React.FC<MapComponentProps> = ({ items, onMarkerClick
       }
 
       if (coordinates && map) {
-        const marker = new window.google.maps.Marker({
+        const marker = new google.maps.Marker({
           position: {
             lat: coordinates.latitude,
             lng: coordinates.longitude
@@ -34,17 +35,30 @@ export const MapComponent: React.FC<MapComponentProps> = ({ items, onMarkerClick
           title: 'coordinates' in item ? item.name : `Game at ${item.locationId}`,
         });
 
+        bounds.extend(marker.getPosition()!);
+
         marker.addListener('click', () => onMarkerClick(item));
       }
     };
 
     if (window.google && mapRef.current) {
-      map = new window.google.maps.Map(mapRef.current, {
+      map = new google.maps.Map(mapRef.current, {
         zoom: 12,
         center: { lat: 45.523127, lng: -122.686422 },
       });
 
       items.forEach(item => placeMarker(item));
+
+      if (items.length > 0) {
+        map.fitBounds(bounds);
+
+        if (items.length === 1) {
+          map.setZoom(12); // Adjust the zoom level for a single pin
+        }
+      }
+
+      // Smooth transition when the map zoom and center change
+      map.panTo(bounds.getCenter()!);
     }
   }, [items]);
 
