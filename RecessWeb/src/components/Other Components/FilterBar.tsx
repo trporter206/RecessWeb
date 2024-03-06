@@ -20,6 +20,7 @@ const filters: Filters = {
 export const FilterBar: React.FC<FilterBarProps> = ({ onFiltersChange, onSearch }) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedFilters, setSelectedFilters] = useState<{ [key: string]: string }>({});
+  const [openDropdown, setOpenDropdown] = useState<string | null>(null);
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value;
@@ -40,14 +41,18 @@ export const FilterBar: React.FC<FilterBarProps> = ({ onFiltersChange, onSearch 
       setSelectedFilters(newFilters);
       onFiltersChange(newFilters); // Pass the updated filters to the parent component
     }
+    setOpenDropdown(null); // Close the dropdown after selection
   };
-  
 
   const handleResetFilters = () => {
     setSelectedFilters({});
     setSearchQuery("");
     onFiltersChange({}); // Reset filters
     onSearch(""); // Reset search
+  };
+
+  const toggleDropdown = (category: string) => {
+    setOpenDropdown(category === openDropdown ? null : category);
   };
 
   return (
@@ -61,22 +66,29 @@ export const FilterBar: React.FC<FilterBarProps> = ({ onFiltersChange, onSearch 
           className="search-input"
         />
       </div>
-      {Object.entries(filters).map(([category, options]) => (
-        <div key={category} className="filter-category">
-          <h3>{category}</h3>
-          <div className="filter-options">
-            {options.map((option) => (
-              <button
-                key={`${category}-${option}`}
-                onClick={() => handleFilterClick(category, option)}
-                className={`filter-option-button ${selectedFilters[category] === option ? "selected" : ""}`}
-              >
-                {option}
-              </button>
-            ))}
+      <div className="filter-container">
+        {Object.entries(filters).map(([category, options]) => (
+          <div key={category} className="filter-category">
+            <div className="filter-pillbox" onClick={() => toggleDropdown(category)}>
+              {category}
+              {selectedFilters[category] && <span className="filter-badge">{selectedFilters[category]}</span>}
+            </div>
+            {openDropdown === category && (
+              <div className="filter-dropdown">
+                {options.map((option) => (
+                  <div
+                    key={`${category}-${option}`}
+                    onClick={() => handleFilterClick(category, option)}
+                    className={`filter-option ${selectedFilters[category] === option ? "selected" : ""}`}
+                  >
+                    {option}
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
-        </div>
-      ))}
+        ))}
+      </div>
       <button onClick={handleResetFilters} className="filter-reset-button">
         Reset Filters
       </button>

@@ -30,7 +30,7 @@ export const GamesPage = () => {
     };
 
     return (
-        <div className='main-container'>
+        <div>
             <div className='games-header'>  
                 <h1>Find Games</h1>
             </div>

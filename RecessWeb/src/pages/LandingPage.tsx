@@ -102,23 +102,16 @@ export const LandingPage = () => {
     setDisplayedLocations(filteredLocations);
   };
 
-  // const handleSearch = (searchQuery: string) => {
-  //   const filteredLocations = searchQuery
-  //     ? locations.filter(location =>
-  //         location.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-  //         location.description.toLowerCase().includes(searchQuery.toLowerCase()))
-  //     : locations;
-  //   setDisplayedLocations(filteredLocations);
-  // };
-
   return (
-    <div className="main-container">
+    <div>
       <FilterBar onFiltersChange={handleFiltersChange} onSearch={handleSearch} />
       <div className="map-and-list-container">
-        <div className="map-container">
-          <MapComponent items={displayedLocations} onMarkerClick={handleMarkerClick} />
+        <div className='col-md-8 col-sm-12 map-container'>
+          <div className="map-container">
+            <MapComponent items={displayedLocations} onMarkerClick={handleMarkerClick} />
+          </div>
         </div>
-        <div className="list-container">
+        <div className="list-container col-md-4 col-sm-12">
           <div className="scrollable-list-container">
             <LocationsList locations={displayedLocations} />
           </div>

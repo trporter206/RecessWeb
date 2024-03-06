@@ -8,7 +8,7 @@ export const LocationsPage = () => {
   const data = useContext(DataContext);
 
   return (
-    <div className="main-container">
+    <div>
       <h1>Discover Locations</h1>
       <div className='list-container'>
         <LocationsList locations={data.locations} />

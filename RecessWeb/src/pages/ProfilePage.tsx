@@ -6,12 +6,8 @@ import { UserContext } from '../services/UserContext';
 import { DataContext } from '../services/DataProvider';
 import { GamesList } from '../components/Game Components/GamesList';
 import { Game } from '../models/Game'; // Import the Game type
-// import { Team } from '../models/Team'; // Import the Team type
 import { Location } from '../models/Location'; // Import the Location type
 import { LocationsList } from '../components/Location Components/LocationsList';
-// import { TeamCreationModal } from '../components/Team Components/TeamCreationModal';
-// import { TeamsList } from '../components/Team Components/TeamsList';
-// import { TeamInviteItem } from '../components/Team Components/TeamInviteItem';
 import { addGameToUser, removeGameFromPendingInvites } from '../services/UserServices';
 import { ClubCreationModal } from '../components/Club Components/ClubCreationModal';
 import { GameInviteItem } from '../components/Game Components/GameInviteItem';
@@ -22,15 +18,13 @@ import { Club } from '../models/Club';
 export const ProfilePage = () => {
   const userContext = useContext(UserContext);
   const dataContext = useContext(DataContext);
-  // const { addTeamToPlayerContext, removeTeamInviteContext, addMemberToTeamContext } = dataContext;
   const [showProfileCreationModal, setShowProfileCreationModal] = useState(false);
   const [showClubCreationModal, setShowClubCreationModal] = useState(false);
-  // const [showTeamCreationModal, setShowTeamCreationModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const user = userContext?.user;
   const profile = userContext?.profile;
   const games = dataContext?.games || []; 
-  const { username, points, gamesHosted, gamesJoined, network, currentGames, clubs } = profile || 
+  const { username, points, gamesHosted, gamesJoined, network, currentGames } = profile || 
   { username: '', points: 0, totalGames: 0, gamesHosted: 0, gamesJoined: 0, network: [], clubs: [] };
 
   let userGames: Game[] = [];
@@ -100,7 +94,7 @@ export const ProfilePage = () => {
   }
 
   return (
-    <div className='main-container'>
+    <div>
       {user ? (
         <div className='profile-container'>
           <p>Welcome, {username}</p>

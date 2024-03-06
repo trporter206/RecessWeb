@@ -36,7 +36,7 @@ export const PlayersPage = () => {
   }, [view]);
 
   return (
-    <div className="main-container">
+    <div>
       <div className="tabs-container">
         <button className="tab-button" data-view="players" onClick={() => setView('players')}>Players</button>
         <button className="tab-button" data-view="clubs" onClick={() => setView('clubs')}>Clubs</button>

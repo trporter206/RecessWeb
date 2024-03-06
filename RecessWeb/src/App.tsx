@@ -8,24 +8,42 @@ import { ProfilePage } from './pages/ProfilePage';
 import { UserProvider } from './services/UserContext';
 import { PlayersPage } from './pages/PlayersPage'; // Import the PlayersPage component
 import { HomePage } from './pages/HomePage';
-// import 'bootstrap/dist/css/bootstrap.min.css';
+import { useEffect, useState } from 'react';
 
 export const App = () => {
+  const [navbarHeight, setNavbarHeight] = useState(0);
+
+  useEffect(() => {
+    const handleResize = () => {
+      const navbar = document.querySelector('.nav-style');
+      if (navbar) {
+        setNavbarHeight(navbar.clientHeight);
+      }
+    };
+
+    handleResize();
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
 
   return (
     <UserProvider>
       <DataProvider>
         <Router>
           <NavigationBar />
-          <Routes>
-            <Route path="/games" element={<GamesPage />} /> // Use the imported Games element
-            <Route path="/players" element={<PlayersPage />} /> // Use the imported PlayersPage element
-            <Route path="/locations" element={<LocationsPage />} /> // Use the imported LocationsPage element
-            <Route path="/profile" element={<ProfilePage />} /> // Use the imported ProfilePage component
-            <Route path="/" element={<LandingPage />} />
-            <Route path="/Home" element={<HomePage />} />
-            {/* Other routes */}
-          </Routes>
+          <div className='main-container' style={{ paddingTop: `${navbarHeight}px` }}>
+            <Routes>
+              <Route path="/games" element={<GamesPage />} />
+              <Route path="/players" element={<PlayersPage />} />
+              <Route path="/locations" element={<LocationsPage />} />
+              <Route path="/profile" element={<ProfilePage />} />
+              <Route path="/" element={<LandingPage />} />
+              <Route path="/Home" element={<HomePage />} />
+            </Routes>
+          </div>
         </Router>
       </DataProvider>
     </UserProvider>

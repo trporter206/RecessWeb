@@ -7,13 +7,14 @@
 
 .main-container {
   /* position: relative; */
+  padding-top: 80px;
   display: flex;
   flex-direction: column;
   align-items: center; /* Aligns children (items) horizontally in the center */
   justify-content: flex-start; /* Aligns children (items) vertically in the center */
   width: 100vw; /* Full width of the viewport */
   max-width: 100%;
-  height: 100%; /* Full height of the viewport */
+  height: 100vh; /* Full height of the viewport */
 }
 
 .profile-container {
@@ -23,33 +24,32 @@
     justify-content: flex-start; /* Aligns content to the top */
     width: 100%; /* Full width of the viewport */
     overflow-y: auto; /* Enable vertical scrolling */
-    padding-left: 20px;
-    margin-top: 200px;
+    padding: 2em;
+    /* margin-top: 200px; */
 }
+
 .map-and-list-container {
-  display: flex;
-  flex-direction: row; /* Horizontal layout */
-  height: 100%; /* Take up all available vertical space */
-  width: 100%; /* Full width */
-}
-
-/* Style the map and list containers as needed */
-.map-container {
-  flex-grow: 1; /* Grow to fill available space */
-  height: 80vh; /* Adjusted height, previously set inline */
-  width: 100%; /* Adjusted width, previously set inline */
-}
-
-.list-container {
-    width: 30%;
-    padding: 10px; /* Adjusted width, previously set inline */
-}
+    display: flex;
+    flex-direction: row;
+    height: auto; /* Remove fixed height */
+  }
+  
+  .map-container {
+    flex-grow: 1;
+    height: 100vh;
+    width: auto;
+    position: relative;
+    z-index: 0; /* Add a lower z-index value */
+  }
+  
+  .list-container {
+    padding: 1rem; /* Default padding */
+  }
 
 /* Style the list container to take up 20% of the width */
 .scrollable-list-container {
-  max-height: 70vh; /* Adjust as needed */
   overflow-y: auto; /* Enable vertical scrolling */
-  margin-top: 20px;
+  max-height: 100vh;
 }
 
 .nav-style {
@@ -58,6 +58,8 @@
   position: fixed;
   z-index: 100;
   top: 0;
+  left: 0;
+  right: 0;
   width: 100%;          /* Removed quotes for percentage value */
 }
 
@@ -256,7 +258,7 @@
     position: relative;
     margin-bottom: 30px; /* Increase the bottom margin for more separation */
     padding-bottom: 10px;
-    padding-top: 5rem; /* Add some padding at the bottom */
+    padding-top: 2em; /* Add some padding at the bottom */
 }
 
 .tab-button {
@@ -484,20 +486,129 @@
     justify-content: space-evenly;
 }
 
+.filter-container {
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0, 0, 0, 0.2) rgba(0, 0, 0, 0.1);
+    padding-bottom: 10px;
+    overflow: visible;
+  }
+
+  .filter-container::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  
+  .filter-container::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.2);
+    border-radius: 3px;
+  }
+  
+  .filter-container::-webkit-scrollbar-track {
+    background-color: rgba(0, 0, 0, 0.1);
+  }
+
 .filter-bar-container {
     display: flex;
-    overflow-x: auto; /* Enable horizontal scrolling */
-    white-space: nowrap;
-    width: 100%;
+    flex-direction: row;
     align-items: center;
-    gap: 10px; 
-    justify-content: space-evenly; 
-    padding-top: 70px;
+    justify-content: space-evenly;
+    padding: 1em;
+    overflow: visible;
+  }
+  
+  .filter-bar-container::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  
+  .filter-bar-container::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.2);
+    border-radius: 3px;
+  }
+  
+  .filter-bar-container::-webkit-scrollbar-track {
+    background-color: rgba(0, 0, 0, 0.1);
   }
   
   .filter-category {
-    margin: 10px;
-    flex: 0 0 auto; /* Prevent flex items from growing or shrinking */
+    position: relative;
+    margin: 0 10px;
+    flex-shrink: 0;
+  }
+
+  .filter-pillbox {
+    display: flex;
+    align-items: center;
+    padding: 8px 16px;
+    background-color: #f0f0f0;
+    border-radius: 20px;
+    cursor: pointer;
+    user-select: none;
+    z-index: 1;
+  }
+
+  .filter-badge {
+    margin-left: 8px;
+    padding: 4px 8px;
+    background-color: #007bff;
+    color: white;
+    border-radius: 10px;
+    font-size: 12px;
+  }
+
+  .filter-dropdown {
+    position: absolute;
+    top: calc(100% + 5px); /* Adjust the top position */
+    left: 0;
+    z-index: 1000;
+    background-color: white;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 8px;
+    min-width: 150px;
+  }
+
+  .filter-option {
+    padding: 8px 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+
+  .filter-option:hover {
+    background-color: #f0f0f0;
+  }
+  
+  .filter-option.selected {
+    background-color: #007bff;
+    color: white;
+  }
+
+  .search-bar-container {
+    margin-bottom: 10px;
+  }
+  
+  .search-input {
+    width: 100%;
+    padding: 5px 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+  
+  .filter-reset-button {
+    margin-top: 10px;
+    padding: 5px 10px;
+    background: #dc3545;
+    color: white;
+    border: none;
+    cursor: pointer;
+  }
+  
+  .filter-reset-button:hover {
+    background: #c82333;
   }
   
   .filter-options {
@@ -523,30 +634,10 @@
     background: #007bff; /* Change background color on hover and when selected */
     color: white; /* Change text color to white for better contrast */
   }
-
-  .filter-reset-button {
-    margin-top: 10px; /* Space above the reset button */
-    padding: 5px 10px;
-    background: #dc3545; /* A different background color for the reset button */
-    color: white;
-    border: none;
-    cursor: pointer;
-  }
   
   .filter-reset-button:hover {
     background: #c82333; /* Darker shade on hover */
   }
-
-.search-bar-container {
-    flex-grow: 1; 
-  }
-  
-.search-input {
-    width: 80%; 
-    padding: 5px 10px; 
-    border: 1px solid #ccc; 
-    border-radius: 5px; 
-}
 
 .playerlist-container {
     display: flex;
@@ -573,3 +664,44 @@
   margin-top: 20px; /* Space above the container */
   width: 100%; /* Ensure it takes up full container width */
 }
+
+@media screen and (max-width: 900px) {
+    .filter-bar-container {
+      padding-top: 10px;
+      flex-direction: column;
+    }
+  
+    .search-bar-container {
+      margin-bottom: 20px;
+      width: 100%;
+    }
+  
+    .filter-container {
+      justify-content: flex-start;
+      padding-left: 10px;
+      padding-right: 10px;
+    }
+  
+    .filter-category {
+      margin: 0 5px;
+    }
+  
+    .filter-reset-button {
+      margin-top: 20px;
+    }
+
+    .nav-style {
+        padding: 10px;
+        flex-direction: column;
+        height: auto;
+      }
+    
+      .nav-buttons {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    
+      .nav-buttons li {
+        margin-bottom: 10px;
+      }
+  }
