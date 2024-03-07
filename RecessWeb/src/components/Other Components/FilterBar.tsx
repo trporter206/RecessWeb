@@ -87,7 +87,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({ onFiltersChange, onSearch,
       <div className="filter-container">
         {Object.entries(filters).map(([category, options]) => (
           <div key={category} className="filter-category">
-            <div className="filter-pillbox" onClick={() => toggleDropdown(category)}>
+            <div className="filter-pillbox" onClick={() => toggleDropdown(category)} onTouchStart={() => toggleDropdown(category)}>
               {category}
               {selectedFilters[category] && <span className="filter-badge">{selectedFilters[category]}</span>}
             </div>
