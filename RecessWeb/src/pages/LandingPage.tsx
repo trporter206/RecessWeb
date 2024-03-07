@@ -108,10 +108,11 @@ export const LandingPage = () => {
   };
 
   return (
-    <div className="landing-container">
-      <div className="filter-bar-wrapper">
+    <>
+    <div className="filter-bar-wrapper">
         <FilterBar onFiltersChange={handleFiltersChange} onSearch={handleSearch} onToggleView={handleToggleView} />
       </div>
+      <div className="landing-container">
       <div className="map-and-list-container">
         <div className={`map-container ${showMap ? "" : "hidden-sm"}`}>
           <div className="map-container">
@@ -126,5 +127,6 @@ export const LandingPage = () => {
       </div>
       {selectedLocation && <LocationInfoModal location={selectedLocation} onClose={handleCloseModal} />}
     </div>
+    </>
   );
 };

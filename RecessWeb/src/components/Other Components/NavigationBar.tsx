@@ -17,7 +17,7 @@ export const NavigationBar = () => {
     <nav className="nav-style">
       <div className="nav-header">
         <h2>
-          <Link to="/Home">Recess</Link>
+          <Link to="/">Recess</Link>
         </h2>
         <button className="nav-toggle" onClick={toggleMenu}>
           &#9776;
@@ -25,7 +25,7 @@ export const NavigationBar = () => {
       </div>
       <ul className={`nav-buttons ${isOpen ? 'open' : ''}`}>
         <li>
-          <Link to="/" onClick={toggleMenu}>
+          <Link to="/explore" onClick={toggleMenu}>
             Explore
           </Link>
         </li>

@@ -78,6 +78,11 @@ export const FilterBar: React.FC<FilterBarProps> = ({ onFiltersChange, onSearch,
           onChange={handleSearchChange}
           className="search-input"
         />
+        <div className="reset-button-container">
+          <button onClick={handleResetFilters} className="filter-reset-button">
+            Reset
+          </button>
+        </div>
       </div>
       <div className="filter-container">
         {Object.entries(filters).map(([category, options]) => (
@@ -102,9 +107,6 @@ export const FilterBar: React.FC<FilterBarProps> = ({ onFiltersChange, onSearch,
           </div>
         ))}
       </div>
-      <button onClick={handleResetFilters} className="filter-reset-button">
-        Reset Filters
-      </button>
     </div>
   );
 };

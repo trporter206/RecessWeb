@@ -2,7 +2,6 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { LandingPage } from './pages/LandingPage';
 import { NavigationBar } from './components/Other Components/NavigationBar';
 import { GamesPage } from './pages/GamesPage'; // Import the Games component
-import { LocationsPage } from './pages/LocationsPage'; // Import the LocationsPage component
 import { DataProvider } from './services/DataProvider';
 import { ProfilePage } from './pages/ProfilePage';
 import { UserProvider } from './services/UserContext';
@@ -38,10 +37,9 @@ export const App = () => {
             <Routes>
               <Route path="/games" element={<GamesPage />} />
               <Route path="/players" element={<PlayersPage />} />
-              <Route path="/locations" element={<LocationsPage />} />
               <Route path="/profile" element={<ProfilePage />} />
-              <Route path="/" element={<LandingPage />} />
-              <Route path="/Home" element={<HomePage />} />
+              <Route path="/explore" element={<LandingPage />} />
+              <Route path="/" element={<HomePage />} />
             </Routes>
           </div>
         </Router>

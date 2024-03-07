@@ -45,6 +45,7 @@ export const MapComponent: React.FC<MapComponentProps> = ({ items, onMarkerClick
       map = new google.maps.Map(mapRef.current, {
         zoom: 12,
         center: { lat: 45.523127, lng: -122.686422 },
+        gestureHandling: 'greedy',
       });
 
       items.forEach(item => placeMarker(item));
