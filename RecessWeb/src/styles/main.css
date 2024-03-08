@@ -32,7 +32,7 @@
 .map-and-list-container {
   display: flex;
   flex-direction: row;
-  height: calc(100vh - var(--nav-bar-height) - var(--browser-input-bar-height));
+  height: calc(85.77vh - var(--nav-bar-height) - var(--browser-input-bar-height));
   width: 100%;
 }
   
@@ -837,7 +837,7 @@
     .list-container {
       width: 100%;
       margin: 0;
-      height: calc(100vh - 14em);
+      height: calc(86vh - 14em);
     }
 
     .list-container {
